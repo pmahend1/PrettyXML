@@ -43,6 +43,6 @@
 		"vscode-test": "^1.4.0"
 	},
 	"dependencies": {
-		"edge": "^7.10.1"
+		"electron-edge-js": "^12.14.2"
 	}
 }
