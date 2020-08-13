@@ -1,8 +1,18 @@
 {
     "name": "prettyxml",
     "displayName": "Pretty XML",
+    "author": { "name": "Prateek Mahendrakar" },
+    "readme": "https://github.com/pmahend1/PrettyXML/blob/master/README.md",
     "description": "Visual Studio like formatting of XML.",
-    "version": "0.0.1",
+    "version": "0.0.7",
+    "publisher": "PrateekMahendrakar",
+    "repository": {
+        "url": "https://github.com/pmahend1/prettyxml.git"
+    },
+    "icon": "images/logo.png",
+    "license": "MIT",
+    "bugs": "https://github.com/pmahend1/prettyxml/issues",
+    "preview": true,
     "engines": {
         "vscode": "^1.47.0"
     },
@@ -15,43 +25,35 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
-        "commands": [
-            {
-                "command": "prettyxml.prettifyxml",
-                "title": "Prettify XML"
-            }
-        ],
-        "keybindings": [
-            {
-                "command": "prettyxml.prettifyxml",
-                "key": "ctrl+p f"
-            }
-        ],
-        "languages": [
-            {
-                "id": "xml",
-                "extensions": [
-                    ".config",
-                    ".csproj",
-                    ".xml",
-                    ".xsd",
-                    ".xsl",
-                    ".plist",
-                    ".mobileconfig",
-                    ".xaml",
-                    ".axml",
-                    ".resx"
-                ]
-            }
-        ],
-        "menus": {
-            "editor/context": [
-                {
-                    "command": "prettyxml.prettifyxml",
-                    "group": "1_modification@100",
-                    "when": "editorLangId == 'xml'"
-                }
+        "commands": [{
+            "command": "prettyxml.prettifyxml",
+            "title": "Prettify XML"
+        }],
+        "keybindings": [{
+            "command": "prettyxml.prettifyxml",
+            "key": "ctrl+p f"
+        }],
+        "languages": [{
+            "id": "xml",
+            "extensions": [
+                ".config",
+                ".csproj",
+                ".xml",
+                ".xsd",
+                ".xsl",
+                ".plist",
+                ".mobileconfig",
+                ".xaml",
+                ".axml",
+                ".resx"
             ]
+        }],
+        "menus": {
+            "editor/context": [{
+                "command": "prettyxml.prettifyxml",
+                "group": "1_modification@100",
+                "when": "editorLangId == 'xml'"
+            }]
         }
     },
     "scripts": {
