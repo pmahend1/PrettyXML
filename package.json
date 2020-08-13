@@ -15,35 +15,43 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
-        "commands": [{
-            "command": "prettyxml.prettifyxml",
-            "title": "Prettify XML"
-        }],
-        "keybindings": [{
-            "command": "prettyxml.prettifyxml",
-            "key": "ctrl+p f"
-        }],
-        "languages": [{
-            "id": "xml",
-            "extensions": [
-                ".config",
-                ".csproj",
-                ".xml",
-                ".xsd",
-                ".xsl",
-                ".plist",
-                ".mobileconfig",
-                ".xaml",
-                ".axml",
-                ".resx"
-            ]
-        }],
-        "menus": {
-            "editor/context": [{
+        "commands": [
+            {
                 "command": "prettyxml.prettifyxml",
-                "group": "1_modification@100",
-                "when": "editorLangId == 'xml'"
-            }]
+                "title": "Prettify XML"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "prettyxml.prettifyxml",
+                "key": "ctrl+p f"
+            }
+        ],
+        "languages": [
+            {
+                "id": "xml",
+                "extensions": [
+                    ".config",
+                    ".csproj",
+                    ".xml",
+                    ".xsd",
+                    ".xsl",
+                    ".plist",
+                    ".mobileconfig",
+                    ".xaml",
+                    ".axml",
+                    ".resx"
+                ]
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "prettyxml.prettifyxml",
+                    "group": "1_modification@100",
+                    "when": "editorLangId == 'xml'"
+                }
+            ]
         }
     },
     "scripts": {
