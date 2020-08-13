@@ -8,18 +8,19 @@ export function activate(context: vscode.ExtensionContext)
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "prettyxml" is now active!');
+	//console.log('Congratulations, your extension "prettyxml" is now active!');
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('prettyxml.helloWorld', () =>
+	let disposable = vscode.commands.registerTextEditorCommand('prettyxml.prettifyxml', () =>
 	{
 		// The code you place here will be executed every time your command is executed
 
 		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from PrettyXML!');
-		format();
+		//vscode.window.showInformationMessage('Hello World from PrettyXML!');
+			format();
+			
 	});
 
 	context.subscriptions.push(disposable);
@@ -28,32 +29,54 @@ export function activate(context: vscode.ExtensionContext)
 function format()
 {
 
+	var cwd = vscode.env.appRoot;
+	var dllPath = cwd+String.raw`/extensions/prettyxml/dist/XmlFormatter.dll`;
 	try
 	{
-		var edge_ = require('electron-edge-js/lib/edge');
-var formatCSharp = edge_.func({
-		assemblyFile: 'XmlFormatter.dll',
-		typeName: 'XmlFormatter.Formatter',
-		methodName: 'Format' 
-	});
+		let editor = vscode.window.activeTextEditor;
+		if (editor)
+		{
+			let document = editor.document;
 
-	var text =  String.raw`<note>
-	<to>Tove</to>
-	<from>Jani</from>
-	<heading>Reminder</heading>
-	<body>Don't forget me this weekend!</body>
-	</note>`;
-	formatCSharp(text, function (error:any, result:any) { 
+			var start = new vscode.Position(0, 0);
+			var end = new vscode.Position(document.lineCount, 100);
 
-		console.log(result);
+			var ranger = new vscode.Range(start, end);
 
-	 });
+			var docText = document.getText();
+			if (docText)
+			{
+				var edge_ = require('electron-edge-js/lib/edge');
+				var formatCSharp = edge_.func({
+					assemblyFile: dllPath,
+					typeName: 'XmlFormatter.Formatter',
+					methodName: 'Format'
+				});
+
+				formatCSharp(docText, function (error: any, result: any)
+				{
+
+					console.log(result);
+
+					if (result)
+					{
+						editor?.edit(editBuilder =>
+						{
+							editBuilder.replace(ranger, result + "");
+						});
+					}
+
+				});
+			}
+			
+
+		}
 	} catch (error)
 	{
 		console.log(error);
 	}
 
-	
+
 }
 // this method is called when your extension is deactivated
 export function deactivate() { }
