@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/master/README.md",
     "description": "XML formatter extension for Visual Studio Code.Formats XML documents just like Visual Studio.",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -27,35 +27,43 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
-        "commands": [{
-            "command": "prettyxml.prettifyxml",
-            "title": "Prettify XML"
-        }],
-        "keybindings": [{
-            "command": "prettyxml.prettifyxml",
-            "key": "ctrl+p f"
-        }],
-        "languages": [{
-            "id": "xml",
-            "extensions": [
-                ".config",
-                ".csproj",
-                ".xml",
-                ".xsd",
-                ".xsl",
-                ".plist",
-                ".mobileconfig",
-                ".xaml",
-                ".axml",
-                ".resx"
-            ]
-        }],
-        "menus": {
-            "editor/context": [{
+        "commands": [
+            {
                 "command": "prettyxml.prettifyxml",
-                "group": "1_modification@100",
-                "when": "editorLangId == 'xml'"
-            }]
+                "title": "Prettify XML"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "prettyxml.prettifyxml",
+                "key": "ctrl+p f"
+            }
+        ],
+        "languages": [
+            {
+                "id": "xml",
+                "extensions": [
+                    ".config",
+                    ".csproj",
+                    ".xml",
+                    ".xsd",
+                    ".xsl",
+                    ".plist",
+                    ".mobileconfig",
+                    ".xaml",
+                    ".axml",
+                    ".resx"
+                ]
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "prettyxml.prettifyxml",
+                    "group": "1_modification@100",
+                    "when": "editorLangId == 'xml'"
+                }
+            ]
         }
     },
     "scripts": {
