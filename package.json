@@ -90,8 +90,11 @@
         "eslint": "^7.6.0",
         "glob": "^7.1.6",
         "mocha": "^8.0.1",
+        "ts-loader": "^8.0.2",
         "typescript": "^3.8.3",
-        "vscode-test": "^1.4.0"
+        "vscode-test": "^1.4.0",
+        "webpack": "^4.44.1",
+        "webpack-cli": "^3.3.12"
     },
     "dependencies": {
         "electron-edge-js": "^12.14.2"
