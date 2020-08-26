@@ -11,3 +11,4 @@ vsc-extension-quickstart.md
 out/*.dll
 **/*.deps.json
 **/*.pdb
+node_modules

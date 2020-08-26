@@ -1,20 +1,31 @@
 import * as vscode from 'vscode';
-
+import * as edge from 'electron-edge-js';
 let extPath = '';
+
 export function activate(context: vscode.ExtensionContext)
 {
 
-	let disposable = vscode.commands.registerTextEditorCommand('prettyxml.prettifyxml', async () =>
+	let disposable = vscode.commands.registerTextEditorCommand('prettyxml.prettifyxml', () =>
 	{
 		extPath = context.extensionPath;
+	
 		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Window,
-			title: "Prettifying XML"
-		},
-			async (progress, token) =>
+			location: vscode.ProgressLocation.Notification,
+			cancellable: false,
+			title: 'Pretty XML'
+		},async progress =>
+		{
+			progress.report({ message: 'Formatting document...' });
+
+			await format();
+			return new Promise((resolve) =>
 			{
-				await format();
+				setTimeout(() =>
+				{
+					resolve();
+				}, 1000);
 			});
+		});
 
 
 	});
@@ -47,8 +58,9 @@ async function format()
 			var docText = document.getText();
 			if (docText)
 			{
-				var edge_ = require('electron-edge-js/lib/edge');
-				var formatCSharp = edge_.func({
+				//var edge_ = require('electron-edge-js/lib/edge/');
+				
+				var formatCSharp = edge.func({
 					assemblyFile: dllPath,
 					typeName: 'XmlFormatter.Formatter',
 					methodName: 'Format'
@@ -66,7 +78,7 @@ async function format()
 
 					} else if (error)
 					{
-						vscode.window.showErrorMessage(error);
+						vscode.window.showErrorMessage(error+"");
 						console.error(error);
 					}
 
@@ -77,8 +89,8 @@ async function format()
 		}
 	} catch (error)
 	{
-		vscode.window.showErrorMessage(error);
-		console.error(error);
+		vscode.window.showErrorMessage(error+"");
+		console.error(error+"");
 	}
 
 
