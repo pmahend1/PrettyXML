@@ -36,7 +36,13 @@
         "keybindings": [
             {
                 "command": "prettyxml.prettifyxml",
-                "key": "ctrl+p f"
+                "key": "ctrl+k l",
+                "when": "!isMac"
+            },
+            {
+                "command": "prettyxml.prettifyxml",
+                "key": "cmd+k l",
+                "when": "isMac"
             }
         ],
         "languages": [
