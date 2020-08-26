@@ -7,16 +7,24 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 ## Features
 
 ### Prettify XML (XML Formatting) :   
-Keyboard shortcut : **Ctrl+P F** or Right Click and Select Prettify XML.
+
+Right Click and Select Prettify XML.
+
 - First attribute on same line as start tag.
 - All attributes indented in line with first attribute.
 - If no child for an element then close inline end tag.
 - No empty lines.
  
+## Keyboard Shortcuts
+
+**Cmd+K L** - Mac  
+**Control+K L** - Windows, Linux or Web  
+
 <img src='./example.gif'>
 
-### Formatted Document Example
- 
+
+### Formatted Document Example  
+
 <img src='./screenshot.png'>
 
 ## Requirements
@@ -29,6 +37,9 @@ Limited DTD, XSD support.
 Issues can be reported at [Issues sections](https://github.com/pmahend1/PrettyXML/issues)
 
 ## Release Notes
+
+### 0.0.10
+Changed keybinding to **Cmd+K L** for Mac and **Control+K L** for other platforms.
 
 ### 0.0.8
 
