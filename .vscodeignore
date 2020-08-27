@@ -12,4 +12,5 @@ out/*.dll
 **/*.deps.json
 **/*.pdb
 node_modules
+out/
 !node_modules/electron-edge-js
