@@ -1,54 +1,60 @@
-import * as vscode from 'vscode';
-
-let extPath = '';
+import * as vscode from "vscode";
+let extPath = "";
 export function activate(context: vscode.ExtensionContext)
 {
-
-	let disposable = vscode.commands.registerTextEditorCommand('prettyxml.prettifyxml', async () =>
+	try
 	{
-		extPath = context.extensionPath;
-		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Window,
-			title: "Prettifying XML"
-		},
-			async (progress, token) =>
+		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.prettifyxml",
+			async () =>
 			{
-				await format();
+				extPath = context.extensionPath;
+				await vscode.window.withProgress(
+					{
+						location: vscode.ProgressLocation.Notification,
+						title: "Pretty XML",
+						cancellable: false
+					},
+					async (progress) =>
+					{
+						progress.report({ message: "Formatting..." });
+						await format();
+					});
 			});
+		context.subscriptions.push(prettifyXmlCommand);
 
-
-	});
-
-	context.subscriptions.push(disposable);
+	} catch (error)
+	{
+		vscode.window.showErrorMessage(error);
+		console.log(error);
+	}
 }
 
 async function format()
 {
-	if (extPath === '')
+	if (extPath === "")
 	{
 		vscode.window.showErrorMessage('Error in finding extension path');
+		return;
 	}
-	var dllPath = extPath + String.raw`/lib/XmlFormatter.dll`;
+	var dllPath = extPath + `/lib/XmlFormatter.dll`;
 	try
 	{
 		let editor = vscode.window.activeTextEditor;
 		if (editor)
 		{
+			//get editor text
 			let document = editor.document;
-
 			var start = new vscode.Position(0, 0);
-
 			var lastButOne = document.lineAt(document.lineCount - 1);
-
 			var end = new vscode.Position(document.lineCount, lastButOne.range.end.character);
-
 			var ranger = new vscode.Range(start, end);
-
 			var docText = document.getText();
+
+			//format
 			if (docText)
 			{
-				var edge_ = require('electron-edge-js/lib/edge');
-				var formatCSharp = edge_.func({
+				var edge = require('electron-edge-js/lib/edge');
+				var formatCSharp = edge.func({
 					assemblyFile: dllPath,
 					typeName: 'XmlFormatter.Formatter',
 					methodName: 'Format'
@@ -72,15 +78,11 @@ async function format()
 
 				});
 			}
-
-
 		}
 	} catch (error)
 	{
 		vscode.window.showErrorMessage(error);
 		console.error(error);
 	}
-
-
 }
 export function deactivate() { }
