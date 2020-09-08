@@ -17,7 +17,14 @@ export function activate(context: vscode.ExtensionContext)
 					async (progress) =>
 					{
 						progress.report({ message: "Formatting..." });
-						await format();
+						try
+						{
+							await format();
+						} catch (error)
+						{
+							console.error(error);
+							vscode.window.showErrorMessage(error);
+						}
 					});
 			});
 		context.subscriptions.push(prettifyXmlCommand);

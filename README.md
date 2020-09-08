@@ -37,7 +37,7 @@ Issues can be reported at [Issues sections](https://github.com/pmahend1/PrettyXM
 
 ## Release Notes
 
-See [Change Log](./CHANGELOG)
+See [Change Log](./CHANGELOG.md)
 
 ### For more information
 
