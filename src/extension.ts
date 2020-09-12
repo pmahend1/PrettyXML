@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { Settings } from "./settings";
 let extPath = "";
 export function activate(context: vscode.ExtensionContext)
 {
@@ -57,6 +58,13 @@ async function format()
 			var ranger = new vscode.Range(start, end);
 			var docText = document.getText();
 
+			let spacelength = vscode.workspace.getConfiguration('prettyxml.settings').get<number>('indentspacelength');
+			let usesinglequotes = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('usesinglequotes');
+			let useselfclosetag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useselfclosingtag');
+			var settings = new Settings({spacelength : spacelength, singleQuotes:usesinglequotes, useSelfCloseTag: useselfclosetag});
+
+
+			settings.printOptions();
 			//format
 			if (docText)
 			{

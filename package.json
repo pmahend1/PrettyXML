@@ -70,7 +70,35 @@
                     "when": "editorLangId == 'xml'"
                 }
             ]
-        }
+        },
+        "configuration": [
+            {
+                "title": "PrettyXML Settings",
+                "properties": {
+                    "prettyxml.settings.indentspacelength": {
+                        "type": "number",
+                        "description": "Indent space length",
+                        "markdownDescription": "Indent space length",
+                        "default": 2,
+                        "maximum": 10,
+                        "minimum": 1
+                    },
+                    "prettyxml.settings.usesinglequotes":{
+                        "type": "boolean",
+                        "description": "Use ' instead of \"",
+                        "markdownDescription": "Use ' instead of \"",
+                        "default" : false 
+                    }
+                    ,
+                    "prettyxml.settings.useselfclosingtag":{
+                        "type" : "boolean",
+                        "description": "If no child nodes then self closing tag />",
+                        "markdownDescription": "If no child nodes then self closing tag />",
+                        "default": false
+                    }
+                }
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "yarn run compile",
