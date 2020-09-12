@@ -11,3 +11,5 @@ vsc-extension-quickstart.md
 out/*.dll
 **/*.deps.json
 **/*.pdb
+node_modules/nan/**
+node_modules/edge-cs/**
