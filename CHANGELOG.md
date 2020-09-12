@@ -2,6 +2,10 @@
 
 ## Preview
 
+### 0.1.8
+
+Fixed Mac native node bindings not found issue.
+
 ### 0.1.5
 
 Notification progress bar while formatting.

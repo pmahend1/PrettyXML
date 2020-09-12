@@ -60,7 +60,16 @@ async function format()
 			//format
 			if (docText)
 			{
-				var edge = require('electron-edge-js/lib/edge');
+				switch (process.platform)
+				{
+					case 'darwin':
+						var edge = require('electron-edge-js-mac/lib/edge');
+						break;
+					default:
+						var edge = require('electron-edge-js/lib/edge');
+						break;
+				}
+
 				var formatCSharp = edge.func({
 					assemblyFile: dllPath,
 					typeName: 'XmlFormatter.Formatter',
