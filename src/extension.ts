@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from "vscode";
-import { Settings } from "./settings";
+import { JSInputDTO } from "./jsinputdto";
+import { DefaultSettings, Settings } from "./settings";
+
 let extPath = "";
 export function activate(context: vscode.ExtensionContext)
 {
@@ -39,6 +42,7 @@ export function activate(context: vscode.ExtensionContext)
 
 async function format()
 {
+	//extension path was not found
 	if (extPath === "")
 	{
 		vscode.window.showErrorMessage('Error in finding extension path');
@@ -58,18 +62,19 @@ async function format()
 			var ranger = new vscode.Range(start, end);
 			var docText = document.getText();
 
+			//get settings
 			let spacelength = vscode.workspace.getConfiguration('prettyxml.settings').get<number>('indentspacelength');
-			let usesinglequotes = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('usesinglequotes');
-			let useselfclosetag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useselfclosingtag');
-			var settings = new Settings({spacelength : spacelength, singleQuotes:usesinglequotes, useSelfCloseTag: useselfclosetag});
+			let usesinglequotes = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('usesinglequotes') ;
+			let useselfclosetag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useselfclosingtag') ;
 
+			var settings = new Settings(spacelength, usesinglequotes, useselfclosetag);
 
-			settings.printOptions();
 			//format
 			if (docText)
 			{
 				switch (process.platform)
 				{
+					//if Mac then use different binary
 					case 'darwin':
 						var edge = require('electron-edge-js-mac/lib/edge');
 						break;
@@ -78,13 +83,27 @@ async function format()
 						break;
 				}
 
+				//electron-edge-js function for C# DLL
 				var formatCSharp = edge.func({
 					assemblyFile: dllPath,
 					typeName: 'XmlFormatter.Formatter',
-					methodName: 'Format'
+					methodName: 'Format',
+
 				});
 
-				await formatCSharp(docText, function (error: any, result: any)
+				//DTO object for DLL
+				var jsinput: JSInputDTO = new JSInputDTO(
+					docText,
+					settings.IndentLength,
+					settings.UseSingleQuotes,
+					settings.UseSelfClosingTags
+				);
+
+				//convert to string
+				var inputstr = JSON.stringify(jsinput);
+
+				//call C# method from DLL
+				await formatCSharp(inputstr, function (error: any, result: any)
 				{
 					if (result)
 					{

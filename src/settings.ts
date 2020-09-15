@@ -1,41 +1,30 @@
-import { type } from 'os';
-import { workspace } from 'vscode';
-
-
-
-interface ISettings
+/* eslint-disable @typescript-eslint/naming-convention */
+export interface ISettings
 {
-    spacelength?: number;
-    singleQuotes?: boolean;
-    useSelfCloseTag?: boolean;
+    IndentLength: number;
+    UseSingleQuotes: boolean;
+    UseSelfClosingTags: boolean;
 
 }
 
-
-type SettingsType = {
-    spacelength?: number;
-    singleQuotes?: boolean;
-    useSelfCloseTag?: boolean;
+export const DefaultSettings: ISettings = {
+    IndentLength: 2,
+    UseSingleQuotes: false,
+    UseSelfClosingTags: true,
 };
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-const DefaultSettings: ISettings = {
-    spacelength: 2,
-    singleQuotes: false,
-    useSelfCloseTag: false,
-};
+export class Settings
+{
+    IndentLength?: number;
+    UseSingleQuotes?: boolean;
+    UseSelfClosingTags?: boolean ;
 
-export class Settings {
-    private options: ISettings;
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    constructor(XOptions: ISettings) {
-        this.options = { ...DefaultSettings, ...XOptions };
-    }
-
-    public printOptions(): void {
-        console.log(this.options.spacelength);
-        console.log(this.options.singleQuotes);
-        console.log(this.options.useSelfCloseTag);
+    constructor(indentLengh?:number, useSingleQuotes?:boolean, useSelfClosingTags?:boolean)
+    {
+        this.IndentLength = indentLengh ?? DefaultSettings.IndentLength;
+        this.UseSingleQuotes = useSingleQuotes ?? DefaultSettings.UseSingleQuotes;
+        this.UseSelfClosingTags = useSelfClosingTags?? DefaultSettings.UseSelfClosingTags;
     }
 }
+
+
