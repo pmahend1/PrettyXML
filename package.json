@@ -75,22 +75,22 @@
             {
                 "title": "PrettyXML Settings",
                 "properties": {
-                    "prettyxml.settings.indentspacelength": {
+                    "prettyxml.settings.indentSpaceLength": {
                         "type": "number",
-                        "description": "Indent space length",
-                        "markdownDescription": "Indent space length",
+                        "description": "No of spaces for indentation.",
+                        "markdownDescription": "No of spaces for indentation.",
                         "default": 2,
                         "maximum": 10,
                         "minimum": 1
                     },
-                    "prettyxml.settings.usesinglequotes":{
+                    "prettyxml.settings.useSingleQuotes":{
                         "type": "boolean",
                         "description": "Use ' instead of \"",
                         "markdownDescription": "Use ' instead of \"",
                         "default" : false 
                     }
                     ,
-                    "prettyxml.settings.useselfclosingtag":{
+                    "prettyxml.settings.useSelfClosingTag":{
                         "type" : "boolean",
                         "description": "If no child nodes then self closing tag />",
                         "markdownDescription": "If no child nodes then self closing tag />",

@@ -63,9 +63,9 @@ async function format()
 			var docText = document.getText();
 
 			//get settings
-			let spacelength = vscode.workspace.getConfiguration('prettyxml.settings').get<number>('indentspacelength');
-			let usesinglequotes = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('usesinglequotes') ;
-			let useselfclosetag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useselfclosingtag') ;
+			let spacelength = vscode.workspace.getConfiguration('prettyxml.settings').get<number>('indentSpaceLength');
+			let usesinglequotes = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSingleQuotes') ;
+			let useselfclosetag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSelfClosingTag') ;
 
 			var settings = new Settings(spacelength, usesinglequotes, useselfclosetag);
 
