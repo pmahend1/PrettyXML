@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/master/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -94,7 +94,7 @@
                         "type" : "boolean",
                         "description": "If no child nodes then self closing tag />",
                         "markdownDescription": "If no child nodes then self closing tag />",
-                        "default": false
+                        "default": true
                     }
                 }
             }

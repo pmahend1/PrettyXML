@@ -2,6 +2,10 @@
 
 ## Preview
 
+### 0.2.1 
+
+Updated default for `prettyxml.settings.useSelfClosingTag` to `true`.  
+
 ### 0.2.0
 
 Added Settings 
