@@ -6,8 +6,8 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/master/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "0.1.8",
-    "publisher": "PrateekMahendrakar",
+    "version": "0.2.0",
+    "publisher": "PraeekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
     },
@@ -77,8 +77,8 @@
                 "properties": {
                     "prettyxml.settings.indentSpaceLength": {
                         "type": "number",
-                        "description": "No of spaces for indentation.",
-                        "markdownDescription": "No of spaces for indentation.",
+                        "description": "No. of spaces for indentation.",
+                        "markdownDescription": "No. of spaces for indentation.",
                         "default": 2,
                         "maximum": 10,
                         "minimum": 1

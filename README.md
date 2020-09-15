@@ -1,4 +1,4 @@
-<img src='images/logo.png' width=200 height=200>  
+<img src='images/logo.png' width=200 height=200>
 
 # Pretty XML
 
@@ -12,7 +12,7 @@ Right Click and Select Prettify XML.
 
 - First attribute on same line as start tag.
 - All attributes indented in line with first attribute.
-- If no child for an element then close inline end tag.
+- If no child for an element then close inline end tag.(Setting)
 - No empty lines.
  
 ## Keyboard Shortcuts
@@ -20,15 +20,32 @@ Right Click and Select Prettify XML.
 **Cmd+K L** - Mac  
 **Control+K L** - Windows, Linux or Web  
 
-<img src='./example.gif'>
+<img src='./images/example.gif'>
 
-### Formatted Document Example  
+## Formatted Document Example  
 
-<img src='./screenshot.png'>
+<img src='./images/screenshot.png'>
+
+## Settings 
+
+| Setting Key                          | Default Value | Column3                                    |
+| ------------------------------------ | ------------- | ------------------------------------------ |
+| prettyxml.settings.indentSpaceLength | 2             | No. of spaces for indentation.             |
+| prettyxml.settings.useSingleQuotes   | false         | Use ' instead of \"                        |
+| prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |
+
+<img src='./images/settings.png'>  
 
 ## Requirements
 
 VS Code 1.47 or higher.
+
+## Installation
+
+[Download at Visual Studio MarketPlace](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
+
+> [!IMPORTANT]
+> You will need .Net SDK or Mono installed on your machine.
 
 ## Known Issues
 

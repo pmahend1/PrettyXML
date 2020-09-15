@@ -2,6 +2,13 @@
 
 ## Preview
 
+### 0.2.0
+
+Added Settings 
+ - Indent Space Length.
+ - Use Single Quotes.
+ - Use Self Closing Tags.
+
 ### 0.1.8
 
 Fixed Mac native node bindings not found issue.
