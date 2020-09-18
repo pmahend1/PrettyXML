@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext)
 						} catch (error)
 						{
 							console.error(error);
-							vscode.window.showErrorMessage(error);
+							vscode.window.showErrorMessage(error.message);
 						}
 					});
 			});
@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext)
 
 	} catch (error)
 	{
-		vscode.window.showErrorMessage(error);
+		vscode.window.showErrorMessage(error.message);
 		console.log(error);
 	}
 }
@@ -48,7 +48,7 @@ async function format()
 		vscode.window.showErrorMessage('Error in finding extension path');
 		return;
 	}
-	var dllPath = extPath + `/lib/XmlFormatter.dll`;
+	var dllPath = extPath + `/lib/XmlFormatter.VSCode.dll`;
 	try
 	{
 		let editor = vscode.window.activeTextEditor;
@@ -86,9 +86,8 @@ async function format()
 				//electron-edge-js function for C# DLL
 				var formatCSharp = edge.func({
 					assemblyFile: dllPath,
-					typeName: 'XmlFormatter.Formatter',
+					typeName: 'XmlFormatter.VSCode.PrettyXML',
 					methodName: 'Format',
-
 				});
 
 				//DTO object for DLL
@@ -115,7 +114,7 @@ async function format()
 
 					} else if (error)
 					{
-						vscode.window.showErrorMessage(error);
+						vscode.window.showErrorMessage(error.message);
 						console.error(error);
 					}
 
@@ -124,7 +123,7 @@ async function format()
 		}
 	} catch (error)
 	{
-		vscode.window.showErrorMessage(error);
+		vscode.window.showErrorMessage(error.message);
 		console.error(error);
 	}
 }
