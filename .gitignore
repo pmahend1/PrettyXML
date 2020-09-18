@@ -1,8 +1,8 @@
 node_modules/*
-!node_modules/electron-edge-js
-!node_modules/electron-edge-js/*
-!node_modules/electron-edge-js-mac
-!node_modules/electron-edge-js-mac/*
+# !node_modules/electron-edge-js
+# !node_modules/electron-edge-js/*
+# !node_modules/electron-edge-js-mac
+# !node_modules/electron-edge-js-mac/*
 out
 .vscode-test/
 *.vsix

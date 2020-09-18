@@ -2,6 +2,11 @@
 
 ## Preview
 
+### 0.2.2
+
+- Updated packages
+- Fixes [Issue#20:Issue in formatting tag with no attributes and no childs but has separate end tag](https://github.com/pmahend1/PrettyXML/issues/20)
+
 ### 0.2.1 
 
 Updated default for `prettyxml.settings.useSelfClosingTag` to `true`.  
