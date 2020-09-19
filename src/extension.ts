@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+// imports 
 import * as vscode from "vscode";
 import { JSInputDTO } from "./jsinputdto";
-import { DefaultSettings, Settings } from "./settings";
+import { Settings } from "./settings";
 
+// global variables
 let extPath = "";
 let dllPath = "";
+let edge: any;
+
+//extension activate
 export function activate(context: vscode.ExtensionContext)
 {
 	try
@@ -17,10 +22,24 @@ export function activate(context: vscode.ExtensionContext)
 			return;
 		}
 		dllPath = extPath + `//lib//XmlFormatter.VSCode.dll`;
+
+		//select edge based on platform
+		switch (process.platform)
+		{
+			//if Mac then use different binary
+			case 'darwin':
+				edge = require('electron-edge-js-mac/lib/edge');
+				break;
+			default:
+				edge = require('electron-edge-js/lib/edge');
+				break;
+		}
+
+		//prettyfy command definition
 		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.prettifyxml",
-			async () =>
+			() =>
 			{
-				await vscode.window.withProgress(
+				vscode.window.withProgress(
 					{
 						location: vscode.ProgressLocation.Notification,
 						title: "Pretty XML",
@@ -35,23 +54,26 @@ export function activate(context: vscode.ExtensionContext)
 			});
 
 		let minimizeXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.minimizexml",
-			async () => {
-				await vscode.window.withProgress(
+			() =>
+			{
+				vscode.window.withProgress(
 					{
 						location: vscode.ProgressLocation.Notification,
 						title: "Pretty XML",
 						cancellable: false
-					},async (progress) =>
-					{
-						progress.report({ message: "Formatting..." });
+					}, async (progress) =>
+				{
+					progress.report({ message: "Minimizing..." });
 
-						await minimizeXml();
-					});
-				
+					await minimizeXml();
+				});
+
 
 			});
 
-		context.subscriptions.push( minimizeXmlCommand);
+		//subscribe commands
+		context.subscriptions.push(prettifyXmlCommand, minimizeXmlCommand);
+
 
 	} catch (error)
 	{
@@ -65,9 +87,6 @@ async function format()
 
 	try
 	{
-
-
-
 		//get settings
 		let spacelength = vscode.workspace.getConfiguration('prettyxml.settings').get<number>('indentSpaceLength');
 		let usesinglequotes = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSingleQuotes');
@@ -75,22 +94,11 @@ async function format()
 
 		var settings = new Settings(spacelength, usesinglequotes, useselfclosetag);
 
-		var docText = vscode?.window?.activeTextEditor?.document?.getText();
+		var docText = vscode?.window.activeTextEditor?.document?.getText();
 		var ranger = getEditorRange();
 		//format
 		if (docText)
 		{
-			switch (process.platform)
-			{
-				//if Mac then use different binary
-				case 'darwin':
-					var edge = require('electron-edge-js-mac/lib/edge');
-					break;
-				default:
-					var edge = require('electron-edge-js/lib/edge');
-					break;
-			}
-
 			//electron-edge-js function for C# DLL
 			var formatCSharp = edge.func({
 				assemblyFile: dllPath,
@@ -120,7 +128,8 @@ async function format()
 					});
 					console.log("Document formatted!");
 
-				} else if (error)
+				} 
+				else if (error)
 				{
 					vscode.window.showErrorMessage(error.message);
 					console.error(error);
@@ -138,27 +147,16 @@ async function format()
 
 async function minimizeXml()
 {
-	var docText = vscode.window.activeTextEditor?.document.getText();
+	var docText = vscode.window.activeTextEditor?.document?.getText();
 	var editor = vscode.window.activeTextEditor;
 	var ranger = getEditorRange();
 	if (docText)
 	{
-		switch (process.platform)
-		{
-			//if Mac then use different binary
-			case 'darwin':
-				var edge = require('electron-edge-js-mac/lib/edge');
-				break;
-			default:
-				var edge = require('electron-edge-js/lib/edge');
-				break;
-		}
-
 		//electron-edge-js function for C# DLL
 		var minimizeXmlCsharp = edge.func({
 			assemblyFile: dllPath,
 			typeName: 'XmlFormatter.VSCode.PrettyXML',
-			methodName: 'MinimizeXml',
+			methodName: 'Minimize',
 		});
 
 		await minimizeXmlCsharp(docText, function (error: Error, result: any)
@@ -170,7 +168,8 @@ async function minimizeXml()
 					editBuilder.replace(ranger, result + "");
 				});
 				console.log("Document minimized!");
-			} else if (error)
+			} 
+			else if (error)
 			{
 				vscode.window.showErrorMessage(error.message);
 				console.error(error);
@@ -180,7 +179,7 @@ async function minimizeXml()
 
 }
 
-
+//get Range of the active document
 function getEditorRange()
 {
 	let editor = vscode.window.activeTextEditor;
@@ -198,4 +197,6 @@ function getEditorRange()
 		return new vscode.Range(0, 0, 0, 0);
 	}
 }
+
+//extension deactivate
 export function deactivate() { }

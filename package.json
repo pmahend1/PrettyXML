@@ -35,7 +35,7 @@
             },
             {
                 "command": "prettyxml.minimizexml",
-                "title": "Minimize XML"
+                "title": "Pretty XML: Minimize"
             }
         ],
         "keybindings": [
@@ -48,11 +48,13 @@
                 "command": "prettyxml.prettifyxml",
                 "key": "cmd+k l",
                 "when": "isMac"
-            },{
+            },
+            {
                 "command": "prettyxml.minimizexml",
                 "key": "ctrl+k `",
                 "when": "!isMac"
-            },{
+            },
+            {
                 "command": "prettyxml.minimizexml",
                 "key": "cmd+k `",
                 "when": "isMac"
