@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/master/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "0.2.2",
+    "version": "0.3.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -23,7 +23,8 @@
     ],
     "activationEvents": [
         "onCommand:prettyxml.prettifyxml",
-        "onLanguage:xml"
+        "onLanguage:xml",
+        "onCommand:prettyxml.minimizexml"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -31,6 +32,10 @@
             {
                 "command": "prettyxml.prettifyxml",
                 "title": "Prettify XML"
+            },
+            {
+                "command": "prettyxml.minimizexml",
+                "title": "Minimize XML"
             }
         ],
         "keybindings": [
@@ -42,6 +47,14 @@
             {
                 "command": "prettyxml.prettifyxml",
                 "key": "cmd+k l",
+                "when": "isMac"
+            },{
+                "command": "prettyxml.minimizexml",
+                "key": "ctrl+k `",
+                "when": "!isMac"
+            },{
+                "command": "prettyxml.minimizexml",
+                "key": "cmd+k `",
                 "when": "isMac"
             }
         ],
