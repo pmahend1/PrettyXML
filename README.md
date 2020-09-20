@@ -6,21 +6,39 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 
 ## Features
 
-### Prettify XML (XML Formatting) :   
+1. ### Prettify XML (XML Formatting) :   
+   
+   Right Click and Select Prettify XML.
 
-Right Click and Select Prettify XML.
+   - First attribute on same line as start tag.
+   - All attributes indented in line with first attribute.
+   - If no child for an element then close inline end tag.(Setting)
+   - No empty lines.  
 
-- First attribute on same line as start tag.
-- All attributes indented in line with first attribute.
-- If no child for an element then close inline end tag.(Setting)
-- No empty lines.
- 
+2. ### Pretty XML: Minimize 
+
+   Minimizes XML.
+
+## GIFs
+
+**Prettify XML**  
+
+<img src='./images/Prettify.gif'>
+
+**PrettyXML: Minimize**  
+
+<img src="./images/Minimize.gif">
+
+
 ## Keyboard Shortcuts
 
-**Cmd+K L** - Mac  
-**Control+K L** - Windows, Linux or Web  
+| Command                  | Platform       | Shortcut        |
+|--------------------------|----------------|-----------------|
+| Prettify XML             | Mac            | **Cmd+K L**     |
+| Prettify XML             | Windows, Linux | **Control+K L** |
+| PrettyXML: Minimize | Mac            | **Cmd+K `**     |
+| PrettyXML: Minimize | Windows, Linux | **Control+K `** |
 
-<img src='./images/example.gif'>
 
 ## Formatted Document Example  
 
@@ -28,8 +46,10 @@ Right Click and Select Prettify XML.
 
 ## Settings 
 
-| Setting Key                          | Default Value | Column3                                    |
-| ------------------------------------ | ------------- | ------------------------------------------ |
+These will be for **Prettify XML** command.
+
+| Setting Key                          | Default Value | Description                                |
+|--------------------------------------|---------------|--------------------------------------------|
 | prettyxml.settings.indentSpaceLength | 2             | No. of spaces for indentation.             |
 | prettyxml.settings.useSingleQuotes   | false         | Use ' instead of \"                        |
 | prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |
