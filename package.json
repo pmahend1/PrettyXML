@@ -136,6 +136,7 @@
         "vscode-test": "^1.4.0"
     },
     "dependencies": {
-        "electron-edge-js": "^12.14.2"
+        "electron-edge-js": "file:./lib//electron-edge-js",
+        "electron-edge-js-mac": "file:./lib/electron-edge-js-mac"
     }
 }
