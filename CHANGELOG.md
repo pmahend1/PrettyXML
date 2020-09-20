@@ -4,7 +4,7 @@
 
 ### 0.3.0
 
-Added **PrettyXML: Minimize XML** command.  
+Added **PrettyXML: Minimize** command.  
 
 ### 0.2.2
 

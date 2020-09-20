@@ -25,7 +25,7 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 
 <img src='./images/Prettify.gif'>
 
-**Pretty XML: Minimize XML**  
+**PrettyXML: Minimize**  
 
 <img src="./images/Minimize.gif">
 
@@ -36,8 +36,8 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 |--------------------------|----------------|-----------------|
 | Prettify XML             | Mac            | **Cmd+K L**     |
 | Prettify XML             | Windows, Linux | **Control+K L** |
-| Pretty XML: Minimize XML | Mac            | **Cmd+K `**     |
-| Pretty XML: Minimize XML | Windows, Linux | **Control+K `** |
+| PrettyXML: Minimize | Mac            | **Cmd+K `**     |
+| PrettyXML: Minimize | Windows, Linux | **Control+K `** |
 
 
 ## Formatted Document Example  
@@ -45,6 +45,8 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 <img src='./images/screenshot.png'>
 
 ## Settings 
+
+These will be for **Prettify XML** command.
 
 | Setting Key                          | Default Value | Description                                |
 |--------------------------------------|---------------|--------------------------------------------|
