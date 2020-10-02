@@ -1,5 +1,17 @@
 <img src='images/logo.png' width=200 height=200>
 
+ [![License](https://img.shields.io/github/license/pmahend1/PrettyXML?style=flat-square&label=License&color=brightgreen)](https://choosealicense.com/licenses/mit/)
+
+[![Version](https://vsmarketplacebadge.apphb.com/version/PrateekMahendrakar.PrettyXML.svg?logo=visual-studio-code&style=for-the-badge)](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
+
+![Installs](https://vsmarketplacebadge.apphb.com/installs/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Installs&logo=data:img/png:images/logo.png) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Downloads) ![Rating](https://vsmarketplacebadge.apphb.com/rating-star/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Rating)
+
+![Trending-Weekly](https://vsmarketplacebadge.apphb.com/trending-weekly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Weekly)  ![Trending-Monthly](https://vsmarketplacebadge.apphb.com/trending-monthly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Monthly)
+
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width=150 height=40>](https://www.buymeacoffee.com/pmahend1)  
+
+---
+
 # Pretty XML
 
 Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML documents just like Visual Studio. This is in preview mode. Suggestions , improvement PRs are welcome.
@@ -37,7 +49,8 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 | Prettify XML        | Mac            | **Cmd+K L**     |
 | Prettify XML        | Windows, Linux | **Control+K L** |
 | PrettyXML: Minimize | Mac            | **Cmd+K `**     |
-| PrettyXML: Minimize | Windows, Linux | **Control+K `** |
+| PrettyXML: Minimize | Windows, Linux | **Control+K `** |  
+
 
 ## Formatted Document Example  
 
@@ -48,10 +61,11 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 These will be for **Prettify XML** command.
 
 | Setting Key                          | Default Value | Description                                |
-| ------------------------------------ | ------------- | ------------------------------------------ |
+|--------------------------------------|---------------|--------------------------------------------|
 | prettyxml.settings.indentSpaceLength | 2             | No. of spaces for indentation.             |
 | prettyxml.settings.useSingleQuotes   | false         | Use ' instead of \"                        |
-| prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |
+| prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |  
+
 
 <img src='./images/settings.png'>  
 
