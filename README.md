@@ -77,16 +77,15 @@ VS Code 1.47 or higher.
 
 [Download at Visual Studio MarketPlace](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
 
----
 
-**IMPORTANT** : You will need .Net SDK or Mono installed on your machine.
-
----
+> **Important!**  
+>
+> You will need .Net SDK or Mono installed on your machine.
 
 ## Known Issues
 
 Limited DTD, XSD support.
-Issues can be reported at [Issues sections](https://github.com/pmahend1/PrettyXML/issues)  
+Issues can be reported at [issues section](https://github.com/pmahend1/PrettyXML/issues)  
 
 ## Release Notes
 
