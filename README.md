@@ -1,5 +1,17 @@
 <img src='images/logo.png' width=200 height=200>
 
+ [![License](https://img.shields.io/github/license/pmahend1/PrettyXML?style=flat-square&label=License&color=brightgreen)](https://choosealicense.com/licenses/mit/)
+
+[![Version](https://vsmarketplacebadge.apphb.com/version/PrateekMahendrakar.PrettyXML.svg?logo=visual-studio-code&style=for-the-badge)](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
+
+![Installs](https://vsmarketplacebadge.apphb.com/installs/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Installs&logo=data:img/png:images/logo.png) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Downloads) ![Rating](https://vsmarketplacebadge.apphb.com/rating-star/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Rating)
+
+![Trending-Weekly](https://vsmarketplacebadge.apphb.com/trending-weekly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Weekly)  ![Trending-Monthly](https://vsmarketplacebadge.apphb.com/trending-monthly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Monthly)
+
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width=150 height=40>](https://www.buymeacoffee.com/pmahend1)  
+
+---
+
 # Pretty XML
 
 Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML documents just like Visual Studio. This is in preview mode. Suggestions , improvement PRs are welcome.
@@ -32,12 +44,12 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 
 ## Keyboard Shortcuts
 
-| Command                  | Platform       | Shortcut        |
-|--------------------------|----------------|-----------------|
-| Prettify XML             | Mac            | **Cmd+K L**     |
-| Prettify XML             | Windows, Linux | **Control+K L** |
+| Command             | Platform       | Shortcut        |
+| ------------------- | -------------- | --------------- |
+| Prettify XML        | Mac            | **Cmd+K L**     |
+| Prettify XML        | Windows, Linux | **Control+K L** |
 | PrettyXML: Minimize | Mac            | **Cmd+K `**     |
-| PrettyXML: Minimize | Windows, Linux | **Control+K `** |
+| PrettyXML: Minimize | Windows, Linux | **Control+K `** |  
 
 
 ## Formatted Document Example  
@@ -52,7 +64,8 @@ These will be for **Prettify XML** command.
 |--------------------------------------|---------------|--------------------------------------------|
 | prettyxml.settings.indentSpaceLength | 2             | No. of spaces for indentation.             |
 | prettyxml.settings.useSingleQuotes   | false         | Use ' instead of \"                        |
-| prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |
+| prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |  
+
 
 <img src='./images/settings.png'>  
 
@@ -64,13 +77,15 @@ VS Code 1.47 or higher.
 
 [Download at Visual Studio MarketPlace](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
 
-> [!IMPORTANT]
+
+> **Important!**  
+>
 > You will need .Net SDK or Mono installed on your machine.
 
 ## Known Issues
 
 Limited DTD, XSD support.
-Issues can be reported at [Issues sections](https://github.com/pmahend1/PrettyXML/issues)  
+Issues can be reported at [issues section](https://github.com/pmahend1/PrettyXML/issues)  
 
 ## Release Notes
 
@@ -79,3 +94,7 @@ See [Change Log](./CHANGELOG.md)
 ### For more information
 
 * [Source Code](https://github.com/pmahend1/prettyxml)
+
+**Support me on Buy me a coffee!**
+
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width=150 height=40>](https://www.buymeacoffee.com/pmahend1)  
