@@ -1,6 +1,6 @@
 <img src='images/logo.png' width=200 height=200>
-
- [![License](https://img.shields.io/github/license/pmahend1/PrettyXML?style=flat-square&label=License&color=brightgreen)](https://choosealicense.com/licenses/mit/)
+  
+[![License](https://img.shields.io/github/license/pmahend1/PrettyXML?style=flat-square&label=License)](https://choosealicense.com/licenses/mit/)
 
 [![Version](https://vsmarketplacebadge.apphb.com/version/PrateekMahendrakar.PrettyXML.svg?logo=visual-studio-code&style=for-the-badge)](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
 
