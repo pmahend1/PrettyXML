@@ -32,13 +32,12 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 
 ## Keyboard Shortcuts
 
-| Command                  | Platform       | Shortcut        |
-|--------------------------|----------------|-----------------|
-| Prettify XML             | Mac            | **Cmd+K L**     |
-| Prettify XML             | Windows, Linux | **Control+K L** |
+| Command             | Platform       | Shortcut        |
+| ------------------- | -------------- | --------------- |
+| Prettify XML        | Mac            | **Cmd+K L**     |
+| Prettify XML        | Windows, Linux | **Control+K L** |
 | PrettyXML: Minimize | Mac            | **Cmd+K `**     |
 | PrettyXML: Minimize | Windows, Linux | **Control+K `** |
-
 
 ## Formatted Document Example  
 
@@ -49,7 +48,7 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 These will be for **Prettify XML** command.
 
 | Setting Key                          | Default Value | Description                                |
-|--------------------------------------|---------------|--------------------------------------------|
+| ------------------------------------ | ------------- | ------------------------------------------ |
 | prettyxml.settings.indentSpaceLength | 2             | No. of spaces for indentation.             |
 | prettyxml.settings.useSingleQuotes   | false         | Use ' instead of \"                        |
 | prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |
@@ -64,8 +63,11 @@ VS Code 1.47 or higher.
 
 [Download at Visual Studio MarketPlace](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
 
-> [!IMPORTANT]
-> You will need .Net SDK or Mono installed on your machine.
+---
+
+**IMPORTANT** : You will need .Net SDK or Mono installed on your machine.
+
+---
 
 ## Known Issues
 
@@ -79,3 +81,7 @@ See [Change Log](./CHANGELOG.md)
 ### For more information
 
 * [Source Code](https://github.com/pmahend1/prettyxml)
+
+**Support me on Buy me a coffee!**
+
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width=150 height=40>](https://www.buymeacoffee.com/pmahend1)  
