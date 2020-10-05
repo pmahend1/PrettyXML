@@ -25,15 +25,14 @@ jobs:
       run: yarn
     
     - name : install semver
-      run: Install-Module -Name SemVer
+      run: |
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        Install-Module -Name PoshSemanticVersion 
       
     - name : current version
       run: |
-        $version = [SemVer]((Get-Content .\package.json | ConvertFrom-Json).version)
+        $version = New-SemanticVersion ((Get-Content .\package.json | ConvertFrom-Json).version)
         Write-Host 'Current version from package.json: ' $version
-         
-    - name: next version
-      run: $sem = "minor"
     
     - name: get published version
       run: |
@@ -43,5 +42,35 @@ jobs:
         $headers.Add("Content-Type", "application/json")
         $body = "{`"filters`":[{`"criteria`":[{`"filterType`":7,`"value`":`"PrateekMahendrakar.PrettyXML`"},{`"filterType`":12,`"value`":4096}]}],`"flags`":914}"
         $response = Invoke-RestMethod 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' -Method Post -Headers $headers -Body $body
-        $publishedVersion= [SemVer]($response.results[0].extensions.versions.version)
+        $publishedVersion= New-SemanticVersion ($response.results[0].extensions.versions.version)
         Write-Host 'Last Published version: '$publishedVersion 
+        
+    - name : compare version
+      run: | 
+        $nextVersion=$publishedVersion
+        $com = Compare-SemanticVersion $version1 $version2
+        if(com.IsCompatible){
+        $com = Compare-SemanticVersion $packageversion $publishedVersion
+        $nextversion = [VersionComponent]::Patch
+        if ($com.IsCompatible) {
+          if ($com.Precedence -eq '=') {
+            $nextversion = [VersionComponent]::Patch
+          }
+          elseif ($com.Precedence -eq '>') {
+            $nextversion = $packageversion
+          }
+          elseif ($com.Precedence -eq '<') {
+            # overwrite package.json
+            $packagejson = (Get-Content .\package.json | ConvertFrom-Json)
+            $packagejson.Version = $publishedVersion.ToString()
+            $packagejson | ConvertTo-Json | Out-File ".\package.json" 
+            $nextversion = [VersionComponent]::Patch
+          }
+        }
+        
+    - name : VSCE publish
+      run: |
+        vsce publish $nextversion -p $VSCE_TOKEN
+      env:
+        VSCE_TOKEN: ${{ secrets.VSCE_PRETTYXML }} 
+
