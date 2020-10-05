@@ -36,7 +36,7 @@ jobs:
         $version = New-SemanticVersion ((Get-Content .\package.json | ConvertFrom-Json).version)
         Write-Host 'Current version from package.json: ' $version
       env:
-        version: $${{version}}  
+        version: ${{version}}  
       
     
     - name: Get published version from VS Code extension REST API
@@ -51,7 +51,7 @@ jobs:
         $publishedVersion= New-SemanticVersion ($response.results[0].extensions.versions.version)
         Write-Host 'Last Published version: '$publishedVersion 
       env:
-        publishedVersion: $${{publishedVersion}}  
+        publishedVersion: ${{publishedVersion}}  
         
     - name : Compare and bump next version
       run: | 
