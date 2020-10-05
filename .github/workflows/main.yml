@@ -81,7 +81,5 @@ jobs:
         }
         
     - name : VSCE publish
-      run: vsce publish ${{ env.VERSIONSTR }} -p $VSCE_TOKEN --yarn
-      env:
-        VSCE_TOKEN: ${{ secrets.VSCE_PRETTYXML }} 
+      run: vsce publish ${{ env.VERSIONSTR }} -p ${{ secrets.VSCE_PRETTYXML }} --yarn
 
