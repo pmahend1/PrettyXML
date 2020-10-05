@@ -31,11 +31,13 @@ jobs:
         Install-Module -Name SemVer
       
     - name : Get current version from package.json
+      id: getpackageversion
       run: |
         $version = New-SemanticVersion ((Get-Content .\package.json | ConvertFrom-Json).version)
         Write-Host 'Current version from package.json: ' $version
     
     - name: Get published version from VS Code extension REST API
+      id: getPublishedVersion
       run: |
         $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
         $headers.Add("VSMarketplaceBadge", "1.0")
@@ -70,6 +72,10 @@ jobs:
             }
           }
         }
+      env:
+        version: ${{ steps.getpackageversion.outputs.version }}
+        publishedversion: ${{ steps.getPublishedVersion.outputs.publishedversion }} 
+        
         
     - name : VSCE publish
       run: |
