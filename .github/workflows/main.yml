@@ -82,5 +82,8 @@ jobs:
         }
         
     - name : VSCE publish
-      run: vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} -p ${{ secrets.VSCE_PRETTYXML }} --yarn
+      run: |
+        git config --global user.email "prateek.mahendrakar@gmail.com"
+        git config --global user.name "Prateek Mahendrakar"
+        vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} -p ${{ secrets.VSCE_PRETTYXML }} --yarn
 
