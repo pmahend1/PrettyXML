@@ -25,17 +25,14 @@ jobs:
       run: yarn
     
     - name : current version
-      if: github.event.action == 'inline'
       run: |
         $version = (Get-Content .\package.json | ConvertFrom-Json).version
         Write-Host 'Current version from package.json: ' $version
          
     - name: next version
-      if: github.event.action == 'inline'
       run: $sem = "minor"
     
     - name: get published version
-      if: github.event.action == 'inline'
       run: |
         $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
         $headers.Add("VSMarketplaceBadge", "1.0")
