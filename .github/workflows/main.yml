@@ -64,7 +64,7 @@ jobs:
           if ($com.IsCompatible) {
             if ($com.Precedence -eq '=') {
                 $nextversion = [VersionComponent]::Patch
-                Write-Host "::set-output name=VERSIONSTR::$nextversion.ToString().ToLower()"
+                Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
             }
             elseif ($com.Precedence -eq '>') {
               $nextversion = $packageversion
@@ -76,7 +76,7 @@ jobs:
               $packagejson.Version = $publishedVersion.ToString()
               $packagejson | ConvertTo-Json | Out-File ".\package.json" 
               $nextversion = [VersionComponent]::Patch
-              Write-Host "::set-output name=VERSIONSTR::$nextversion.ToString().ToLower()"
+              Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
             }
           }
         }
