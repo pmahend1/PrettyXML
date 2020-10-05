@@ -70,7 +70,7 @@ jobs:
         
     - name : VSCE publish
       run: |
-        vsce publish $nextversion -p $VSCE_TOKEN
+        vsce publish $nextversion.ToString().ToLower() -p $VSCE_TOKEN
       env:
         VSCE_TOKEN: ${{ secrets.VSCE_PRETTYXML }} 
 
