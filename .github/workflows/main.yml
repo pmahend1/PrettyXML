@@ -7,8 +7,8 @@ on:
         - master
   workflow_dispatch:
       branches:
-        - Pipeline
         - master
+        - Dev
 
 
 name: GitHub Action for vsce
@@ -58,7 +58,7 @@ jobs:
         $nextVersion=[VersionComponent]::Patch
         $com = Compare-SemanticVersion ${{ steps.getpackageversion.outputs.VERSION }} ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
         #bump
-        if(com.IsCompatible){
+        if($com.IsCompatible){
           if ($com.IsCompatible) {
             if ($com.Precedence -eq '=') {
                 $nextversion = [VersionComponent]::Patch
