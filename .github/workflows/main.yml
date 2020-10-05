@@ -21,4 +21,4 @@ jobs:
         with:
           args: "publish --pat $VSCE_TOKEN"
         env:
-          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+          VSCE_TOKEN: ${{ secrets.VSCE_PRETTYXML }}
