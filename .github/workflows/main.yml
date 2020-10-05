@@ -33,7 +33,7 @@ jobs:
     - name : Get current version from package.json
       id: getpackageversion
       run: |
-        $version = New-SemanticVersion ((Get-Content .\package.json | ConvertFrom-Json).version)
+        $version = (Get-Content .\package.json | ConvertFrom-Json).version
         Write-Host 'Current version from package.json: ' $version
         Write-Host "::set-output name=VERSION::$version"
       
@@ -47,7 +47,7 @@ jobs:
         $headers.Add("Content-Type", "application/json")
         $body = "{`"filters`":[{`"criteria`":[{`"filterType`":7,`"value`":`"PrateekMahendrakar.PrettyXML`"},{`"filterType`":12,`"value`":4096}]}],`"flags`":914}"
         $response = Invoke-RestMethod 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' -Method Post -Headers $headers -Body $body
-        $publishedVersion= New-SemanticVersion ($response.results[0].extensions.versions.version)
+        $publishedVersion= $response.results[0].extensions.versions.version
         Write-Host 'Last Published version: '$publishedVersion 
         Write-Host "::set-output name=PUB_VERSION::$publishedVersion"
         
