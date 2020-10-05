@@ -68,7 +68,7 @@ jobs:
             elseif ($com.Precedence -eq '<') {
               # overwrite package.json
               $packagejson = (Get-Content .\package.json | ConvertFrom-Json)
-              $packagejson.version = ${{ steps.getPublishedVersion.outputs.PUB_VERSION.ToString() }}
+              $packagejson.version = ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
               $packagejson | ConvertTo-Json | Out-File ".\package.json" 
               $nextversion = [VersionComponent]::Patch
               Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
