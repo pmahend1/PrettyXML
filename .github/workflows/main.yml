@@ -53,6 +53,7 @@ jobs:
         Write-Host "::set-output name=PUB_VERSION::$publishedVersion"
         
     - name : Compare and bump next version
+      id: bumpversion
       run: | 
         Import-Module SemVer
         Import-Module PoshSemanticVersion
@@ -63,7 +64,7 @@ jobs:
           if ($com.IsCompatible) {
             if ($com.Precedence -eq '=') {
                 $nextversion = [VersionComponent]::Patch
-                Write-Host "::set-outputname=VERSIONSTR::$nextversion.ToString().ToLower()"
+                Write-Host "::set-output name=VERSIONSTR::$nextversion.ToString().ToLower()"
             }
             elseif ($com.Precedence -eq '>') {
               $nextversion = $packageversion
@@ -81,5 +82,5 @@ jobs:
         }
         
     - name : VSCE publish
-      run: vsce publish ${{ env.VERSIONSTR }} -p ${{ secrets.VSCE_PRETTYXML }} --yarn
+      run: vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} -p ${{ secrets.VSCE_PRETTYXML }} --yarn
 
