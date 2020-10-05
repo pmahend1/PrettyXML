@@ -29,6 +29,8 @@ jobs:
         Set-PSRepository PSGallery -InstallationPolicy Trusted
         Install-Module -Name PoshSemanticVersion
         Install-Module -Name SemVer
+        Import-Module SemVer
+        Import-Module PoshSemanticVersion
       
     - name : current version
       run: |
@@ -72,7 +74,7 @@ jobs:
         
     - name : VSCE publish
       run: |
-        vsce publish $nextversion.ToString().ToLower() -p $VSCE_TOKEN
+        vsce publish $nextversion.ToString().ToLower() -p $VSCE_TOKEN --yarn
       env:
         VSCE_TOKEN: ${{ secrets.VSCE_PRETTYXML }} 
 
