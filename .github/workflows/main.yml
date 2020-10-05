@@ -24,9 +24,12 @@ jobs:
     - name: yarn
       run: yarn
     
+    - name : install semver
+      run: Install-Module -Name SemVer
+      
     - name : current version
       run: |
-        $version = (Get-Content .\package.json | ConvertFrom-Json).version
+        $version = [SemVer]((Get-Content .\package.json | ConvertFrom-Json).version)
         Write-Host 'Current version from package.json: ' $version
          
     - name: next version
@@ -40,5 +43,5 @@ jobs:
         $headers.Add("Content-Type", "application/json")
         $body = "{`"filters`":[{`"criteria`":[{`"filterType`":7,`"value`":`"PrateekMahendrakar.PrettyXML`"},{`"filterType`":12,`"value`":4096}]}],`"flags`":914}"
         $response = Invoke-RestMethod 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' -Method Post -Headers $headers -Body $body
-        $publishedVersion= $response.results[0].extensions.versions.version
+        $publishedVersion= [SemVer]($response.results[0].extensions.versions.version)
         Write-Host 'Last Published version: '$publishedVersion 
