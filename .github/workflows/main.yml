@@ -49,6 +49,9 @@ jobs:
         Write-Host 'Last Published version: '$publishedVersion 
         
     - name : Compare and bump next version
+      env:
+        version: ${{ steps.getpackageversion.outputs.version }}
+        publishedversion: ${{ steps.getPublishedVersion.outputs.publishedversion }} 
       run: | 
         Import-Module SemVer
         Import-Module PoshSemanticVersion
@@ -72,9 +75,6 @@ jobs:
             }
           }
         }
-      env:
-        version: ${{ steps.getpackageversion.outputs.version }}
-        publishedversion: ${{ steps.getPublishedVersion.outputs.publishedversion }} 
         
         
     - name : VSCE publish
