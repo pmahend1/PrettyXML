@@ -10,7 +10,6 @@ on:
         - master
         - Dev
 
-
 name: GitHub Action for vsce
 
 jobs:
@@ -23,7 +22,7 @@ jobs:
       
     - name: Run Yarn & add vsce
       run: |
-        yarn global add vsce
+        npm install -g vsce
         yarn
     
     - name : Install SemVer PS modules
