@@ -35,7 +35,7 @@ jobs:
       run: |
         $version = New-SemanticVersion ((Get-Content .\package.json | ConvertFrom-Json).version)
         Write-Host 'Current version from package.json: ' $version
-        Write-Host "::set-env name=VERSION::$version"
+        Write-Host "::set-output name=VERSION::$version"
       
     
     - name: Get published version from VS Code extension REST API
@@ -49,24 +49,24 @@ jobs:
         $response = Invoke-RestMethod 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' -Method Post -Headers $headers -Body $body
         $publishedVersion= New-SemanticVersion ($response.results[0].extensions.versions.version)
         Write-Host 'Last Published version: '$publishedVersion 
-        Write-Host "::set-env name=PUB_VERSION::$publishedVersion"
+        Write-Host "::set-output name=PUB_VERSION::$publishedVersion"
         
     - name : Compare and bump next version
       run: | 
         Import-Module SemVer
         Import-Module PoshSemanticVersion
         $nextVersion=[VersionComponent]::Patch
-        $com = Compare-SemanticVersion ${{ env.VERSION }} ${{ env.PUB_VERSION }}
+        $com = Compare-SemanticVersion ${{ steps.getpackageversion.outputs.VERSION }} ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
         #bump
         if(com.IsCompatible){
           if ($com.IsCompatible) {
             if ($com.Precedence -eq '=') {
                 $nextversion = [VersionComponent]::Patch
-                Write-Host "::set-env name=VERSIONSTR::$nextversion.ToString().ToLower()"
+                Write-Host "::set-outputname=VERSIONSTR::$nextversion.ToString().ToLower()"
             }
             elseif ($com.Precedence -eq '>') {
               $nextversion = $packageversion
-              Write-Host "::set-env name=VERSIONSTR::''"
+              Write-Host "::set-output name=VERSIONSTR::''"
             }
             elseif ($com.Precedence -eq '<') {
               # overwrite package.json
@@ -74,7 +74,7 @@ jobs:
               $packagejson.Version = $publishedVersion.ToString()
               $packagejson | ConvertTo-Json | Out-File ".\package.json" 
               $nextversion = [VersionComponent]::Patch
-              Write-Host "::set-env name=VERSIONSTR::$nextversion.ToString().ToLower()"
+              Write-Host "::set-output name=VERSIONSTR::$nextversion.ToString().ToLower()"
             }
           }
         }
