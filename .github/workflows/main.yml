@@ -8,7 +8,6 @@ on:
   workflow_dispatch:
       branches:
         - master
-        - Dev
 
 name: GitHub Action for vsce
 
@@ -73,7 +72,7 @@ jobs:
             elseif ($com.Precedence -eq '<') {
               # overwrite package.json
               $packagejson = (Get-Content .\package.json | ConvertFrom-Json)
-              $packagejson.Version = $publishedVersion.ToString()
+              $packagejson.Version = ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
               $packagejson | ConvertTo-Json | Out-File ".\package.json" 
               $nextversion = [VersionComponent]::Patch
               Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
