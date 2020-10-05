@@ -6,6 +6,9 @@ on:
       branches:
         - master
   workflow_dispatch:
+      branches:
+        - Pipeline
+        - master
 
 
 name: GitHub Action for vsce
