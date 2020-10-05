@@ -21,8 +21,10 @@ jobs:
     - name: Checkout branch
       uses: actions/checkout@v2
       
-    - name: Run Yarn
-      run: yarn
+    - name: Run Yarn & add vsce
+      run: |
+        yarn global add vsce
+        yarn
     
     - name : Install SemVer PS modules
       run: |
