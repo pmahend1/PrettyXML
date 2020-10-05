@@ -51,10 +51,9 @@ jobs:
         Import-Module SemVer
         Import-Module PoshSemanticVersion
         $nextVersion=[VersionComponent]::Patch
-        $com = Compare-SemanticVersion $version1 $version2
+        $com = Compare-SemanticVersion $version $publishedVersion
+        #bump
         if(com.IsCompatible){
-          $com = Compare-SemanticVersion $packageversion $publishedVersion
-          $nextversion = [VersionComponent]::Patch
           if ($com.IsCompatible) {
             if ($com.Precedence -eq '=') {
                 $nextversion = [VersionComponent]::Patch
