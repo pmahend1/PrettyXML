@@ -1,11 +1,10 @@
-# This is a basic workflow to help you get started with Actions
 on:
   push:
     branches:
       - master
   pull_request:
       branches:
-      - master
+        - master
   workflow_dispatch:
 
 
@@ -13,12 +12,35 @@ name: GitHub Action for vsce
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: yarn
-      - uses: lannonbr/vsce-action@master
-        with:
-          args: "publish --pat $VSCE_TOKEN"
-        env:
-          VSCE_TOKEN: ${{ secrets.VSCE_PRETTYXML }}
+      
+    - name: checkout
+      uses: actions/checkout@v2
+      
+    - name: yarn
+      run: yarn
+    
+    - name : current version
+      if: github.event.action == 'inline'
+      run: |
+        $version = (Get-Content .\package.json | ConvertFrom-Json).version
+        Write-Host 'Current version from package.json: ' $version
+         
+    - name: next version
+      if: github.event.action == 'inline'
+      run: $sem = "minor"
+    
+    - name: get published version
+      if: github.event.action == 'inline'
+      run: |
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        $headers.Add("VSMarketplaceBadge", "1.0")
+        $headers.Add("Accept", "application/json;api-version=3.0-preview.1")
+        $headers.Add("Content-Type", "application/json")
+        $headers.Add("Cookie", "VstsSession=%7B%22PersistentSessionId%22%3A%220ca63c2c-c9d0-4ddc-bc57-dd721fdd2444%22%2C%22PendingAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22CurrentAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22SignInState%22%3A%7B%7D%7D")
+        $body = "{`"filters`":[{`"criteria`":[{`"filterType`":7,`"value`":`"PrateekMahendrakar.ResxPress`"},{`"filterType`":12,`"value`":4096}]}],`"flags`":914}"
+        $response = Invoke-RestMethod 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' -Method 'POST' -Headers $headers -Body $body
+        $results = $response | ConvertTo-Json
+        $publishedVersion= $results.results[0].extensions.versions.version
+        Write-Output 'Last Published version: '$publishedVersion 
