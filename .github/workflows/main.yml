@@ -38,9 +38,7 @@ jobs:
         $headers.Add("VSMarketplaceBadge", "1.0")
         $headers.Add("Accept", "application/json;api-version=3.0-preview.1")
         $headers.Add("Content-Type", "application/json")
-        $headers.Add("Cookie", "VstsSession=%7B%22PersistentSessionId%22%3A%220ca63c2c-c9d0-4ddc-bc57-dd721fdd2444%22%2C%22PendingAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22CurrentAuthenticationSessionId%22%3A%2200000000-0000-0000-0000-000000000000%22%2C%22SignInState%22%3A%7B%7D%7D")
         $body = "{`"filters`":[{`"criteria`":[{`"filterType`":7,`"value`":`"PrateekMahendrakar.ResxPress`"},{`"filterType`":12,`"value`":4096}]}],`"flags`":914}"
-        $response = Invoke-RestMethod 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' -Method 'POST' -Headers $headers -Body $body
-        $results = $response | ConvertTo-Json
-        $publishedVersion= $results.results[0].extensions.versions.version
-        Write-Output 'Last Published version: '$publishedVersion 
+        $response = Invoke-RestMethod 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' -Method Post -Headers $headers -Body $body
+        $publishedVersion= $response.results[0].extensions.versions.version
+        Write-Host 'Last Published version: '$publishedVersion 
