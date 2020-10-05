@@ -61,20 +61,18 @@ jobs:
         #bump
         if($com.IsCompatible){
           if ($com.IsCompatible) {
-            if ($com.Precedence -eq '=') {
-                $nextversion = [VersionComponent]::Patch
-                Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
-            }
-            elseif ($com.Precedence -eq '>') {
+            if ($com.Precedence -eq '>') {
               $nextversion = $packageversion
               Write-Host "::set-output name=VERSIONSTR::''"
             }
             elseif ($com.Precedence -eq '<') {
               # overwrite package.json
               $packagejson = (Get-Content .\package.json | ConvertFrom-Json)
-              $packagejson.Version = ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
+              $packagejson.version = ${{ steps.getPublishedVersion.outputs.PUB_VERSION.ToString() }}
               $packagejson | ConvertTo-Json | Out-File ".\package.json" 
               $nextversion = [VersionComponent]::Patch
+              Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
+            }else{
               Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
             }
           }
