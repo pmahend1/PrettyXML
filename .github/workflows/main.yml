@@ -48,7 +48,7 @@ jobs:
         
     - name : compare version
       run: | 
-        $nextVersion=$publishedVersion
+        $nextVersion=[VersionComponent]::Patch
         $com = Compare-SemanticVersion $version1 $version2
         if(com.IsCompatible){
           $com = Compare-SemanticVersion $packageversion $publishedVersion
