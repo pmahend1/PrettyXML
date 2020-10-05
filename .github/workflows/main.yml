@@ -1,24 +1,88 @@
-# This is a basic workflow to help you get started with Actions
 on:
   push:
     branches:
       - master
   pull_request:
       branches:
-      - master
+        - master
   workflow_dispatch:
-
+      branches:
+        - master
+        - Dev
 
 name: GitHub Action for vsce
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: yarn
-      - uses: lannonbr/vsce-action@master
-        with:
-          args: "publish --pat $VSCE_TOKEN"
-        env:
-          VSCE_TOKEN: ${{ secrets.VSCE_PRETTYXML }}
+      
+    - name: Checkout branch
+      uses: actions/checkout@v2
+      
+    - name: Run Yarn & add vsce
+      run: |
+        npm install -g vsce
+        yarn
+    
+    - name : Install SemVer PS modules
+      run: |
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        Install-Module -Name PoshSemanticVersion
+        Install-Module -Name SemVer
+      
+    - name : Get current version from package.json
+      id: getpackageversion
+      run: |
+        $version = New-SemanticVersion ((Get-Content .\package.json | ConvertFrom-Json).version)
+        Write-Host 'Current version from package.json: ' $version
+        Write-Host "::set-output name=VERSION::$version"
+      
+    
+    - name: Get published version from VS Code extension REST API
+      id: getPublishedVersion
+      run: |
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        $headers.Add("VSMarketplaceBadge", "1.0")
+        $headers.Add("Accept", "application/json;api-version=3.0-preview.1")
+        $headers.Add("Content-Type", "application/json")
+        $body = "{`"filters`":[{`"criteria`":[{`"filterType`":7,`"value`":`"PrateekMahendrakar.PrettyXML`"},{`"filterType`":12,`"value`":4096}]}],`"flags`":914}"
+        $response = Invoke-RestMethod 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' -Method Post -Headers $headers -Body $body
+        $publishedVersion= New-SemanticVersion ($response.results[0].extensions.versions.version)
+        Write-Host 'Last Published version: '$publishedVersion 
+        Write-Host "::set-output name=PUB_VERSION::$publishedVersion"
+        
+    - name : Compare and bump next version
+      id: bumpversion
+      run: | 
+        Import-Module SemVer
+        Import-Module PoshSemanticVersion
+        $nextVersion=[VersionComponent]::Patch
+        $com = Compare-SemanticVersion ${{ steps.getpackageversion.outputs.VERSION }} ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
+        #bump
+        if($com.IsCompatible){
+          if ($com.IsCompatible) {
+            if ($com.Precedence -eq '=') {
+                $nextversion = [VersionComponent]::Patch
+                Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
+            }
+            elseif ($com.Precedence -eq '>') {
+              $nextversion = $packageversion
+              Write-Host "::set-output name=VERSIONSTR::''"
+            }
+            elseif ($com.Precedence -eq '<') {
+              # overwrite package.json
+              $packagejson = (Get-Content .\package.json | ConvertFrom-Json)
+              $packagejson.Version = $publishedVersion.ToString()
+              $packagejson | ConvertTo-Json | Out-File ".\package.json" 
+              $nextversion = [VersionComponent]::Patch
+              Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
+            }
+          }
+        }
+        
+    - name : VSCE publish
+      run: |
+        git config --global user.email "prateek.mahendrakar@gmail.com"
+        git config --global user.name "Prateek Mahendrakar"
+        vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} -p ${{ secrets.VSCE_PRETTYXML }} --yarn
