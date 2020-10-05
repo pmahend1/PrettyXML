@@ -27,7 +27,8 @@ jobs:
     - name : install semver
       run: |
         Set-PSRepository PSGallery -InstallationPolicy Trusted
-        Install-Module -Name PoshSemanticVersion 
+        Install-Module -Name PoshSemanticVersion
+        Install-Module -Name SemVer
       
     - name : current version
       run: |
@@ -50,21 +51,22 @@ jobs:
         $nextVersion=$publishedVersion
         $com = Compare-SemanticVersion $version1 $version2
         if(com.IsCompatible){
-        $com = Compare-SemanticVersion $packageversion $publishedVersion
-        $nextversion = [VersionComponent]::Patch
-        if ($com.IsCompatible) {
-          if ($com.Precedence -eq '=') {
-            $nextversion = [VersionComponent]::Patch
-          }
-          elseif ($com.Precedence -eq '>') {
-            $nextversion = $packageversion
-          }
-          elseif ($com.Precedence -eq '<') {
-            # overwrite package.json
-            $packagejson = (Get-Content .\package.json | ConvertFrom-Json)
-            $packagejson.Version = $publishedVersion.ToString()
-            $packagejson | ConvertTo-Json | Out-File ".\package.json" 
-            $nextversion = [VersionComponent]::Patch
+          $com = Compare-SemanticVersion $packageversion $publishedVersion
+          $nextversion = [VersionComponent]::Patch
+          if ($com.IsCompatible) {
+            if ($com.Precedence -eq '=') {
+                $nextversion = [VersionComponent]::Patch
+            }
+            elseif ($com.Precedence -eq '>') {
+              $nextversion = $packageversion
+            }
+            elseif ($com.Precedence -eq '<') {
+              # overwrite package.json
+              $packagejson = (Get-Content .\package.json | ConvertFrom-Json)
+              $packagejson.Version = $publishedVersion.ToString()
+              $packagejson | ConvertTo-Json | Out-File ".\package.json" 
+              $nextversion = [VersionComponent]::Patch
+            }
           }
         }
         
