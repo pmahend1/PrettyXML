@@ -43,12 +43,12 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 
 ## Keyboard Shortcuts
 
-| Command             | Platform       | Shortcut        |
-| ------------------- | -------------- | --------------- |
-| Prettify XML        | Mac            | **Cmd+K L**     |
-| Prettify XML        | Windows, Linux | **Control+K L** |
-| PrettyXML: Minimize | Mac            | **Cmd+K `**     |
-| PrettyXML: Minimize | Windows, Linux | **Control+K `** |
+| Command             | Platform       | Shortcut         |
+|---------------------|----------------|------------------|
+| Prettify XML        | Mac            | **Cmd+K L**      |
+| Prettify XML        | Windows, Linux | **Control+K L**  |
+| PrettyXML: Minimize | Mac            | **Cmd+K \`**     |
+| PrettyXML: Minimize | Windows, Linux | **Control+K \`** |
 
 ## Formatted Document Example
 
@@ -59,7 +59,7 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 These will be for **Prettify XML** command.
 
 | Setting Key                          | Default Value | Description                                |
-| ------------------------------------ | ------------- | ------------------------------------------ |
+|--------------------------------------|---------------|--------------------------------------------|
 | prettyxml.settings.indentSpaceLength | 2             | No. of spaces for indentation.             |
 | prettyxml.settings.useSingleQuotes   | false         | Use ' instead of \"                        |
 | prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |
