@@ -73,8 +73,7 @@ jobs:
         run: |
           git config --global user.email "prateek.mahendrakar@gmail.com"
           git config --global user.name "Prateek Mahendrakar"
-          Write-Host ${{ steps.bumpversion.outputs.VERSIONSTR }}" is the parameter for vsce"
-          Write-Host "vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} -p $env:VSCE_PAT --yarn"
+          vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} -p $env:VSCE_PAT --yarn
         env:
-          VSCE_PAT: ${{ secrets.VSCE_PRETTYXML  }}          
+          VSCE_PAT: ${{ secrets.VSCE_PRETTYXML }}          
           
