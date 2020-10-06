@@ -4,7 +4,7 @@
 
 [![Version](https://vsmarketplacebadge.apphb.com/version/PrateekMahendrakar.PrettyXML.svg?logo=visual-studio-code&style=for-the-badge)](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
 
-![Installs](https://vsmarketplacebadge.apphb.com/installs/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Installs&logo=data:img/png:images/logo.png) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Downloads) ![Rating](https://vsmarketplacebadge.apphb.com/rating-star/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Rating)
+![Deploy](https://img.shields.io/github/workflow/status/pmahend1/prettyxml/Deploy%20CI?color=brightgreen&label=Deploy%20CI&style=flat-square) ![Installs](https://vsmarketplacebadge.apphb.com/installs/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Installs&logo=data:img/png:images/logo.png) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Downloads) ![Rating](https://vsmarketplacebadge.apphb.com/rating-star/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Rating)
 
 ![Trending-Weekly](https://vsmarketplacebadge.apphb.com/trending-weekly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Weekly)  ![Trending-Monthly](https://vsmarketplacebadge.apphb.com/trending-monthly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Monthly)
 
@@ -45,12 +45,12 @@ Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML d
 ## Keyboard Shortcuts
 
 | Command             | Platform       | Shortcut        |
-| ------------------- | -------------- | --------------- |
+|---------------------|----------------|-----------------|
 | Prettify XML        | Mac            | **Cmd+K L**     |
 | Prettify XML        | Windows, Linux | **Control+K L** |
 | PrettyXML: Minimize | Mac            | **Cmd+K `**     |
-| PrettyXML: Minimize | Windows, Linux | **Control+K `** |  
-
+| PrettyXML: Minimize | Windows, Linux | **Control+K `** |
+  
 
 ## Formatted Document Example  
 
@@ -65,7 +65,7 @@ These will be for **Prettify XML** command.
 | prettyxml.settings.indentSpaceLength | 2             | No. of spaces for indentation.             |
 | prettyxml.settings.useSingleQuotes   | false         | Use ' instead of \"                        |
 | prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |  
-
+  
 
 <img src='./images/settings.png'>  
 
