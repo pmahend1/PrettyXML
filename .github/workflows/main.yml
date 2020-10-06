@@ -1,3 +1,5 @@
+name: Deploy CI
+
 on:
   push:
     branches:

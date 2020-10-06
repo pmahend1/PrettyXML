@@ -2,6 +2,10 @@
 
 ## Preview
 
+### 0.4.0
+
+Added CIs for PR version check and extension deployment.
+
 ### 0.3.0
 
 Added **PrettyXML: Minimize** command.  
