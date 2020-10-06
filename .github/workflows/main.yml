@@ -15,10 +15,8 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
 
-      - name: Run Yarn & add vsce
-        run: |
-          npm install -g vsce
-          yarn
+      - name: Run Yarn
+        run: yarn
 
       - name: Install SemVer PS modules
         run: |
@@ -73,4 +71,5 @@ jobs:
           git config --global user.email "prateek.mahendrakar@gmail.com"
           git config --global user.name "Prateek Mahendrakar"
           Write-Host ${{ steps.bumpversion.outputs.VERSIONSTR }}" is the parameter for vsce"
-          vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} --yarn -p ${{ secrets.VSCE_PRETTYXML }} 
+          vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} -p ${{ secrets.VSCE_PRETTYXML }} --yarn
+          
