@@ -49,7 +49,7 @@ jobs:
       - name: Compare and bump next version
         id: bumpversion
         run: |
-          Import-Module SemVer
+          'Import-Module SemVer
           Import-Module PoshSemanticVersion
           $nextVersion = [VersionComponent]::Patch
           $com = Compare-SemanticVersion ${{ steps.getpackageversion.outputs.VERSION }} ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
@@ -71,7 +71,7 @@ jobs:
               Write-Host 'Version in package.json is equal to latest published version'
               Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
             }
-          }
+          }'
 
       - name: VSCE publish
         run: |
