@@ -2,7 +2,7 @@
 
 ## Preview
 
-### 0.4.0
+### 0.4.1
 
 Added CIs for PR version check and extension deployment.
 

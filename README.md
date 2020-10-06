@@ -1,73 +1,70 @@
-<img src='images/logo.png' width=200 height=200>
-  
-[![License](https://img.shields.io/github/license/pmahend1/PrettyXML?style=flat-square&label=License)](https://choosealicense.com/licenses/mit/)
-
-[![Version](https://vsmarketplacebadge.apphb.com/version/PrateekMahendrakar.PrettyXML.svg?logo=visual-studio-code&style=for-the-badge)](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
-
-![Deploy](https://img.shields.io/github/workflow/status/pmahend1/prettyxml/Deploy%20CI?color=brightgreen&label=Deploy%20CI&style=flat-square) ![Installs](https://vsmarketplacebadge.apphb.com/installs/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Installs&logo=data:img/png:images/logo.png) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Downloads) ![Rating](https://vsmarketplacebadge.apphb.com/rating-star/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Rating)
-
-![Trending-Weekly](https://vsmarketplacebadge.apphb.com/trending-weekly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Weekly)  ![Trending-Monthly](https://vsmarketplacebadge.apphb.com/trending-monthly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Monthly)
-
-[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width=150 height=40>](https://www.buymeacoffee.com/pmahend1)  
-
----
-
 # Pretty XML
 
 Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML documents just like Visual Studio. This is in preview mode. Suggestions , improvement PRs are welcome.
 
+<img src='./images/logo.png' width='200' height='200'>
+
+[![License](https://img.shields.io/github/license/pmahend1/PrettyXML?style=flat-square&label=License)](https://choosealicense.com/licenses/mit/)
+
+[![Version](https://vsmarketplacebadge.apphb.com/version/PrateekMahendrakar.PrettyXML.svg?logo=visual-studio-code&style=for-the-badge)](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
+
+![Deploy](https://img.shields.io/github/workflow/status/pmahend1/prettyxml/Deploy%20CI?color=brightgreen&label=Deploy%20CI&style=flat-square&logo=github) ![Installs](https://vsmarketplacebadge.apphb.com/installs/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Installs&logo=data:img/png:images/logo.png) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Downloads) ![Rating](https://vsmarketplacebadge.apphb.com/rating-star/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Rating)
+
+![Trending-Weekly](https://vsmarketplacebadge.apphb.com/trending-weekly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Weekly) ![Trending-Monthly](https://vsmarketplacebadge.apphb.com/trending-monthly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Monthly)
+
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="150" height="40">](https://www.buymeacoffee.com/pmahend1)
+
+---
+
 ## Features
 
-1. ### Prettify XML (XML Formatting) :   
-   
+1. ### Prettify XML (XML Formatting)
+
    Right Click and Select Prettify XML.
 
    - First attribute on same line as start tag.
    - All attributes indented in line with first attribute.
    - If no child for an element then close inline end tag.(Setting)
-   - No empty lines.  
+   - No empty lines.
 
-2. ### Pretty XML: Minimize 
+2. ### Pretty XML: Minimize
 
    Minimizes XML.
 
 ## GIFs
 
-**Prettify XML**  
+### Prettify XML
 
-<img src='./images/Prettify.gif'>
+![prettify gif](./images/Prettify.gif)
 
-**PrettyXML: Minimize**  
+### PrettyXML: Minimize
 
-<img src="./images/Minimize.gif">
-
+![minimize gif](./images/Minimize.gif)
 
 ## Keyboard Shortcuts
 
 | Command             | Platform       | Shortcut        |
-|---------------------|----------------|-----------------|
+| ------------------- | -------------- | --------------- |
 | Prettify XML        | Mac            | **Cmd+K L**     |
 | Prettify XML        | Windows, Linux | **Control+K L** |
 | PrettyXML: Minimize | Mac            | **Cmd+K `**     |
 | PrettyXML: Minimize | Windows, Linux | **Control+K `** |
-  
 
-## Formatted Document Example  
+## Formatted Document Example
 
-<img src='./images/screenshot.png'>
+![Screenshot](./images/screenshot.png)
 
-## Settings 
+## Settings
 
 These will be for **Prettify XML** command.
 
 | Setting Key                          | Default Value | Description                                |
-|--------------------------------------|---------------|--------------------------------------------|
+| ------------------------------------ | ------------- | ------------------------------------------ |
 | prettyxml.settings.indentSpaceLength | 2             | No. of spaces for indentation.             |
 | prettyxml.settings.useSingleQuotes   | false         | Use ' instead of \"                        |
-| prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |  
-  
+| prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |
 
-<img src='./images/settings.png'>  
+![Settings Image](./images/settings.png)
 
 ## Requirements
 
@@ -77,15 +74,14 @@ VS Code 1.47 or higher.
 
 [Download at Visual Studio MarketPlace](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
 
-
-> **Important!**  
+> **Important!**
 >
 > You will need .Net SDK or Mono installed on your machine.
 
 ## Known Issues
 
 Limited DTD, XSD support.
-Issues can be reported at [issues section](https://github.com/pmahend1/PrettyXML/issues)  
+Issues can be reported at [issues section](https://github.com/pmahend1/PrettyXML/issues)
 
 ## Release Notes
 
@@ -93,8 +89,8 @@ See [Change Log](./CHANGELOG.md)
 
 ### For more information
 
-* [Source Code](https://github.com/pmahend1/prettyxml)
+- [Source Code](https://github.com/pmahend1/prettyxml)
 
 **Support me on Buy me a coffee!**
 
-[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width=150 height=40>](https://www.buymeacoffee.com/pmahend1)  
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width='150' height='40'>](https://www.buymeacoffee.com/pmahend1)
