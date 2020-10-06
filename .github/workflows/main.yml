@@ -2,9 +2,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
   workflow_dispatch:
     branches:
       - master
@@ -60,17 +57,19 @@ jobs:
           if($com.IsCompatible){
             if ($com.IsCompatible) {
               if ($com.Precedence -eq '>') {
+                Write-Host 'Version in package.json is higher than latest published version'
                 $nextversion = $packageversion
                 Write-Host "::set-output name=VERSIONSTR::''"
               }
               elseif ($com.Precedence -eq '<') {
-                # overwrite package.json
+                Write-Host 'Version in package.json is less than latest published version'
                 $packagejson = (Get-Content .\package.json | ConvertFrom-Json)
                 $packagejson.version = ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
                 $packagejson | ConvertTo-Json | Out-File ".\package.json" 
                 $nextversion = [VersionComponent]::Patch
                 Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
               }else{
+                 Write-Host 'Version in package.json is equal to latest published version'
                 Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
               }
             }
@@ -80,4 +79,5 @@ jobs:
         run: |
           git config --global user.email "prateek.mahendrakar@gmail.com"
           git config --global user.name "Prateek Mahendrakar"
+          Write-Host ${{ steps.bumpversion.outputs.VERSIONSTR }} " is the parameter for vsce"
           vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} -p ${{ secrets.VSCE_PRETTYXML }} --yarn
