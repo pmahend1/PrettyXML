@@ -52,7 +52,7 @@ jobs:
           Import-Module SemVer
           Import-Module PoshSemanticVersion
           $nextVersion = [VersionComponent]::Patch
-          $com = Compare-SemanticVersion ${{ steps.getpackageversion.outputs.VERSION }} ${{ steps.getPublishedVersion.outputs.PUB_VERSION } }
+          $com = Compare-SemanticVersion ${{ steps.getpackageversion.outputs.VERSION }} ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
           if ($com.IsCompatible) {
             if ($com.Precedence -eq '>') {
               Write-Host 'Version in package.json is higher than latest published version'
