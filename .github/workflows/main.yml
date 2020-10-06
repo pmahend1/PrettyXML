@@ -53,25 +53,23 @@ jobs:
           Import-Module PoshSemanticVersion
           $nextVersion = [VersionComponent]::Patch
           $com = Compare-SemanticVersion ${{ steps.getpackageversion.outputs.VERSION }} ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
-
-          if ($com.IsCompatible) {
-            if ($com.Precedence -eq '>') {
-              Write-Host "Version in package.json is higher than latest published version"
-              $nextversion = $packageversion
-              Write-Host "::set-output name=VERSIONSTR::''"
-            }
-            elseif ($com.Precedence -eq '<') {
-              Write-Host "Version in package.json is less than latest published version"
-              $packagejson = (Get-Content .\package.json | ConvertFrom-Json)
-              $packagejson.version = ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
-              $packagejson | ConvertTo-Json | Out-File ".\package.json" 
-              $nextversion = [VersionComponent]::Patch
-              Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
-            }
-            else {
-              Write-Host "Version in package.json is equal to latest published version"
-              Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
-            }
+          
+          if ($com.Precedence -eq '>') {
+            Write-Host "Version in package.json is higher than latest published version"
+            $nextversion = $packageversion
+            Write-Host "::set-output name=VERSIONSTR::''"
+          }
+          elseif ($com.Precedence -eq '<') {
+            Write-Host "Version in package.json is less than latest published version"
+            $packagejson = (Get-Content .\package.json | ConvertFrom-Json)
+            $packagejson.version = ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
+            $packagejson | ConvertTo-Json | Out-File ".\package.json" 
+            $nextversion = [VersionComponent]::Patch
+            Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
+          }
+          else {
+            Write-Host "Version in package.json is equal to latest published version"
+            Write-Host "::set-output name=VERSIONSTR::"$nextversion.ToString().ToLower()
           }
 
       - name: VSCE publish
