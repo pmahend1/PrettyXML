@@ -18,8 +18,9 @@ jobs:
 
       - name: yarn
         run: yarn
-  
+
   deploy:
+    runs-on: windows-latest
     steps:
       - name: VSCE publish
         run: vsce publish --yarn -p $env:VSCE_PAT
