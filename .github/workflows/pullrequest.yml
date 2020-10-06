@@ -2,10 +2,13 @@ name: Version Check
 
 on:
   pull_request:
-    branches: [ master,PR_Check_Pipeline ]
+    branches:
+      - master
+      - Dev
   workflow_dispatch:
     branches:
       - master
+      - Dev
 
 jobs:
   versioncheck:
@@ -55,5 +58,4 @@ jobs:
           else {
             throw [System.Exception]("Version can not be same as latest published version. Update package version")
           }
-
-
+          
