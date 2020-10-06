@@ -15,10 +15,13 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
 
+      - name: Install vsce
+        run: npm install -g vsce
+        
       - name: Run Yarn
         run: yarn
 
-      - name: Install SemVer PS modules
+      - name: Install PoshSemanticVersion PS module
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module -Name PoshSemanticVersion
@@ -71,5 +74,8 @@ jobs:
           git config --global user.email "prateek.mahendrakar@gmail.com"
           git config --global user.name "Prateek Mahendrakar"
           Write-Host ${{ steps.bumpversion.outputs.VERSIONSTR }}" is the parameter for vsce"
-          vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} -p ${{ secrets.VSCE_PRETTYXML }} --yarn
+          vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} -p $env:VSCE_PAT --yarn
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PRETTYXML }} 
+          
           
