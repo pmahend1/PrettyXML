@@ -72,6 +72,5 @@ jobs:
         run: |
           git config --global user.email "prateek.mahendrakar@gmail.com"
           git config --global user.name "Prateek Mahendrakar"
-          $arg = ${{ steps.bumpversion.outputs.VERSIONSTR }}
-          Write-Host $arg" is the parameter for vsce"
-          vsce publish $arg -p ${{ secrets.VSCE_PRETTYXML }} --yarn
+          Write-Host ${{ steps.bumpversion.outputs.VERSIONSTR }}" is the parameter for vsce"
+          vsce publish ${{ steps.bumpversion.outputs.VERSIONSTR }} --yarn -p ${{ secrets.VSCE_PRETTYXML }} 
