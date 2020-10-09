@@ -2,7 +2,11 @@
 
 ## Preview
 
-### 0.4.1
+### 0.4.3
+
+Fixes [Issue 39](https://github.com/pmahend1/PrettyXML/issues/39)
+
+### 0.4.2
 
 Added CIs for PR version check and extension deployment.
 
