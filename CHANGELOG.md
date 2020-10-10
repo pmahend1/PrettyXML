@@ -2,6 +2,10 @@
 
 ## Preview
 
+### 0.4.4
+
+Added reference to [PrettyXML.VSMac](https://github.com/pmahend1/PrettyXML.VSMac) in ReadMe.
+
 ### 0.4.3
 
 Fixes [Issue 39](https://github.com/pmahend1/PrettyXML/issues/39)
