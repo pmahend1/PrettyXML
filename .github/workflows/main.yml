@@ -25,3 +25,10 @@ jobs:
         run: vsce publish --yarn -p $env:VSCE_PAT
         env:
           VSCE_PAT: ${{ secrets.VSCE_PRETTYXML }}
+          
+      - name: Open VSX publish
+        run: |
+          $filename = (Get-ChildItem *.vsix | Sort-Object -Descending)[0]
+          npx ovsx publish $filename.Name --yarn -p $env:OPEN_VSX_PAT
+        env:
+          OPEN_VSX_PAT: ${{ secrets.OPENVSX }} 
