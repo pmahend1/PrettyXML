@@ -2,6 +2,10 @@
 
 ## Preview
 
+### 0.5.1
+
+Small fix to CI.
+
 ### 0.5.0
 
 Publish extension to [Open VSX](https://open-vsx.org/extension/PrateekMahendrakar/prettyxml) for [VSCodium](https://vscodium.com/) as well.
