@@ -15,20 +15,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: install vsce & open vsx 
+      - name: Install vsce and open vsx 
         run: |
           npm install -g vsce
-          npm install - ovsx
+          npm install -g ovsx
 
       - name: yarn
         run: yarn
 
-      - name: VSCE publish
+      - name: VSCE Publish
         run: vsce publish --yarn -p $env:VSCE_PAT
         env:
           VSCE_PAT: ${{ secrets.VSCE_PRETTYXML }}
 
-      - name: Open VSX publish
+      - name: Open VSX Publish
         run: npx ovsx publish --yarn -p $env:OPEN_VSX_PAT
         env:
           OPEN_VSX_PAT: ${{ secrets.OPENVSX }}
