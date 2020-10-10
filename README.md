@@ -1,6 +1,9 @@
 # Pretty XML
 
-Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML documents just like Visual Studio. This is in preview mode. Suggestions , improvement PRs are welcome.
+Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML documents just like Visual Studio. This is in preview mode. 
+Suggestions , improvement PRs are welcome.
+
+There is also **Visual Studio for Mac** version of this extension. Check it out at [PrettyXML.VSMac](https://github.com/pmahend1/PrettyXML.VSMac)  
 
 <img src='./images/logo.png' width='200' height='200'>
 
