@@ -2,6 +2,10 @@
 
 ## Preview
 
+### 0.5.0
+
+Publish extension to [Open VSX](https://open-vsx.org/extension/PrateekMahendrakar/prettyxml) for [VSCodium](https://vscodium.com/) as well.
+
 ### 0.4.4
 
 Added reference to [PrettyXML.VSMac](https://github.com/pmahend1/PrettyXML.VSMac) in ReadMe.
