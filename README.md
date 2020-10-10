@@ -1,11 +1,13 @@
 # Pretty XML
 
-Pretty XML is a XML formatter extension for Visual Studio Code. It formats XML documents just like Visual Studio. This is in preview mode. 
-Suggestions , improvement PRs are welcome.
+<img src='./images/logo.png' width='200' height='200' />
+
+Pretty XML is a XML formatter extension for Visual Studio Code and VSCodium. It formats XML documents just like Visual Studio on Windows.
+**Supported file extensions**: xml, xaml, xsd, xsl, plist, mobileconfig, config, csproj, axml, resx and all other XML type of files.
 
 There is also **Visual Studio for Mac** version of this extension. Check it out at [PrettyXML.VSMac](https://github.com/pmahend1/PrettyXML.VSMac)  
 
-<img src='./images/logo.png' width='200' height='200'>
+Suggestions , improvement PRs are welcome.
 
 [![License](https://img.shields.io/github/license/pmahend1/PrettyXML?style=flat-square&label=License)](https://choosealicense.com/licenses/mit/)
 
@@ -15,7 +17,7 @@ There is also **Visual Studio for Mac** version of this extension. Check it out 
 
 ![Trending-Weekly](https://vsmarketplacebadge.apphb.com/trending-weekly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Weekly) ![Trending-Monthly](https://vsmarketplacebadge.apphb.com/trending-monthly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Monthly)
 
-[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="150" height="40">](https://www.buymeacoffee.com/pmahend1)
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="150" height="40" />](https://www.buymeacoffee.com/pmahend1)
 
 ---
 
@@ -75,10 +77,11 @@ VS Code 1.47 or higher.
 
 ## Installation
 
-[Download at Visual Studio MarketPlace](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
+Visual Studio Code - [Visual Studio MarketPlace](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)
+
+For VSCodium - [open-vsx.org](https://open-vsx.org/extension/PrateekMahendrakar/prettyxml)
 
 > **Important!**
->
 > You will need .Net SDK or Mono installed on your machine.
 
 ## Known Issues

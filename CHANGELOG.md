@@ -2,6 +2,10 @@
 
 ## Preview
 
+### 0.5.2
+
+Updated ReadMe with VSCodium and OpenVsx.
+
 ### 0.5.1
 
 Small fix to CI.
