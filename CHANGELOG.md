@@ -2,6 +2,11 @@
 
 ## Preview
 
+### 0.5.4
+
+- Yarn upgrade.
+- Updated banner color and theme.
+
 ### 0.5.3
 
 Typo fix in CI.
