@@ -82,11 +82,12 @@ Visual Studio Code - [Visual Studio MarketPlace](https://marketplace.visualstudi
 For VSCodium - [open-vsx.org](https://open-vsx.org/extension/PrateekMahendrakar/prettyxml)
 
 > **Important!**
+> 
 > You will need .Net SDK or Mono installed on your machine.
 
 ## Known Issues
 
-Limited DTD, XSD support.
+Limited DTD support.
 Issues can be reported at [issues section](https://github.com/pmahend1/PrettyXML/issues)
 
 ## Release Notes

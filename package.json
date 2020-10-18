@@ -15,6 +15,24 @@
     "license": "MIT",
     "bugs": "https://github.com/pmahend1/prettyxml/issues",
     "preview": true,
+    "galleryBanner": {
+        "color": "#445678",
+        "theme": "dark"
+    },
+    "markdown": "standard",
+    "keywords": [
+        "xml",
+        "xaml",
+        "xsd",
+        "xsl",
+        "plist",
+        "mobileconfig",
+        "config",
+        "csproj",
+        "axml",
+        "resx",
+        "formatter"
+    ],
     "engines": {
         "vscode": "^1.47.0"
     },
