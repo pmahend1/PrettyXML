@@ -2,6 +2,10 @@
 
 ## Preview
 
+### 0.6.0
+
+- New Feature **Format On Save** added.
+
 ### 0.5.4
 
 - Yarn upgrade.
