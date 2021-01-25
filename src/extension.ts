@@ -71,11 +71,14 @@ export function activate(context: vscode.ExtensionContext)
 
 			});
 
+
+		vscode.workspace.onDidSaveTextDocument(async (document: vscode.TextDocument) => { await formatOnSave(); });
+
 		//subscribe commands
 		context.subscriptions.push(prettifyXmlCommand, minimizeXmlCommand);
 
-
-	} catch (error)
+	}
+	catch (error)
 	{
 		vscode.window.showErrorMessage(error.message);
 		console.log(error);
@@ -91,8 +94,9 @@ async function format()
 		let spacelength = vscode.workspace.getConfiguration('prettyxml.settings').get<number>('indentSpaceLength');
 		let usesinglequotes = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSingleQuotes');
 		let useselfclosetag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSelfClosingTag');
+		let formatOnSave = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('formatOnSave');
 
-		var settings = new Settings(spacelength, usesinglequotes, useselfclosetag);
+		var settings = new Settings(spacelength, usesinglequotes, useselfclosetag, formatOnSave);
 
 		var docText = vscode?.window.activeTextEditor?.document?.getText();
 		var ranger = getEditorRange();
@@ -128,7 +132,7 @@ async function format()
 					});
 					console.log("Document formatted!");
 
-				} 
+				}
 				else if (error)
 				{
 					vscode.window.showErrorMessage(error.message);
@@ -168,7 +172,7 @@ async function minimizeXml()
 					editBuilder.replace(ranger, result + "");
 				});
 				console.log("Document minimized!");
-			} 
+			}
 			else if (error)
 			{
 				vscode.window.showErrorMessage(error.message);
@@ -177,6 +181,17 @@ async function minimizeXml()
 		});
 	}
 
+}
+
+//format on save command
+async function formatOnSave()
+{
+	let formatOnSave = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('formatOnSave') ?? false;
+
+	if (formatOnSave)
+	{
+		await format();
+	}
 }
 
 //get Range of the active document
