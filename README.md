@@ -25,7 +25,7 @@ Suggestions , improvement PRs are welcome.
 
 1. ### Prettify XML (XML Formatting)
 
-   Right Click and Select Prettify XML.
+   Right Click and Select Prettify XML or use [shortcut](#keyboard-shortcuts)
 
    - First attribute on same line as start tag.
    - All attributes indented in line with first attribute.
@@ -68,6 +68,7 @@ These will be for **Prettify XML** command.
 | prettyxml.settings.indentSpaceLength | 2             | No. of spaces for indentation.             |
 | prettyxml.settings.useSingleQuotes   | false         | Use ' instead of \"                        |
 | prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |
+| prettyxml.settings.formatOnSave      | false         | Enable format on save                      |
 
 ![Settings Image](./images/settings.png)
 
@@ -98,6 +99,3 @@ See [Change Log](./CHANGELOG.md)
 
 - [Source Code](https://github.com/pmahend1/prettyxml)
 
-**Support me on Buy me a coffee!**
-
-[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width='150' height='40'>](https://www.buymeacoffee.com/pmahend1)
