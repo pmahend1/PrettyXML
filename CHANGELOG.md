@@ -2,6 +2,12 @@
 
 ## Preview
 
+### 0.7.0
+
+- Electron-edge-js updated for NodeJs 12.18.3/Electron 11.2.1
+- Fixes [Issue#55: The edge module has not been pre-compiled for node.js version v12.18.3](https://github.com/pmahend1/PrettyXML/issues/55)
+
+
 ### 0.6.0
 
 - New Feature **Format On Save** added.
