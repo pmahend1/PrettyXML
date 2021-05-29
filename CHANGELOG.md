@@ -2,6 +2,10 @@
 
 ## Preview
 
+### 0.7.3 
+
+- Yarn security updates
+
 ### 0.7.2
 
 - Fixed XML value escape issue [#61: "&amp" in attributes are reformatted as "&"](https://github.com/pmahend1/PrettyXML/issues/61)
