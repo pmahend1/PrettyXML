@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import { DefaultSettings } from "./settings";
-
-
 interface IJSInputDto
 {
     XMLString: string;
@@ -11,23 +9,20 @@ interface IJSInputDto
     UseSelfClosingTags?: boolean;
 }
 
-
 export class JSInputDTO
 {
     XMLString: string;
     IndentLength: number;
     UseSingleQuotes: boolean;
     UseSelfClosingTags: boolean;
+    AllowSingleQuoteInAttributeValue?: boolean;
 
-    constructor(XMLString: string,
-        IndentLength: number = DefaultSettings.IndentLength,
-        UseSingleQuotes: boolean = DefaultSettings.UseSingleQuotes,
-        UseSelfClosingTags: boolean = DefaultSettings.UseSelfClosingTags)
+    constructor(xmlString: string, indentLength: number = DefaultSettings.IndentLength, useSingleQuotes: boolean = DefaultSettings.UseSingleQuotes, useSelfClosingTags: boolean = DefaultSettings.UseSelfClosingTags, allowSingleQuoteInAttributeValue: boolean = DefaultSettings.AllowSingleQuoteInAttributeValue)
     {
-        this.XMLString = XMLString;
-        this.IndentLength = IndentLength;
-        this.UseSingleQuotes = UseSingleQuotes;
-        this.UseSelfClosingTags = UseSelfClosingTags;
+        this.XMLString = xmlString;
+        this.IndentLength = indentLength;
+        this.UseSingleQuotes = useSingleQuotes;
+        this.UseSelfClosingTags = useSelfClosingTags;
+        this.AllowSingleQuoteInAttributeValue = allowSingleQuoteInAttributeValue;
     }
-
 }

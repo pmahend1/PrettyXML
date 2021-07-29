@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext)
 				break;
 		}
 
-		//prettyfy command definition
+		//prettify command definition
 		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.prettifyxml",
 			() =>
 			{
@@ -62,11 +62,11 @@ export function activate(context: vscode.ExtensionContext)
 						title: "Pretty XML",
 						cancellable: false
 					}, async (progress) =>
-				{
-					progress.report({ message: "Minimizing..." });
+					{
+						progress.report({ message: "Minimizing..." });
 
-					await minimizeXml();
-				});
+						await minimizeXml();
+					});
 
 
 			});
@@ -95,8 +95,9 @@ async function format()
 		let usesinglequotes = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSingleQuotes');
 		let useselfclosetag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSelfClosingTag');
 		let formatOnSave = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('formatOnSave');
+		let allowSingleQuoteInAttributeValue = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('allowSingleQuoteInAttributeValue');
 
-		var settings = new Settings(spacelength, usesinglequotes, useselfclosetag, formatOnSave);
+		var settings = new Settings(spacelength, usesinglequotes, useselfclosetag, formatOnSave,allowSingleQuoteInAttributeValue);
 
 		var docText = vscode?.window.activeTextEditor?.document?.getText();
 		var ranger = getEditorRange();
@@ -115,11 +116,12 @@ async function format()
 				docText,
 				settings.IndentLength,
 				settings.UseSingleQuotes,
-				settings.UseSelfClosingTags
+				settings.UseSelfClosingTags,
+				settings.AllowSingleQuoteInAttributeValue
 			);
 
-			//convert to string
 			var inputstr = JSON.stringify(jsinput);
+
 			var editor = vscode.window.activeTextEditor;
 			//call C# method from DLL
 			await formatCSharp(inputstr, function (error: any, result: any)
@@ -131,7 +133,6 @@ async function format()
 						editBuilder.replace(ranger, result + "");
 					});
 					console.log("Document formatted!");
-
 				}
 				else if (error)
 				{
