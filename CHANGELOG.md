@@ -13,6 +13,7 @@
 ### 0.8.1
 
 - Fix for [#66:The edge module has not been pre-compiled for node.js version v14.16.0](https://github.com/pmahend1/PrettyXML/issues/66)
+
 ### 0.7.3 
 
 - Yarn security updates
