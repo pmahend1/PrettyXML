@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/master/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "0.8.1",
+    "version": "0.9.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -34,7 +34,7 @@
         "formatter"
     ],
     "engines": {
-        "vscode": "^1.52.0"
+        "vscode": "^1.58.0"
     },
     "categories": [
         "Formatters"
@@ -110,29 +110,42 @@
                 "properties": {
                     "prettyxml.settings.indentSpaceLength": {
                         "type": "number",
-                        "description": "No. of spaces for indentation.",
-                        "markdownDescription": "No. of spaces for indentation.",
-                        "default": 2,
-                        "maximum": 10,
-                        "minimum": 1
+                        "enum": [
+                            2,
+                            4,
+                            8
+                        ],
+                        "markdownDescription": "No. of spaces for indentation.\n Default is 4"
                     },
                     "prettyxml.settings.useSingleQuotes": {
                         "type": "boolean",
-                        "description": "Use ' instead of \"",
-                        "markdownDescription": "Use ' instead of \"",
+                        "markdownDescription": "Use apostrophe `'` instead of quotes `\"` \n\n **Checked** : `Attribute='Value'` \n\n **Unchecked** :  `Attribute=\"Value\"`",
                         "default": false
                     },
                     "prettyxml.settings.useSelfClosingTag": {
                         "type": "boolean",
-                        "description": "If no child nodes then self closing tag />",
-                        "markdownDescription": "If no child nodes then self closing tag />",
+                        "markdownDescription": "If no child nodes then use self closing tag `/>` \n\n **Checked** : `<Foo></Foo>` → `<Foo/>` \n\n  **Unchecked** : `<Foo></Foo>` → `<Foo></Foo>`",
                         "default": true
                     },
                     "prettyxml.settings.formatOnSave": {
                         "type": "boolean",
-                        "description": "Enable format on save.",
                         "markdownDescription": "Enable format on save.",
                         "default": false
+                    },
+                    "prettyxml.settings.allowSingleQuoteInAttributeValue": {
+                        "type": "boolean",
+                        "markdownDescription": "Allow single quote in attribute values.\n\n  **Checked** : `Attribute=\"Value'has'apostrphoes\"` \n\n **Unchecked** : `Attribute=\"Value&apos;has&apos;apostrphoes\"` \n\n Ignored if *Use Single Quotes* is *Checked*",
+                        "default": true
+                    },
+                    "prettyxml.settings.addSpaceBeforeSelfClosingTag": {
+                        "type": "boolean",
+                        "markdownDescription": "Add space before self closing tag.\n\n **Checked** : `<Foo />` \n\n **Unchecked** : `<Foo/>`",
+                        "default": true
+                    },
+                    "prettyxml.settings.wrapCommentTextWithSpaces": {
+                        "type": "boolean",
+                        "markdownDescription": "Wrap Comment text with spaces\n\n **Checked** : `<!-- Comment Text -->` \n\n **Unchecked** : `<!--Comment Text-->`",
+                        "default": true
                     }
                 }
             }
@@ -149,20 +162,21 @@
     "devDependencies": {
         "@types/glob": "^7.1.3",
         "@types/mocha": "^8.0.0",
-        "@types/node": "^15.6.1",
-        "@types/vscode": "^1.52.0",
+        "@types/node": "^16.3.1",
+        "@types/vscode": "^1.58.0",
         "@typescript-eslint/eslint-plugin": "^4.0.1",
-        "@typescript-eslint/parser": "4.25.0",
+        "@typescript-eslint/parser": "4.28.2",
         "electron-rebuild": "^2.3.5",
         "eslint": "^7.6.0",
         "glob": "^7.1.6",
-        "mocha": "^8.1.3",
+        "mocha": "^9.0.2",
         "typescript": "^4.1.3",
         "vsce": "^1.81.1",
         "vscode-test": "^1.4.0"
     },
     "dependencies": {
         "electron-edge-js": "file:./lib/electron-edge-js",
-        "electron-edge-js-mac": "file:./lib/electron-edge-js-mac"
+        "electron-edge-js-mac": "file:./lib/electron-edge-js-mac",
+        "install": "^0.13.0"
     }
 }

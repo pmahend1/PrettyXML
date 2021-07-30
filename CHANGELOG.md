@@ -2,10 +2,18 @@
 
 ## Preview
 
+### 0.9.0 : 07-Jul-2021
+- Added settings : 
+    - `prettyxml.settings.allowSingleQuoteInAttributeValue`
+    - `prettyxml.settings.addSpaceBeforeSelfClosingTag`
+    - `prettyxml.settings.wrapCommentTextWithSpaces`
+
+- Updated **Readme.md**.  
 
 ### 0.8.1
 
 - Fix for [#66:The edge module has not been pre-compiled for node.js version v14.16.0](https://github.com/pmahend1/PrettyXML/issues/66)
+
 ### 0.7.3 
 
 - Yarn security updates
