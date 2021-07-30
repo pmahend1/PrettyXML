@@ -2,6 +2,12 @@
 
 ## Preview
 
+### 0.9.0 : 07-Jul-2021
+- Added settings
+    - `prettyxml.settings.allowSingleQuoteInAttributeValue`
+    - `prettyxml.settings.addSpaceBeforeSelfClosingTag`
+    - `prettyxml.settings.wrapCommentTextWithSpaces`
+
 
 ### 0.8.1
 

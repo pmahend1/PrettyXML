@@ -15,11 +15,12 @@ Suggestions , improvement PRs are welcome.
 
 ![Deploy](https://img.shields.io/github/workflow/status/pmahend1/prettyxml/Deploy%20CI?color=brightgreen&label=Deploy%20CI&style=flat-square&logo=github) ![Installs](https://vsmarketplacebadge.apphb.com/installs/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Installs&logo=data:img/png:images/logo.png) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Downloads) ![Rating](https://vsmarketplacebadge.apphb.com/rating-star/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Rating)
 
-![Trending-Weekly](https://vsmarketplacebadge.apphb.com/trending-weekly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Weekly) ![Trending-Monthly](https://vsmarketplacebadge.apphb.com/trending-monthly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Monthly)
+<!-- ![Trending-Weekly](https://vsmarketplacebadge.apphb.com/trending-weekly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Weekly) ![Trending-Monthly](https://vsmarketplacebadge.apphb.com/trending-monthly/PrateekMahendrakar.PrettyXML.svg?labelColor=red&logo=tinder&logoColor=white&label=Trending%20Monthly) -->
 
 [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="150" height="40" />](https://www.buymeacoffee.com/pmahend1)
 
 ---
+![prettify gif](./images/Prettify.gif)
 
 ## Features
 
@@ -28,7 +29,7 @@ Suggestions , improvement PRs are welcome.
    Right Click and Select Prettify XML or use [shortcut](#keyboard-shortcuts)
 
    - First attribute on same line as start tag.
-   - All attributes indented in line with first attribute.
+   - All attributes indented aligning with first attribute.
    - If no child for an element then close inline end tag.(Setting)
    - No empty lines.
 
@@ -40,7 +41,14 @@ Suggestions , improvement PRs are welcome.
 
 ### Prettify XML
 
-![prettify gif](./images/Prettify.gif)
+- *before*  
+
+ ![Before](./images/before.png)
+
+- **After**  
+
+![After](./images/after.png)
+
 
 ### PrettyXML: Minimize
 
@@ -55,26 +63,30 @@ Suggestions , improvement PRs are welcome.
 | PrettyXML: Minimize | Mac            | **Cmd+K \`**     |
 | PrettyXML: Minimize | Windows, Linux | **Control+K \`** |
 
-## Formatted Document Example
+> **Note**
+> 
+>  You can change these in **Preferences → Keyboard Shortcuts**  if you want.
 
-![Screenshot](./images/screenshot.png)
 
 ## Settings
 
 These will be for **Prettify XML** command.
 
-| Setting Key                          | Default Value | Description                                |
-|--------------------------------------|---------------|--------------------------------------------|
-| prettyxml.settings.indentSpaceLength | 2             | No. of spaces for indentation.             |
-| prettyxml.settings.useSingleQuotes   | false         | Use ' instead of \"                        |
-| prettyxml.settings.useSelfClosingTag | true          | If no child nodes then self closing tag /> |
-| prettyxml.settings.formatOnSave      | false         | Enable format on save                      |
+| Setting Key                                         | Default Value | Description                                     |
+|-----------------------------------------------------|---------------|-------------------------------------------------|
+| prettyxml.settings.indentSpaceLength                | 4             | No. of spaces for indentation.                  |
+| prettyxml.settings.useSingleQuotes                  | false         | Use ' instead of \"                             |
+| prettyxml.settings.useSelfClosingTag                | true          | If no child nodes then self closing tag />      |
+| prettyxml.settings.formatOnSave                     | false         | Enable format on save                           |
+| prettyxml.settings.allowSingleQuoteInAttributeValue | true          | Allows ' in attribute values instead of \&apos; |
+| prettyxml.settings.addSpaceBeforeSelfClosingTag     | true          | Adds space before self closing tag              |
+| prettyxml.settings.wrapCommentTextWithSpaces        | true          | Wraps comment text with a single space          |
 
 ![Settings Image](./images/settings.png)
 
 ## Requirements
 
-VS Code 1.47 or higher.
+VS Code 1.48 or higher.
 
 ## Installation
 
