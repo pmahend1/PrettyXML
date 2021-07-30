@@ -7,6 +7,9 @@ interface IJSInputDto
     IndentLength?: number;
     UseSingleQuotes?: boolean;
     UseSelfClosingTags?: boolean;
+    AllowSingleQuoteInAttributeValue?: boolean;
+    AddSpaceBeforeSelfClosingTag?: boolean;
+    WrapCommentTextWithSpaces?: boolean;
 }
 
 export class JSInputDTO
@@ -15,14 +18,24 @@ export class JSInputDTO
     IndentLength: number;
     UseSingleQuotes: boolean;
     UseSelfClosingTags: boolean;
-    AllowSingleQuoteInAttributeValue?: boolean;
+    AllowSingleQuoteInAttributeValue: boolean;
+    AddSpaceBeforeSelfClosingTag: boolean;
+    WrapCommentTextWithSpaces: boolean;
 
-    constructor(xmlString: string, indentLength: number = DefaultSettings.IndentLength, useSingleQuotes: boolean = DefaultSettings.UseSingleQuotes, useSelfClosingTags: boolean = DefaultSettings.UseSelfClosingTags, allowSingleQuoteInAttributeValue: boolean = DefaultSettings.AllowSingleQuoteInAttributeValue)
+    constructor(xmlString: string,
+        indentLength: number = DefaultSettings.IndentLength,
+        useSingleQuotes: boolean = DefaultSettings.UseSingleQuotes,
+        useSelfClosingTags: boolean = DefaultSettings.UseSelfClosingTags,
+        allowSingleQuoteInAttributeValue: boolean = DefaultSettings.AllowSingleQuoteInAttributeValue,
+        addSpaceBeforeSelfClosingTag: boolean = DefaultSettings.AddSpaceBeforeSelfClosingTag,
+        wrapCommentTextWithSpaces: boolean = DefaultSettings.WrapCommentTextWithSpaces)
     {
         this.XMLString = xmlString;
         this.IndentLength = indentLength;
         this.UseSingleQuotes = useSingleQuotes;
         this.UseSelfClosingTags = useSelfClosingTags;
         this.AllowSingleQuoteInAttributeValue = allowSingleQuoteInAttributeValue;
+        this.AddSpaceBeforeSelfClosingTag = addSpaceBeforeSelfClosingTag;
+        this.WrapCommentTextWithSpaces = wrapCommentTextWithSpaces;
     }
 }

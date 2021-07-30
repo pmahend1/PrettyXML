@@ -110,35 +110,42 @@
                 "properties": {
                     "prettyxml.settings.indentSpaceLength": {
                         "type": "number",
-                        "description": "No. of spaces for indentation.",
-                        "markdownDescription": "No. of spaces for indentation.",
-                        "default": 2,
-                        "maximum": 10,
-                        "minimum": 1
+                        "enum": [
+                            2,
+                            4,
+                            8
+                        ],
+                        "markdownDescription": "No. of spaces for indentation.\n Default is 4"
                     },
                     "prettyxml.settings.useSingleQuotes": {
                         "type": "boolean",
-                        "description": "Use ' instead of \"",
-                        "markdownDescription": "Use ' instead of \"",
+                        "markdownDescription": "Use apostrophe `'` instead of quotes `\"` \n\n **Checked** : `Attribute='Value'` \n\n **Unchecked** :  `Attribute=\"Value\"`",
                         "default": false
                     },
                     "prettyxml.settings.useSelfClosingTag": {
                         "type": "boolean",
-                        "description": "If no child nodes then self closing tag />",
-                        "markdownDescription": "If no child nodes then self closing tag />",
+                        "markdownDescription": "If no child nodes then use self closing tag `/>` \n\n **Checked** : `<Foo></Foo>` → `<Foo/>` \n\n  **Unchecked** : `<Foo></Foo>` → `<Foo></Foo>`",
                         "default": true
                     },
                     "prettyxml.settings.formatOnSave": {
                         "type": "boolean",
-                        "description": "Enable format on save.",
                         "markdownDescription": "Enable format on save.",
                         "default": false
                     },
                     "prettyxml.settings.allowSingleQuoteInAttributeValue": {
                         "type": "boolean",
-                        "description": "Allow single quote in attribute values.",
-                        "markdownDescription": "Allow single quote in attribute values.",
-                        "default": false
+                        "markdownDescription": "Allow single quote in attribute values.\n\n  **Checked** : `Attribute=\"Value'has'apostrphoes\"` \n\n **Unchecked** : `Attribute=\"Value&apos;has&apos;apostrphoes\"` \n\n Ignored if *Use Single Quotes* is *Checked*",
+                        "default": true
+                    },
+                    "prettyxml.settings.addSpaceBeforeSelfClosingTag": {
+                        "type": "boolean",
+                        "markdownDescription": "Add space before self closing tag.\n\n **Checked** : `<Foo />` \n\n **Unchecked** : `<Foo/>`",
+                        "default": true
+                    },
+                    "prettyxml.settings.wrapCommentTextWithSpaces": {
+                        "type": "boolean",
+                        "markdownDescription": "Wrap Comment text with spaces\n\n **Checked** : `<!-- Comment Text -->` \n\n **Unchecked** : `<!--Comment Text-->`",
+                        "default": true
                     }
                 }
             }

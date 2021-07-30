@@ -62,11 +62,11 @@ export function activate(context: vscode.ExtensionContext)
 						title: "Pretty XML",
 						cancellable: false
 					}, async (progress) =>
-					{
-						progress.report({ message: "Minimizing..." });
+				{
+					progress.report({ message: "Minimizing..." });
 
-						await minimizeXml();
-					});
+					await minimizeXml();
+				});
 
 
 			});
@@ -96,8 +96,10 @@ async function format()
 		let useselfclosetag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSelfClosingTag');
 		let formatOnSave = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('formatOnSave');
 		let allowSingleQuoteInAttributeValue = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('allowSingleQuoteInAttributeValue');
+		let addSpaceBeforeSelfClosingTag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('addSpaceBeforeSelfClosingTag');
+		let wrapCommentTextWithSpaces = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('wrapCommentTextWithSpaces');
 
-		var settings = new Settings(spacelength, usesinglequotes, useselfclosetag, formatOnSave,allowSingleQuoteInAttributeValue);
+		var settings = new Settings(spacelength, usesinglequotes, useselfclosetag, formatOnSave, allowSingleQuoteInAttributeValue, addSpaceBeforeSelfClosingTag, wrapCommentTextWithSpaces);
 
 		var docText = vscode?.window.activeTextEditor?.document?.getText();
 		var ranger = getEditorRange();
@@ -117,7 +119,9 @@ async function format()
 				settings.IndentLength,
 				settings.UseSingleQuotes,
 				settings.UseSelfClosingTags,
-				settings.AllowSingleQuoteInAttributeValue
+				settings.AllowSingleQuoteInAttributeValue,
+				settings.AddSpaceBeforeSelfClosingTag,
+				settings.WrapCommentTextWithSpaces
 			);
 
 			var inputstr = JSON.stringify(jsinput);
