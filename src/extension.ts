@@ -72,7 +72,7 @@ export function activate(context: vscode.ExtensionContext)
 			});
 
 
-		vscode.workspace.onDidSaveTextDocument(async (document: vscode.TextDocument) => { await formatOnSave(); });
+		vscode.workspace.onDidSaveTextDocument(async () => { await formatOnSave(); });
 
 		//subscribe commands
 		context.subscriptions.push(prettifyXmlCommand, minimizeXmlCommand);
@@ -98,8 +98,16 @@ async function format()
 		let allowSingleQuoteInAttributeValue = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('allowSingleQuoteInAttributeValue');
 		let addSpaceBeforeSelfClosingTag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('addSpaceBeforeSelfClosingTag');
 		let wrapCommentTextWithSpaces = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('wrapCommentTextWithSpaces');
+		let allowWhiteSpaceUnicodesInAttributeValues = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('allowWhiteSpaceUnicodesInAttributeValues');
 
-		var settings = new Settings(spacelength, usesinglequotes, useselfclosetag, formatOnSave, allowSingleQuoteInAttributeValue, addSpaceBeforeSelfClosingTag, wrapCommentTextWithSpaces);
+		var settings = new Settings(spacelength,
+			usesinglequotes,
+			useselfclosetag,
+			formatOnSave,
+			allowSingleQuoteInAttributeValue,
+			addSpaceBeforeSelfClosingTag,
+			wrapCommentTextWithSpaces,
+			allowWhiteSpaceUnicodesInAttributeValues);
 
 		var docText = vscode?.window.activeTextEditor?.document?.getText();
 		var ranger = getEditorRange();
@@ -121,7 +129,8 @@ async function format()
 				settings.UseSelfClosingTags,
 				settings.AllowSingleQuoteInAttributeValue,
 				settings.AddSpaceBeforeSelfClosingTag,
-				settings.WrapCommentTextWithSpaces
+				settings.WrapCommentTextWithSpaces,
+				settings.AllowWhiteSpaceUnicodesInAttributeValues
 			);
 
 			var inputstr = JSON.stringify(jsinput);

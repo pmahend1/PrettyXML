@@ -8,6 +8,7 @@ export interface ISettings
     AllowSingleQuoteInAttributeValue: boolean;
     AddSpaceBeforeSelfClosingTag: boolean;
     WrapCommentTextWithSpaces: boolean;
+    AllowWhiteSpaceUnicodesInAttributeValues: boolean;
 }
 
 export const DefaultSettings: ISettings = {
@@ -17,7 +18,8 @@ export const DefaultSettings: ISettings = {
     FormatOnSave: false,
     AllowSingleQuoteInAttributeValue: true,
     AddSpaceBeforeSelfClosingTag: true,
-    WrapCommentTextWithSpaces: true
+    WrapCommentTextWithSpaces: true,
+    AllowWhiteSpaceUnicodesInAttributeValues: true
 };
 
 export class Settings
@@ -29,6 +31,7 @@ export class Settings
     AllowSingleQuoteInAttributeValue?: boolean;
     AddSpaceBeforeSelfClosingTag?: boolean;
     WrapCommentTextWithSpaces?: boolean;
+    AllowWhiteSpaceUnicodesInAttributeValues?: boolean;
 
     constructor(indentLengh?: number,
         useSingleQuotes?: boolean,
@@ -36,7 +39,8 @@ export class Settings
         formatOnSave?: boolean,
         allowSingleQuoteInAttributeValue?: boolean,
         addSpaceBeforeSelfClosingTag?: boolean,
-        wrapCommentTextWithSpaces?: boolean)
+        wrapCommentTextWithSpaces?: boolean,
+        allowWhiteSpaceUnicodesInAttributeValues?: boolean)
     {
         this.IndentLength = indentLengh ?? DefaultSettings.IndentLength;
         this.UseSingleQuotes = useSingleQuotes ?? DefaultSettings.UseSingleQuotes;
@@ -45,5 +49,6 @@ export class Settings
         this.AllowSingleQuoteInAttributeValue = allowSingleQuoteInAttributeValue;
         this.AddSpaceBeforeSelfClosingTag = addSpaceBeforeSelfClosingTag ?? DefaultSettings.AddSpaceBeforeSelfClosingTag;
         this.WrapCommentTextWithSpaces = wrapCommentTextWithSpaces ?? DefaultSettings.WrapCommentTextWithSpaces;
+        this.AllowWhiteSpaceUnicodesInAttributeValues = allowWhiteSpaceUnicodesInAttributeValues;
     }
 }
