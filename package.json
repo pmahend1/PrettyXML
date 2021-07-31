@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/master/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "0.9.0",
+    "version": "0.10.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -115,36 +115,41 @@
                             4,
                             8
                         ],
-                        "markdownDescription": "No. of spaces for indentation.\n Default is 4"
+                        "markdownDescription": "No. of spaces for indentation. *Default* is *4*"
                     },
                     "prettyxml.settings.useSingleQuotes": {
                         "type": "boolean",
-                        "markdownDescription": "Use apostrophe `'` instead of quotes `\"` \n\n **Checked** : `Attribute='Value'` \n\n **Unchecked** :  `Attribute=\"Value\"`",
+                        "markdownDescription": "Use apostrophe `'` instead of quotes `\"`. *Default* is *Unchecked* \n\n **Checked** : `Attribute='Value'` \n\n **Unchecked** :  `Attribute=\"Value\"`",
                         "default": false
                     },
                     "prettyxml.settings.useSelfClosingTag": {
                         "type": "boolean",
-                        "markdownDescription": "If no child nodes then use self closing tag `/>` \n\n **Checked** : `<Foo></Foo>` → `<Foo/>` \n\n  **Unchecked** : `<Foo></Foo>` → `<Foo></Foo>`",
+                        "markdownDescription": "If no child nodes then use self closing tag `/>`. *Default* is *Checked* \n\n **Checked** : `<Foo></Foo>` → `<Foo/>` \n\n  **Unchecked** : `<Foo></Foo>` → `<Foo></Foo>` ",
                         "default": true
                     },
                     "prettyxml.settings.formatOnSave": {
                         "type": "boolean",
-                        "markdownDescription": "Enable format on save.",
+                        "markdownDescription": "Enable format on save.  *Default* is *Unchecked*",
                         "default": false
                     },
                     "prettyxml.settings.allowSingleQuoteInAttributeValue": {
                         "type": "boolean",
-                        "markdownDescription": "Allow single quote in attribute values.\n\n  **Checked** : `Attribute=\"Value'has'apostrphoes\"` \n\n **Unchecked** : `Attribute=\"Value&apos;has&apos;apostrphoes\"` \n\n Ignored if *Use Single Quotes* is *Checked*",
+                        "markdownDescription": "Allow single quote in attribute values. Ignored if *Use Single Quotes* is *Checked*. *Default* is *Checked* \n\n  **Checked** : `Attribute=\"Value'has'apostrphoes\"` \n\n **Unchecked** : `Attribute=\"Value&apos;has&apos;apostrphoes\"` \n\n  ",
                         "default": true
                     },
                     "prettyxml.settings.addSpaceBeforeSelfClosingTag": {
                         "type": "boolean",
-                        "markdownDescription": "Add space before self closing tag.\n\n **Checked** : `<Foo />` \n\n **Unchecked** : `<Foo/>`",
+                        "markdownDescription": "Add space before self closing tag. *Default* is *Checked* \n\n **Checked** : `<Foo />` \n\n **Unchecked** : `<Foo/>` ",
                         "default": true
                     },
                     "prettyxml.settings.wrapCommentTextWithSpaces": {
                         "type": "boolean",
-                        "markdownDescription": "Wrap Comment text with spaces\n\n **Checked** : `<!-- Comment Text -->` \n\n **Unchecked** : `<!--Comment Text-->`",
+                        "markdownDescription": "Wrap Comment text with spaces. *Default* is *Checked* \n\n **Checked** : `<!-- Comment Text -->` \n\n **Unchecked** : `<!--Comment Text-->` ",
+                        "default": true
+                    },
+                    "prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues": {
+                        "type": "boolean",
+                        "markdownDescription": "Allow unicode whitespace characters in attribute values. *Default* is *Checked* \n\n **Checked** : \n\n `&#10;` → `&#xA;` \n\n `&#x9;` → `&#x9;` \n\n `&#9;` → `&#x9;` \n\n **Unchecked** :\n\n `&#10;` → new line  \n\n `&#9;` → tab  \n\n `&#x9;` → tab ",
                         "default": true
                     }
                 }
@@ -161,11 +166,11 @@
     },
     "devDependencies": {
         "@types/glob": "^7.1.3",
-        "@types/mocha": "^8.0.0",
+        "@types/mocha": "^9.0.0",
         "@types/node": "^16.3.1",
         "@types/vscode": "^1.58.0",
         "@typescript-eslint/eslint-plugin": "^4.0.1",
-        "@typescript-eslint/parser": "4.28.2",
+        "@typescript-eslint/parser": "4.28.5",
         "electron-rebuild": "^2.3.5",
         "eslint": "^7.6.0",
         "glob": "^7.1.6",

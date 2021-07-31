@@ -1,16 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import { DefaultSettings } from "./settings";
-interface IJSInputDto
-{
-    XMLString: string;
-    IndentLength?: number;
-    UseSingleQuotes?: boolean;
-    UseSelfClosingTags?: boolean;
-    AllowSingleQuoteInAttributeValue?: boolean;
-    AddSpaceBeforeSelfClosingTag?: boolean;
-    WrapCommentTextWithSpaces?: boolean;
-}
 
 export class JSInputDTO
 {
@@ -21,6 +11,7 @@ export class JSInputDTO
     AllowSingleQuoteInAttributeValue: boolean;
     AddSpaceBeforeSelfClosingTag: boolean;
     WrapCommentTextWithSpaces: boolean;
+    AllowWhiteSpaceUnicodesInAttributeValues: boolean;
 
     constructor(xmlString: string,
         indentLength: number = DefaultSettings.IndentLength,
@@ -28,7 +19,8 @@ export class JSInputDTO
         useSelfClosingTags: boolean = DefaultSettings.UseSelfClosingTags,
         allowSingleQuoteInAttributeValue: boolean = DefaultSettings.AllowSingleQuoteInAttributeValue,
         addSpaceBeforeSelfClosingTag: boolean = DefaultSettings.AddSpaceBeforeSelfClosingTag,
-        wrapCommentTextWithSpaces: boolean = DefaultSettings.WrapCommentTextWithSpaces)
+        wrapCommentTextWithSpaces: boolean = DefaultSettings.WrapCommentTextWithSpaces,
+        allowWhiteSpaceUnicodesInAttributeValues: boolean = DefaultSettings.AllowWhiteSpaceUnicodesInAttributeValues)
     {
         this.XMLString = xmlString;
         this.IndentLength = indentLength;
@@ -37,5 +29,6 @@ export class JSInputDTO
         this.AllowSingleQuoteInAttributeValue = allowSingleQuoteInAttributeValue;
         this.AddSpaceBeforeSelfClosingTag = addSpaceBeforeSelfClosingTag;
         this.WrapCommentTextWithSpaces = wrapCommentTextWithSpaces;
+        this.AllowWhiteSpaceUnicodesInAttributeValues = allowWhiteSpaceUnicodesInAttributeValues;
     }
 }
