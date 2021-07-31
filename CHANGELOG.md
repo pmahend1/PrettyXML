@@ -3,7 +3,7 @@
 ## Preview
 
 
-### 1.0.0 : 31-Jul-2021
+### 0.10.0 : 31-Jul-2021
 
 - Added setting  `prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues`
 - Updated **Readme.md**.  
