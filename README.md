@@ -41,7 +41,7 @@ Right Click and Select Prettify XML or use [shortcut](#keyboard-shortcuts)
 
 ![After](./images/after.png)
 
-### 2. ### Pretty XML: Minimize
+### 2. Pretty XML: Minimize
 
 Minimizes XML.
 
