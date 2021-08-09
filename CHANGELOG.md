@@ -2,6 +2,9 @@
 
 ## Preview
 
+### 0.11.0 : 8-Aug-2021
+
+- Electron 13.1.7 specific build.
 
 ### 0.10.0 : 31-Jul-2021
 
