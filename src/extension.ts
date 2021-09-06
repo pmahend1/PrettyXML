@@ -1,19 +1,23 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // imports 
 import * as vscode from "vscode";
+import { Formatter } from "./formatter";
 import { JSInputDTO } from "./jsinputdto";
+import { PrettyXmlFormattingEditProvider } from "./prettyXmlFormattingEditProvider";
 import { Settings } from "./settings";
 
 // global variables
 let extPath = "";
 let dllPath = "";
 let edge: any;
+let formatter : Formatter;
 
 //extension activate
 export function activate(context: vscode.ExtensionContext)
 {
 	try
 	{
+		formatter = new Formatter(context);
 		extPath = context.extensionPath;
 		//extension path was not found
 		if (extPath === "")
@@ -74,8 +78,12 @@ export function activate(context: vscode.ExtensionContext)
 
 		vscode.workspace.onDidSaveTextDocument(async () => { await formatOnSave(); });
 
+		const xmlXsdDocSelector = [...createDocumentSelector("xml"), ...createDocumentSelector("xsd")];
+		const xmlFormattingEditProvider = new PrettyXmlFormattingEditProvider(formatter);
+		let languageProvider = vscode.languages.registerDocumentFormattingEditProvider(xmlXsdDocSelector, xmlFormattingEditProvider);
 		//subscribe commands
-		context.subscriptions.push(prettifyXmlCommand, minimizeXmlCommand);
+		context.subscriptions.push(prettifyXmlCommand, minimizeXmlCommand,languageProvider);
+	
 
 	}
 	catch (error)
@@ -229,3 +237,9 @@ function getEditorRange()
 
 //extension deactivate
 export function deactivate() { }
+export function createDocumentSelector(language: string): vscode.DocumentFilter[] {
+    return [
+        { language, scheme: "file" },
+        { language, scheme: "untitled" },
+    ];
+}

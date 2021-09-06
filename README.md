@@ -33,7 +33,7 @@ Right Click and Select Prettify XML or use [shortcut](#keyboard-shortcuts)
 - No empty lines.
 - Supports `'` and whitespace unicodes in attribute value for XAML parser compatibility.
 
-  _before_
+_before_
 
 ![Before](./images/before.png)
 
