@@ -26,7 +26,7 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
         {
             try
             {
-                this.formatter.formatDocument().then(formattedText =>
+                this.formatter.formatXml().then(formattedText =>
                 {
                     const temp = TextEdit.replace(documentRange, formattedText);
                     resolve([temp]);

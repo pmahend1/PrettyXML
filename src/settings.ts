@@ -12,7 +12,7 @@ export interface ISettings
 }
 
 export const DefaultSettings: ISettings = {
-    IndentLength: 2,
+    IndentLength: 4,
     UseSingleQuotes: false,
     UseSelfClosingTags: true,
     FormatOnSave: false,

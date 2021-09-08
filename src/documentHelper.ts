@@ -8,14 +8,19 @@ export class DocumentHelper
 
     }
 
+
+    public static get Editor()
+    {
+        return vscode.window.activeTextEditor;
+    }
+
     //get Range of the active document
     public static getEditorRange(): vscode.Range
     {
-        let editor = vscode.window.activeTextEditor;
-        if (editor)
+        if (this.Editor)
         {
             //get editor text
-            let document = editor.document;
+            let document = this.Editor.document;
             var start = new vscode.Position(0, 0);
             var lastButOne = document.lineAt(document.lineCount - 1);
             var end = new vscode.Position(document.lineCount, lastButOne.range.end.character);
@@ -30,14 +35,36 @@ export class DocumentHelper
 
     public static getDocumentText(): string
     {
-        let editor = vscode.window.activeTextEditor;
-        if(editor)
+        if (this.Editor)
         {
-            return editor.document.getText();
+            return this.Editor.document.getText();
         }
         else
         {
             throw new Error("Editor not found!");
+        }
+    }
+
+    public static replaceTextForRange(range: vscode.Range, newText: string)
+    {
+        if (this.Editor)
+        {
+            this.Editor.edit(editBuilder =>
+            {
+                editBuilder.replace(range, newText);
+            });
+        }
+    }
+
+    public static replaceDocumentText(newText: string)
+    {
+        if (this.Editor)
+        {
+            var range = this.getEditorRange();
+            this.Editor.edit(editBuilder =>
+            {
+                editBuilder.replace(range, newText);
+            });
         }
     }
 }
