@@ -46,7 +46,9 @@ export function activate(context: vscode.ExtensionContext)
 
 		vscode.workspace.onDidSaveTextDocument(async () => 
 		{ 
-			if(formatter.settings.FormatOnSave)
+			let prettyXmlConfig = vscode.workspace.getConfiguration('prettyxml.settings');
+			let formatOnSave = prettyXmlConfig.get<boolean>('formatOnSave') ?? false;
+			if(formatOnSave)
 			{
 				var formattedText = await formatter.formatXml();
 				DocumentHelper.replaceDocumentText(formattedText);

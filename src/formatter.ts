@@ -42,7 +42,7 @@ export class Formatter
         }
     }
 
-    private loadSettings()
+    public loadSettings()
     {
         //get settings
         let prettyXmlConfig = vscode.workspace.getConfiguration('prettyxml.settings');
