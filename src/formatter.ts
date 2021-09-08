@@ -16,6 +16,7 @@ export class Formatter
     {
         this.extensionContext = context;
         this.initialize();
+        this.loadSettings();
     }
 
     private initialize()
@@ -39,7 +40,10 @@ export class Formatter
                 this.edge = require('electron-edge-js/lib/edge');
                 break;
         }
+    }
 
+    private loadSettings()
+    {
         //get settings
         let prettyXmlConfig = vscode.workspace.getConfiguration('prettyxml.settings');
 
@@ -60,14 +64,14 @@ export class Formatter
                                      addSpaceBeforeSelfClosingTag,
                                      wrapCommentTextWithSpaces,
                                      allowWhiteSpaceUnicodesInAttributeValues);
-
     }
 
     async formatXml(): Promise<string>
     {
         try
         {
-
+            this.loadSettings();
+            
             var docText = DocumentHelper.getDocumentText();
             let formattedString: string = "";
 
@@ -125,6 +129,8 @@ export class Formatter
 
     async minimizeXml(): Promise<string>
     {
+        this.loadSettings();
+
         var docText = DocumentHelper.getDocumentText();
         if (docText)
         {
