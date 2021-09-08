@@ -114,6 +114,3 @@ export function activate(context: vscode.ExtensionContext)
 		console.error(exception);
 	}
 }
-
-//extension deactivate
-export function deactivate() { }

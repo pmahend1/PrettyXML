@@ -71,7 +71,6 @@ export class Formatter
         try
         {
             this.loadSettings();
-
             var docText = DocumentHelper.getDocumentText();
             let formattedString: string = "";
 
