@@ -182,6 +182,7 @@
     "dependencies": {
         "electron-edge-js": "file:./lib/electron-edge-js",
         "electron-edge-js-mac": "file:./lib/electron-edge-js-mac",
+        "fs": "^0.0.1-security",
         "install": "^0.13.0"
     }
 }

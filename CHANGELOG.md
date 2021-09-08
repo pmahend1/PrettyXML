@@ -2,6 +2,10 @@
 
 ## Preview
 
+### 1.0.0 : 9-Sep-2021
+
+- Document formatting provider added.🆕
+
 ### 0.11.0 : 8-Aug-2021
 
 - Electron 13.1.7 specific build.
