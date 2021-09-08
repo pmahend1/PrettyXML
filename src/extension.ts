@@ -1,231 +1,78 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // imports 
 import * as vscode from "vscode";
-import { JSInputDTO } from "./jsinputdto";
-import { Settings } from "./settings";
+import { DocumentHelper } from "./documentHelper";
+import { Formatter } from "./formatter";
+import { PrettyXmlFormattingEditProvider } from "./prettyXmlFormattingEditProvider";
 
 // global variables
-let extPath = "";
-let dllPath = "";
-let edge: any;
+let formatter: Formatter;
 
 //extension activate
 export function activate(context: vscode.ExtensionContext)
 {
 	try
 	{
-		extPath = context.extensionPath;
-		//extension path was not found
-		if (extPath === "")
-		{
-			vscode.window.showErrorMessage('Error in finding extension path');
-			return;
-		}
-		dllPath = extPath + `//lib//XmlFormatter.VSCode.dll`;
-
-		//select edge based on platform
-		switch (process.platform)
-		{
-			//if Mac then use different binary
-			case 'darwin':
-				edge = require('electron-edge-js-mac/lib/edge');
-				break;
-			default:
-				edge = require('electron-edge-js/lib/edge');
-				break;
-		}
+		formatter = new Formatter(context);
 
 		//prettify command definition
-		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.prettifyxml",
+		var progressOptions = { 
+								location: vscode.ProgressLocation.Notification,
+								title: "Pretty XML",
+								cancellable: false
+							  };
+
+		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.prettifyxml" ,
 			() =>
 			{
-				vscode.window.withProgress(
-					{
-						location: vscode.ProgressLocation.Notification,
-						title: "Pretty XML",
-						cancellable: false
-					},
-					async (progress) =>
-					{
-						progress.report({ message: "Formatting..." });
-
-						await format();
-					});
+				vscode.window.withProgress(progressOptions,async (progress) => 
+				{
+					progress.report({ message: "Formatting..." });
+					var formattedText = await formatter.formatXml();
+					DocumentHelper.replaceDocumentText(formattedText);
+				});
 			});
 
 		let minimizeXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.minimizexml",
 			() =>
 			{
-				vscode.window.withProgress(
-					{
-						location: vscode.ProgressLocation.Notification,
-						title: "Pretty XML",
-						cancellable: false
-					}, async (progress) =>
+				vscode.window.withProgress(progressOptions, async (progress) =>
 				{
 					progress.report({ message: "Minimizing..." });
-
-					await minimizeXml();
+					var minimizedText = await formatter.minimizeXml();
+					DocumentHelper.replaceDocumentText(minimizedText);
 				});
-
-
 			});
 
+		vscode.workspace.onDidSaveTextDocument(async () => 
+		{ 
+			let prettyXmlConfig = vscode.workspace.getConfiguration('prettyxml.settings');
+			let formatOnSave = prettyXmlConfig.get<boolean>('formatOnSave') ?? false;
+			if(formatOnSave)
+			{
+				var formattedText = await formatter.formatXml();
+				DocumentHelper.replaceDocumentText(formattedText);
+			}
+		});
 
-		vscode.workspace.onDidSaveTextDocument(async () => { await formatOnSave(); });
+		const xmlXsdDocSelector = [ ...DocumentHelper.createLanguageDocumentFilters("xml"), ...DocumentHelper.createLanguageDocumentFilters("xsd") ];
+		const xmlFormattingEditProvider = new PrettyXmlFormattingEditProvider(formatter);
+		let languageProvider = vscode.languages.registerDocumentFormattingEditProvider(xmlXsdDocSelector, xmlFormattingEditProvider);
 
 		//subscribe commands
-		context.subscriptions.push(prettifyXmlCommand, minimizeXmlCommand);
-
+		context.subscriptions.push(prettifyXmlCommand, minimizeXmlCommand, languageProvider);
 	}
-	catch (error)
+	catch (exception)
 	{
-		vscode.window.showErrorMessage(error.message);
-		console.log(error);
-	}
-}
-
-async function format()
-{
-
-	try
-	{
-		//get settings
-		let spacelength = vscode.workspace.getConfiguration('prettyxml.settings').get<number>('indentSpaceLength');
-		let usesinglequotes = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSingleQuotes');
-		let useselfclosetag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSelfClosingTag');
-		let formatOnSave = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('formatOnSave');
-		let allowSingleQuoteInAttributeValue = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('allowSingleQuoteInAttributeValue');
-		let addSpaceBeforeSelfClosingTag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('addSpaceBeforeSelfClosingTag');
-		let wrapCommentTextWithSpaces = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('wrapCommentTextWithSpaces');
-		let allowWhiteSpaceUnicodesInAttributeValues = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('allowWhiteSpaceUnicodesInAttributeValues');
-
-		var settings = new Settings(spacelength,
-			usesinglequotes,
-			useselfclosetag,
-			formatOnSave,
-			allowSingleQuoteInAttributeValue,
-			addSpaceBeforeSelfClosingTag,
-			wrapCommentTextWithSpaces,
-			allowWhiteSpaceUnicodesInAttributeValues);
-
-		var docText = vscode?.window.activeTextEditor?.document?.getText();
-		var ranger = getEditorRange();
-		//format
-		if (docText)
-		{
-			//electron-edge-js function for C# DLL
-			var formatCSharp = edge.func({
-				assemblyFile: dllPath,
-				typeName: 'XmlFormatter.VSCode.PrettyXML',
-				methodName: 'Format',
-			});
-
-			//DTO object for DLL
-			var jsinput: JSInputDTO = new JSInputDTO(
-				docText,
-				settings.IndentLength,
-				settings.UseSingleQuotes,
-				settings.UseSelfClosingTags,
-				settings.AllowSingleQuoteInAttributeValue,
-				settings.AddSpaceBeforeSelfClosingTag,
-				settings.WrapCommentTextWithSpaces,
-				settings.AllowWhiteSpaceUnicodesInAttributeValues
-			);
-
-			var inputstr = JSON.stringify(jsinput);
-
-			var editor = vscode.window.activeTextEditor;
-			//call C# method from DLL
-			await formatCSharp(inputstr, function (error: any, result: any)
-			{
-				if (result)
-				{
-					editor?.edit(editBuilder =>
-					{
-						editBuilder.replace(ranger, result + "");
-					});
-					console.log("Document formatted!");
-				}
-				else if (error)
-				{
-					vscode.window.showErrorMessage(error.message);
-					console.error(error);
-				}
-
-			});
-		}
-
-	} catch (error)
-	{
-		vscode.window.showErrorMessage(error.message);
-		console.error(error);
+		let errorMessage = (exception as Error)?.message;
+		vscode.window.showErrorMessage(errorMessage);
+		console.log(exception);
 	}
 }
 
-async function minimizeXml()
-{
-	var docText = vscode.window.activeTextEditor?.document?.getText();
-	var editor = vscode.window.activeTextEditor;
-	var ranger = getEditorRange();
-	if (docText)
-	{
-		//electron-edge-js function for C# DLL
-		var minimizeXmlCsharp = edge.func({
-			assemblyFile: dllPath,
-			typeName: 'XmlFormatter.VSCode.PrettyXML',
-			methodName: 'Minimize',
-		});
-
-		await minimizeXmlCsharp(docText, function (error: Error, result: any)
-		{
-			if (result)
-			{
-				editor?.edit(editBuilder =>
-				{
-					editBuilder.replace(ranger, result + "");
-				});
-				console.log("Document minimized!");
-			}
-			else if (error)
-			{
-				vscode.window.showErrorMessage(error.message);
-				console.error(error);
-			}
-		});
-	}
-
-}
-
-//format on save command
-async function formatOnSave()
-{
-	let formatOnSave = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('formatOnSave') ?? false;
-
-	if (formatOnSave)
-	{
-		await format();
-	}
-}
-
-//get Range of the active document
-function getEditorRange()
-{
-	let editor = vscode.window.activeTextEditor;
-	if (editor)
-	{
-		//get editor text
-		let document = editor.document;
-		var start = new vscode.Position(0, 0);
-		var lastButOne = document.lineAt(document.lineCount - 1);
-		var end = new vscode.Position(document.lineCount, lastButOne.range.end.character);
-		var ranger = new vscode.Range(start, end);
-		return ranger;
-	} else
-	{
-		return new vscode.Range(0, 0, 0, 0);
-	}
-}
 
 //extension deactivate
-export function deactivate() { }
+export function deactivate() 
+{
+
+}
