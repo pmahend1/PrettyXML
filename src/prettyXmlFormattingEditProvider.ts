@@ -28,19 +28,13 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
             {
                 this.formatter.formatDocument().then(formattedText =>
                 {
-                    console.log(formattedText);
-                    setTimeout(() => { }, 500);
                     const temp = TextEdit.replace(documentRange, formattedText);
                     resolve([temp]);
-                   //return [temp];
                 });
             } catch (error)
             {
-                throw error;
+                reject(error);
             }
-
-
-
         });
     }
 }

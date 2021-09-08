@@ -12,12 +12,12 @@ let edge: any;
 export class Formatter
 {
     private extensionContext: vscode.ExtensionContext;
-    constructor(context: vscode.ExtensionContext,)
+    constructor(context: vscode.ExtensionContext)
     {
         this.extensionContext = context;
     }
 
-    async formatDocument()
+    async formatDocument(): Promise<string>
     {
         try
         {
@@ -26,7 +26,7 @@ export class Formatter
             if (extPath === "")
             {
                 vscode.window.showErrorMessage('Error in finding extension path');
-                throw error();
+                throw new Error('Error in finding extension path');
             }
             dllPath = extPath + `//lib//XmlFormatter.VSCode.dll`;
             switch (process.platform)
@@ -41,52 +41,49 @@ export class Formatter
             }
 
             //get settings
-            let spacelength = vscode.workspace.getConfiguration('prettyxml.settings').get<number>('indentSpaceLength');
-            let usesinglequotes = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSingleQuotes');
-            let useselfclosetag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('useSelfClosingTag');
-            let formatOnSave = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('formatOnSave');
-            let allowSingleQuoteInAttributeValue = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('allowSingleQuoteInAttributeValue');
-            let addSpaceBeforeSelfClosingTag = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('addSpaceBeforeSelfClosingTag');
-            let wrapCommentTextWithSpaces = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('wrapCommentTextWithSpaces');
-            let allowWhiteSpaceUnicodesInAttributeValues = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('allowWhiteSpaceUnicodesInAttributeValues');
+            let prettyXmlConfig = vscode.workspace.getConfiguration('prettyxml.settings');
+
+            let spacelength = prettyXmlConfig.get<number>('indentSpaceLength');
+            let usesinglequotes = prettyXmlConfig.get<boolean>('useSingleQuotes');
+            let useselfclosetag = prettyXmlConfig.get<boolean>('useSelfClosingTag');
+            let formatOnSave = prettyXmlConfig.get<boolean>('formatOnSave');
+            let allowSingleQuoteInAttributeValue = prettyXmlConfig.get<boolean>('allowSingleQuoteInAttributeValue');
+            let addSpaceBeforeSelfClosingTag = prettyXmlConfig.get<boolean>('addSpaceBeforeSelfClosingTag');
+            let wrapCommentTextWithSpaces = prettyXmlConfig.get<boolean>('wrapCommentTextWithSpaces');
+            let allowWhiteSpaceUnicodesInAttributeValues = prettyXmlConfig.get<boolean>('allowWhiteSpaceUnicodesInAttributeValues');
 
             var settings = new Settings(spacelength,
-                usesinglequotes,
-                useselfclosetag,
-                formatOnSave,
-                allowSingleQuoteInAttributeValue,
-                addSpaceBeforeSelfClosingTag,
-                wrapCommentTextWithSpaces,
-                allowWhiteSpaceUnicodesInAttributeValues);
+                                        usesinglequotes,
+                                        useselfclosetag,
+                                        formatOnSave,
+                                        allowSingleQuoteInAttributeValue,
+                                        addSpaceBeforeSelfClosingTag,
+                                        wrapCommentTextWithSpaces,
+                                        allowWhiteSpaceUnicodesInAttributeValues);
 
-            var docText = vscode?.window.activeTextEditor?.document?.getText();
+            var docText = DocumentHelper.getDocumentText();
             let formattedString: string = "";
+
             //format
             if (docText)
             {
                 //electron-edge-js function for C# DLL
-                var formatCSharp = edge.func({
-                    assemblyFile: dllPath,
-                    typeName: 'XmlFormatter.VSCode.PrettyXML',
-                    methodName: 'Format',
-                });
+                var formatCSharp = edge.func({assemblyFile: dllPath,
+                                              typeName: 'XmlFormatter.VSCode.PrettyXML',
+                                              methodName: 'Format'});
 
                 //DTO object for DLL
-                var jsinput: JSInputDTO = new JSInputDTO(
-                    docText,
-                    settings.IndentLength,
-                    settings.UseSingleQuotes,
-                    settings.UseSelfClosingTags,
-                    settings.AllowSingleQuoteInAttributeValue,
-                    settings.AddSpaceBeforeSelfClosingTag,
-                    settings.WrapCommentTextWithSpaces,
-                    settings.AllowWhiteSpaceUnicodesInAttributeValues
-                );
+                var jsinput: JSInputDTO = new JSInputDTO(docText,
+                                                         settings.IndentLength,
+                                                         settings.UseSingleQuotes,
+                                                         settings.UseSelfClosingTags,
+                                                         settings.AllowSingleQuoteInAttributeValue,
+                                                         settings.AddSpaceBeforeSelfClosingTag,
+                                                         settings.WrapCommentTextWithSpaces,
+                                                         settings.AllowWhiteSpaceUnicodesInAttributeValues);
 
                 var inputstr = JSON.stringify(jsinput);
 
-
-               
                 //call C# method from DLL
                 await formatCSharp(inputstr, function (error: any, result: any)
                 {
@@ -98,21 +95,22 @@ export class Formatter
                     {
                         vscode.window.showErrorMessage(error.message);
                         console.error(error);
+                        throw error;
                     }
-
                 });
                 return formattedString;
-
             }
-            return formattedString;
-
+            else
+            {
+                throw new Error("Document text is not valid!");
+            }
         }
-        catch (error)
+        catch (exception)
         {
-            vscode.window.showErrorMessage(error.message);
+            var errorMessage = (exception as Error)?.message;
+            vscode.window.showErrorMessage(errorMessage);
             console.error(error);
-            return "";
+            throw error;
         }
-
     }
 }

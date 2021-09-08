@@ -21,11 +21,23 @@ export class DocumentHelper
             var end = new vscode.Position(document.lineCount, lastButOne.range.end.character);
             var ranger = new vscode.Range(start, end);
             return ranger;
-        } 
+        }
         else
         {
             return new vscode.Range(0, 0, 0, 0);
         }
     }
 
+    public static getDocumentText(): string
+    {
+        let editor = vscode.window.activeTextEditor;
+        if(editor)
+        {
+            return editor.document.getText();
+        }
+        else
+        {
+            throw new Error("Editor not found!");
+        }
+    }
 }
