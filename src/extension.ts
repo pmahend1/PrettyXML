@@ -3,14 +3,9 @@
 import * as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
 import { Formatter } from "./formatter";
-import { JSInputDTO } from "./jsinputdto";
 import { PrettyXmlFormattingEditProvider } from "./prettyXmlFormattingEditProvider";
-import { Settings } from "./settings";
 
 // global variables
-let extPath = "";
-let dllPath = "";
-let edge: any;
 let formatter: Formatter;
 
 //extension activate
@@ -49,11 +44,19 @@ export function activate(context: vscode.ExtensionContext)
 				});
 			});
 
-		vscode.workspace.onDidSaveTextDocument(async () => { await formatOnSave(); });
+		vscode.workspace.onDidSaveTextDocument(async () => 
+		{ 
+			if(formatter.settings.FormatOnSave)
+			{
+				var formattedText = await formatter.formatXml();
+				DocumentHelper.replaceDocumentText(formattedText);
+			}
+		});
 
-		const xmlXsdDocSelector = [...createDocumentSelector("xml"), ...createDocumentSelector("xsd")];
+		const xmlXsdDocSelector = [ ...DocumentHelper.createLanguageDocumentFilters("xml"), ...DocumentHelper.createLanguageDocumentFilters("xsd") ];
 		const xmlFormattingEditProvider = new PrettyXmlFormattingEditProvider(formatter);
 		let languageProvider = vscode.languages.registerDocumentFormattingEditProvider(xmlXsdDocSelector, xmlFormattingEditProvider);
+
 		//subscribe commands
 		context.subscriptions.push(prettifyXmlCommand, minimizeXmlCommand, languageProvider);
 	}
@@ -66,24 +69,8 @@ export function activate(context: vscode.ExtensionContext)
 }
 
 
-
-//format on save command
-async function formatOnSave()
-{
-	let formatOnSave = vscode.workspace.getConfiguration('prettyxml.settings').get<boolean>('formatOnSave') ?? false;
-
-	if (formatOnSave)
-	{
-		formatter.formatXml();
-	}
-}
-
 //extension deactivate
-export function deactivate() { }
-export function createDocumentSelector(language: string): vscode.DocumentFilter[]
+export function deactivate() 
 {
-	return [
-		{ language, scheme: "file" },
-		{ language, scheme: "untitled" },
-	];
+
 }

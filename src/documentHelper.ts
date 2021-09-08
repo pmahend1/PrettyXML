@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // imports 
 import * as vscode from "vscode";
+import { DocumentFilter } from "./documentFilter";
 export class DocumentHelper
 {
     constructor()
@@ -66,5 +67,11 @@ export class DocumentHelper
                 editBuilder.replace(range, newText);
             });
         }
+    }
+
+    public static createLanguageDocumentFilters(language : string): vscode.DocumentFilter[]
+    {
+        var filters =  [ new DocumentFilter(language, 'file'), new DocumentFilter(language, 'untitled') ];
+        return filters;
     }
 }

@@ -12,15 +12,15 @@ export interface ISettings
 }
 
 export const DefaultSettings: ISettings = {
-    IndentLength: 4,
-    UseSingleQuotes: false,
-    UseSelfClosingTags: true,
-    FormatOnSave: false,
-    AllowSingleQuoteInAttributeValue: true,
-    AddSpaceBeforeSelfClosingTag: true,
-    WrapCommentTextWithSpaces: true,
-    AllowWhiteSpaceUnicodesInAttributeValues: true
-};
+                                            IndentLength: 4,
+                                            UseSingleQuotes: false,
+                                            UseSelfClosingTags: true,
+                                            FormatOnSave: false,
+                                            AllowSingleQuoteInAttributeValue: true,
+                                            AddSpaceBeforeSelfClosingTag: true,
+                                            WrapCommentTextWithSpaces: true,
+                                            AllowWhiteSpaceUnicodesInAttributeValues: true
+                                          };
 
 export class Settings
 {
@@ -34,13 +34,13 @@ export class Settings
     AllowWhiteSpaceUnicodesInAttributeValues?: boolean;
 
     constructor(indentLengh?: number,
-        useSingleQuotes?: boolean,
-        useSelfClosingTags?: boolean,
-        formatOnSave?: boolean,
-        allowSingleQuoteInAttributeValue?: boolean,
-        addSpaceBeforeSelfClosingTag?: boolean,
-        wrapCommentTextWithSpaces?: boolean,
-        allowWhiteSpaceUnicodesInAttributeValues?: boolean)
+                useSingleQuotes?: boolean,
+                useSelfClosingTags?: boolean,
+                formatOnSave?: boolean,
+                allowSingleQuoteInAttributeValue?: boolean,
+                addSpaceBeforeSelfClosingTag?: boolean,
+                wrapCommentTextWithSpaces?: boolean,
+                allowWhiteSpaceUnicodesInAttributeValues?: boolean)
     {
         this.IndentLength = indentLengh ?? DefaultSettings.IndentLength;
         this.UseSingleQuotes = useSingleQuotes ?? DefaultSettings.UseSingleQuotes;
