@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // imports
 import * as vscode from "vscode";
+import * as fs from "fs";
 import { DocumentHelper } from "./documentHelper";
 import { Formatter } from "./formatter";
+import { LocalStorage } from "./localstorage";
 import { PrettyXmlFormattingEditProvider } from "./prettyXmlFormattingEditProvider";
 import { NotificationService } from "./notificationService";
 
