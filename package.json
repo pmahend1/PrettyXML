@@ -14,7 +14,7 @@
     "icon": "images/logo.png",
     "license": "MIT",
     "bugs": "https://github.com/pmahend1/prettyxml/issues",
-    "preview": true,
+    "preview": false,
     "galleryBanner": {
         "color": "#445678",
         "theme": "dark"

@@ -31,7 +31,7 @@ export class NotificationService
                 if (compareVersions.compare(currentVersion, lastVersionShown, '='))
                 {
                     var minus15days = new Date();
-                    minus15days.setDate(minus15days.getDate() - 15);
+                    minus15days.setDate(minus15days.getDate() - 7);
     
                     var lastNotifiedDate = this.context.globalState.get(this.lastNotifiedDateKey) as Date;
                     let dateEligible = lastNotifiedDate === undefined || lastNotifiedDate === null || lastNotifiedDate < minus15days;
@@ -45,8 +45,8 @@ export class NotificationService
             else
             {
                 shouldDisplay = true;
-                this.context.globalState.update(versionKey, currentVersion);
             }
+            this.context.globalState.update(versionKey, currentVersion);
 
         }
         catch (error)
