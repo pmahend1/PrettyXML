@@ -59,8 +59,8 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
 
                     return promise;
                 });
-                const temp = TextEdit.replace(documentRange, formattedText);
-                resolve([ temp ]);
+                const replacer = TextEdit.replace(documentRange, formattedText);
+                resolve([ replacer ]);
             }
             catch (error)
             {

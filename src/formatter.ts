@@ -71,13 +71,6 @@ export class Formatter
         try
         {
             this.loadSettings();
-            // for (let i = 0; i < 40000; i++) 
-            // {
-            //     for (let index = 0; index < 500000; index++)
-            //     {
-                   
-            //     }
-            // }
 
             var docText = DocumentHelper.getDocumentText();
             let formattedString: string = "";
