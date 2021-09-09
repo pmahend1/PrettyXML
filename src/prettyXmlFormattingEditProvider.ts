@@ -8,31 +8,63 @@ import
     TextDocument,
     TextEdit
 } from "vscode";
+import *  as vscode from "vscode";
+import { DocumentHelper } from "./documentHelper";
 import { Formatter } from "./formatter";
 
 export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditProvider
 {
-    formatter: Formatter;
+    private formatter: Formatter;
     constructor(formatter: Formatter)
     {
         this.formatter = formatter;
     }
+
     provideDocumentFormattingEdits(document: TextDocument, options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]>
     {
-        const lastLine = document.lineAt(document.lineCount - 1);
-        const documentRange = new Range(document.positionAt(0), lastLine.range.end);
+        let documentRange: Range = DocumentHelper.getEditorRange();
 
-        return new Promise((resolve, reject) =>
+        return new Promise(async (resolve, reject) =>
         {
             try
             {
-                this.formatter.formatXml().then(formattedText =>
+                var progressOptions = {
+                    location: vscode.ProgressLocation.Notification,
+                    title: "Pretty XML",
+                    cancellable: false,
+                };
+
+                var formattedText = await vscode.window.withProgress(progressOptions, (progress) =>
                 {
-                    const temp = TextEdit.replace(documentRange, formattedText);
-                    resolve([temp]);
+                    var promise = new Promise<string>((resolve) =>
+                    {
+                        progress.report({ message: "Formatting...", increment: 0 });
+
+                        setTimeout(() =>
+                        {
+                            progress.report({ message: "Formatting...", increment: 25 });
+
+                        }, 100);
+
+                        setTimeout(async () =>
+                        {
+                            var formattedText = await this.formatter.formatXml();
+                            progress.report({ message: "Formatting...", increment: 75 });
+                            resolve(formattedText);
+
+                            progress.report({ message: "Formatting...", increment: 100 });
+
+                        }, 250);
+                    });
+
+                    return promise;
                 });
-            } catch (error)
+                const temp = TextEdit.replace(documentRange, formattedText);
+                resolve([ temp ]);
+            }
+            catch (error)
             {
+                console.error(error);
                 reject(error);
             }
         });
