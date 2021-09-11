@@ -81,14 +81,17 @@ export function activate(context: vscode.ExtensionContext)
 			}));
 
 
-		vscode.workspace.onDidSaveTextDocument(async () =>
+		vscode.workspace.onDidSaveTextDocument(async (textDocument) =>
 		{
-			let prettyXmlConfig = vscode.workspace.getConfiguration("prettyxml.settings");
-			let formatOnSave = prettyXmlConfig.get<boolean>("formatOnSave") ?? false;
-			if (formatOnSave)
+			if(textDocument.languageId === "xml" || textDocument.languageId === "xsd")
 			{
-				var formattedText = await formatter.formatXml();
-				DocumentHelper.replaceDocumentText(formattedText);
+				let prettyXmlConfig = vscode.workspace.getConfiguration("prettyxml.settings");
+				let formatOnSave = prettyXmlConfig.get<boolean>("formatOnSave") ?? false;
+				if (formatOnSave)
+				{
+					var formattedText = await formatter.formatXml();
+					DocumentHelper.replaceDocumentText(formattedText);
+				}
 			}
 		});
 
@@ -114,6 +117,3 @@ export function activate(context: vscode.ExtensionContext)
 		console.error(exception);
 	}
 }
-
-//extension deactivate
-export function deactivate() { }

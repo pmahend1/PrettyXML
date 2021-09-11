@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.0.1 : 10-Sep-2021
+
+- Fixed a bug where *on save* was triggering formatting command for non-xml documents .
+
 ### 1.0.0 : 9-Sep-2021
 
 - Document formatting provider added.🆕
