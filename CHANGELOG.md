@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.0.2 : 12-Sep-2021
+
+- Fixed *on save* which was running after the document save.
+
 ### 1.0.1 : 10-Sep-2021
 
 - Fixed a bug where *on save* was triggering formatting command for non-xml documents .

@@ -2,7 +2,8 @@
 
 <img src='./images/logo.png' width='200' height='200' />  
 
-> 🆕 What's new in 1.0.0  
+> 🆕 What's new in version 1.0.x  
+>
 > Now you can set Pretty XML as your default XML formatter.  
 > If you have multiple formatters installed then right click and select 'Format Document with...' and choose 'Configure Default Formatter' to change it.
 > Once done you can use formatting keybind to format , default is usually **Shift + Alt + F**  

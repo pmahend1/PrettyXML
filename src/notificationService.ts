@@ -80,7 +80,7 @@ export class NotificationService
         return updateNotes;
     }
 
-    public notifyWhatsNewInUpdate(): void
+    public async notifyWhatsNewInUpdate(): Promise<void>
     {
         try
         {
