@@ -3,11 +3,11 @@ name: Version Check
 on:
   pull_request:
     branches:
-      - master
+      - main
       - Dev
   workflow_dispatch:
     branches:
-      - master
+      - main
       - Dev
 
 jobs:

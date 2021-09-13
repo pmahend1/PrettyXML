@@ -4,7 +4,7 @@
     "author": {
         "name": "Prateek Mahendrakar"
     },
-    "readme": "https://github.com/pmahend1/PrettyXML/blob/master/README.md",
+    "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
     "version": "1.0.1",
     "publisher": "PrateekMahendrakar",
