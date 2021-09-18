@@ -3,6 +3,10 @@ import * as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
 import { JSInputDTO } from "./jsinputdto";
 import { DefaultSettings, Settings } from "./settings";
+import * as childProcess from "child_process";
+import * as path from "path";
+import { JsonInputDto } from "./jsonInputDto";
+import { FormattingActionKind } from "./formattingActionKind";
 
 export class Formatter
 {
@@ -10,6 +14,8 @@ export class Formatter
     private dllPath: string = "";
 
     private edge: any;
+
+    private runWithCommandLine: boolean = false;
 
     public settings: Settings = DefaultSettings;
     constructor(context: vscode.ExtensionContext)
@@ -21,24 +27,46 @@ export class Formatter
 
     private initialize()
     {
-        let extPath: string = this.extensionContext.extensionPath;
-        //extension path was not found
-        if (extPath === "")
+        try 
         {
-            vscode.window.showErrorMessage('Error in finding extension path');
-            throw new Error('Error in finding extension path');
+            let extPath: string = this.extensionContext.extensionPath;
+            //extension path was not found
+            if (extPath === "")
+            {
+                vscode.window.showErrorMessage('Error in finding extension path');
+                throw new Error('Error in finding extension path');
+            }
+            this.dllPath = path.join(extPath, '/lib/XmlFormatter.VSCode.dll');
+            switch (process.platform)
+            {
+                //if Mac then use different binary
+                case 'darwin':
+                    this.edge = require('electron-edge-js-mac/lib/edge');
+                    break;
+                case 'linux':
+                    // edge binaries not buildable
+                    this.runWithCommandLine = true;
+                    break;
+                case 'win32':
+                    this.edge = require('electron-edge-js/lib/edge');
+                    break;
+                default:
+                    vscode.window.showWarningMessage(`${ process.platform } may be not be supported. If the extension doesnt work , please file a bug report.`);
+                    this.edge = require('electron-edge-js/lib/edge');
+                    break;
+            }
         }
-        this.dllPath = extPath + `//lib//XmlFormatter.VSCode.dll`;
-        switch (process.platform)
+        catch (error)
         {
-            //if Mac then use different binary
-            case 'darwin':
-                this.edge = require('electron-edge-js-mac/lib/edge');
-                break;
-            case 'win32':
-            default:
-                this.edge = require('electron-edge-js/lib/edge');
-                break;
+            var errorMessage = (error as Error)?.message;
+            if (this.checkElectronEdgeException(errorMessage))
+            {
+                this.runWithCommandLine = true;
+            }
+            else
+            {
+                throw error;
+            }
         }
     }
 
@@ -66,99 +94,200 @@ export class Formatter
                                      allowWhiteSpaceUnicodesInAttributeValues);
     }
 
-    async formatXml(): Promise<string>
+    public async formatXml(): Promise<string>
     {
-        try
+        let formattedString: string = "";
+        var docText = DocumentHelper.getDocumentText();
+
+        if (docText)
         {
-            this.loadSettings();
-            var docText = DocumentHelper.getDocumentText();
-            let formattedString: string = "";
-
-            //format
-            if (docText)
+            if (this.runWithCommandLine)
             {
-                //electron-edge-js function for C# DLL
-                var formatCSharp = this.edge.func({
-                                                    assemblyFile: this.dllPath,
-                                                    typeName: 'XmlFormatter.VSCode.PrettyXML',
-                                                    methodName: 'Format'
-                                                  });
-
-                //DTO object for DLL
-                var jsinput: JSInputDTO = new JSInputDTO(docText,
-                                                         this.settings.IndentLength,
-                                                         this.settings.UseSingleQuotes,
-                                                         this.settings.UseSelfClosingTags,
-                                                         this.settings.AllowSingleQuoteInAttributeValue,
-                                                         this. settings.AddSpaceBeforeSelfClosingTag,
-                                                         this.settings.WrapCommentTextWithSpaces,
-                                                         this.settings.AllowWhiteSpaceUnicodesInAttributeValues);
-
-                var inputstr = JSON.stringify(jsinput);
-
-                //call C# method from DLL
-                await formatCSharp(inputstr, function (error: any, result: any)
-                {
-                    if (result)
-                    {
-                        formattedString = result + "";
-                    }
-                    else if (error)
-                    {
-                        vscode.window.showErrorMessage(error.message);
-                        console.error(error);
-                        throw error;
-                    }
-                });
+                formattedString = await this.formatWithCommandLine(docText, FormattingActionKind.format);
                 return formattedString;
             }
             else
             {
-                throw new Error("Document text is not valid!");
+                try
+                {
+                    //electron-edge-js function for C# DLL
+                    var formatCSharp = this.edge.func({ assemblyFile: this.dllPath,
+                                                        typeName: 'XmlFormatter.VSCode.PrettyXML',
+                                                        methodName: 'Format' });
+
+                    //DTO object for DLL
+                    var jsinput: JSInputDTO = new JSInputDTO(docText,
+                                                             this.settings.IndentLength,
+                                                             this.settings.UseSingleQuotes,
+                                                             this.settings.UseSelfClosingTags,
+                                                             this.settings.AllowSingleQuoteInAttributeValue,
+                                                             this.settings.AddSpaceBeforeSelfClosingTag,
+                                                             this.settings.WrapCommentTextWithSpaces,
+                                                             this.settings.AllowWhiteSpaceUnicodesInAttributeValues);
+
+                    var inputstr = JSON.stringify(jsinput);
+
+                    //call C# method from DLL
+                    await formatCSharp(inputstr, function (error: any, result: any)
+                    {
+                        if (result)
+                        {
+                            formattedString = result + "";
+                        }
+                        else if (error)
+                        {
+                            vscode.window.showErrorMessage(error.message);
+                            console.error(error);
+                            throw error;
+                        }
+                    });
+                    return formattedString;
+                }
+                catch (exception)
+                {
+                    var errorMessage = (exception as Error)?.message;
+                    if (this.checkElectronEdgeException(errorMessage))
+                    {
+                        this.runWithCommandLine = true;
+                        formattedString = await this.formatWithCommandLine(docText, FormattingActionKind.format);
+                        return formattedString;
+                    }
+                    else
+                    {
+                        throw error;
+                    }
+                }
+
             }
         }
-        catch (exception)
+        else
         {
-            var errorMessage = (exception as Error)?.message;
-            vscode.window.showErrorMessage(errorMessage);
-            console.error(error);
-            throw error;
+            throw new Error("Document text is not valid!");
         }
     }
 
     async minimizeXml(): Promise<string>
     {
-        this.loadSettings();
-
+        let minimizedXmlText: string = "";
         var docText = DocumentHelper.getDocumentText();
         if (docText)
         {
-            //electron-edge-js function for C# DLL
-            var minimizeXmlCsharp = this.edge.func({
-                                                     assemblyFile: this.dllPath,
-                                                     typeName: 'XmlFormatter.VSCode.PrettyXML',
-                                                     methodName: 'Minimize',
-                                                   });
-
-            let minimizedXmlText: string = "";
-            await minimizeXmlCsharp(docText, function (error: Error, result: any)
+            if (this.runWithCommandLine)
             {
-                if (result)
+                minimizedXmlText = await this.formatWithCommandLine(docText, FormattingActionKind.minimize);
+                return minimizedXmlText;
+            }
+            else
+            {
+                try
                 {
-                    minimizedXmlText = result;
+                    //electron-edge-js function for C# DLL
+                    var minimizeXmlCsharp = this.edge.func({ assemblyFile: this.dllPath,
+                                                             typeName: 'XmlFormatter.VSCode.PrettyXML',
+                                                             methodName: 'Minimize' });
+
+
+                    await minimizeXmlCsharp(docText, function (error: Error, result: any)
+                    {
+                        if (result)
+                        {
+                            minimizedXmlText = result;
+                        }
+                        else if (error)
+                        {
+                            vscode.window.showErrorMessage(error.message);
+                            console.error(error);
+                            throw error;
+                        }
+                    });
+                    return minimizedXmlText;
                 }
-                else if (error)
+                catch (error)
                 {
-                    vscode.window.showErrorMessage(error.message);
-                    console.error(error);
-                    throw error;
+                    var errorMessage = (error as Error)?.message;
+                    if (this.checkElectronEdgeException(errorMessage))
+                    {
+                        this.runWithCommandLine = true;
+                        minimizedXmlText = await this.formatWithCommandLine(docText, FormattingActionKind.minimize);
+                        return minimizedXmlText;
+                    }
+                    else
+                    {
+                        throw error;
+                    }
                 }
-            });
-            return minimizedXmlText;
+
+            }
         }
         else
         {
             throw new Error('Document text is invalid!');
+        }
+    }
+
+    public async formatWithCommandLine(docText: string, actionKind: FormattingActionKind): Promise<string>
+    {
+        try
+        {
+            let dllPath = path.join(this.extensionContext.extensionPath, "lib", "XmlFormatter.CommadLine.dll");
+
+            var jsinput: JsonInputDto = new JsonInputDto(docText, actionKind, this.settings);
+            var inputstr = JSON.stringify(jsinput);
+
+            const cli = childProcess.spawn('dotnet', [ dllPath ], { stdio: [ 'pipe' ] });
+
+            let stdOutData = "";
+            let stdErrData = "";
+
+            cli.stdout.setEncoding("utf8");
+            cli.stdout.on("data", data =>
+            {
+                stdOutData += data;
+            });
+
+            cli.stderr.setEncoding("utf8");
+            cli.stderr.on("data", data =>
+            {
+                stdErrData += data;
+            });
+
+            let promise = new Promise<string>((resolve, reject) =>
+            {
+                cli.on("close", (exitCode: Number) =>
+                {
+                    if (exitCode !== 0)
+                    {
+                        reject(stdErrData);
+                    }
+                    else
+                    {
+                        resolve(stdOutData);
+                    }
+                });
+            });
+
+            cli.stdin.end(inputstr, "utf-8");
+            return promise;
+        }
+        catch (error)
+        {
+            throw new Error('Error formatting with command line. Make sure you have dotnet 5+ installed and it is added to PATH.');
+        }
+
+    }
+
+    private checkElectronEdgeException(errorMessage: string): boolean
+    {
+        if (errorMessage !== null && errorMessage.includes("The edge module has not been pre-compiled for node.js version"))
+        {
+            return true;
+        }
+
+        else
+        {
+            vscode.window.showErrorMessage(errorMessage);
+            console.error(error);
+            return false;
         }
     }
 }

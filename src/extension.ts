@@ -20,6 +20,11 @@ export function activate(context: vscode.ExtensionContext)
 
 		notificationService.notifyWhatsNewInUpdate();
 
+		vscode.workspace.onDidChangeConfiguration((configChangeEvent: vscode.ConfigurationChangeEvent) =>
+		{
+			formatter.loadSettings();
+		});
+
 		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.prettifyxml", () => replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
 
 		let minimizeXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.minimizexml", () => replaceDocumentTextWithProgressForCallback("Minimizing...", formatter.minimizeXml()));
@@ -42,7 +47,7 @@ export function activate(context: vscode.ExtensionContext)
 						}
 					}
 				}
-			} 
+			}
 			catch (exception) 
 			{
 				let errorMessage = (exception as Error)?.message;
