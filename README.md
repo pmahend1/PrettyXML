@@ -2,12 +2,16 @@
 
 <img src='./images/logo.png' width='200' height='200' />  
 
-> 🆕 What's new in version 1.0.x  
+> 🆕 What's new in version 1.x.x 
 >
 > Now you can set Pretty XML as your default XML formatter.  
+> 
 > If you have multiple formatters installed then right click and select 'Format Document with...' and choose 'Configure Default Formatter' to change it.
 > Once done you can use formatting keybind to format , default is usually **Shift + Alt + F**  
+> 
 > You can still use Pretty XML command key Ctrl + K L too.
+>
+> Linux support added with version 1.1.0
 
 Pretty XML is a XML formatter extension for Visual Studio Code and VSCodium. It formats XML documents just like Visual Studio on Windows.
 **Supported file extensions**: xml, xaml, xsd, xsl, plist, mobileconfig, config, csproj, axml, resx and all other XML type of files.

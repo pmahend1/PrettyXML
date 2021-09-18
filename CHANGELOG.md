@@ -2,6 +2,11 @@
 
 ## Stable
 
+### 1.1.0 : 18-Sep-2021
+
+- Linux support added
+- Command line mode added internally as back-up in case electron-edge-js binary issue for NodeJs version.
+
 ### 1.0.2 : 12-Sep-2021
 
 - Fixed *on save* which was running after the document save.
