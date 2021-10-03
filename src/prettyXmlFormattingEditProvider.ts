@@ -36,7 +36,7 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
 
                 var formattedText = await vscode.window.withProgress(progressOptions, (progress) =>
                 {
-                    var promise = new Promise<string>((resolve) =>
+                    var promise = new Promise<string>((resolve, reject) =>
                     {
                         progress.report({ message: "Formatting...", increment: 0 });
 
@@ -48,12 +48,18 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
 
                         setTimeout(async () =>
                         {
-                            var formattedText = await this.formatter.formatXml();
-                            progress.report({ message: "Formatting...", increment: 75 });
-                            resolve(formattedText);
-
-                            progress.report({ message: "Formatting...", increment: 100 });
-
+                            try 
+                            {
+                                var formattedText = await this.formatter.formatXml();
+                                progress.report({ message: "Formatting...", increment: 75 });
+                                resolve(formattedText);
+    
+                                progress.report({ message: "Formatting...", increment: 100 });
+                            }
+                            catch (error) 
+                            {
+                                reject(error);
+                            }
                         }, 250);
                     });
 
