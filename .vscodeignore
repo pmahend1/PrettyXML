@@ -13,3 +13,4 @@ out/*.dll
 **/*.pdb
 node_modules/nan/**
 node_modules/edge-cs/**
+images/old_logo.png
