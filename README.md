@@ -26,8 +26,6 @@ Suggestions , improvement PRs are welcome.
 
 ![Deploy](https://img.shields.io/github/workflow/status/pmahend1/prettyxml/Deploy%20CI?color=brightgreen&label=Deploy%20CI&style=flat-square&logo=github) ![Installs](https://vsmarketplacebadge.apphb.com/installs/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Installs&logo=data:img/png:images/logo.png) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Downloads) ![Rating](https://vsmarketplacebadge.apphb.com/rating-star/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Rating)
 
-[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="150" height="40" />](https://www.buymeacoffee.com/pmahend1)
-
 ---
 
 ![prettify gif](./images/Prettify.gif)
@@ -114,3 +112,6 @@ See [Change Log](./CHANGELOG.md)
 ### For more information
 
 - [Source Code](https://github.com/pmahend1/prettyxml)
+- If you want to support this project,  
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="150" height="35" />](https://www.buymeacoffee.com/pmahend1)
+

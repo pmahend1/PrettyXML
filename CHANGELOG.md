@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.1.1 : 3-Oct-2021
+
+- Fixed a bug where progress bar was not dismissing if there was a formatting error.
+
 ### 1.1.0 : 18-Sep-2021
 
 - Linux support added
