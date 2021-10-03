@@ -2,7 +2,11 @@
 
 ## Stable
 
-### 1.1.1 : 3-Oct-2021
+### 1.2.0: 3-Oct-2021
+
+- New logo added.
+
+### 1.1.2 : 3-Oct-2021
 
 - Fixed a bug where progress bar was not dismissing if there was a formatting error.
 
