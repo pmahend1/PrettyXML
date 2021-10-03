@@ -11,7 +11,7 @@ export function replaceDocumentTextWithProgressForCallback(progressText: string,
 
     var progressPromise = vscode.window.withProgress(progressOptions, (progress) =>
     {
-        var promise = new Promise<void>((resolve) =>
+        var promise = new Promise<void>((resolve, reject)  =>
         {
             progress.report({ message: progressText, increment: 0 });
 
@@ -22,13 +22,19 @@ export function replaceDocumentTextWithProgressForCallback(progressText: string,
 
             setTimeout(async () =>
             {
-                var newText = await task;
-                progress.report({ message: progressText, increment: 75 });
-
-                DocumentHelper.replaceDocumentText(newText);
-                progress.report({ message: progressText, increment: 100 });
-                resolve();
-
+                try 
+                {
+                    var newText = await task;
+                    progress.report({ message: progressText, increment: 75 });
+    
+                    DocumentHelper.replaceDocumentText(newText);
+                    progress.report({ message: progressText, increment: 100 });
+                    resolve();
+                } 
+                catch (error) 
+                {
+                    reject(error);
+                }
             }, 250);
         });
 
