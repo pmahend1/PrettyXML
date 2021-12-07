@@ -16,14 +16,6 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
 
-      - name: Check CHANGELOG.md
-        id: checkchangelog
-        run: |
-          $changelog = git diff --merge-base main -- CHANGELOG.md
-          if ($null -eq $changelog) { 
-            throw [System.Exception]("CHANGELOG not changed.")
-          }
-
       - name: Install SemVer PS modules
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
