@@ -22,5 +22,9 @@
     {
         "version": "1.2.0",
         "updateNotes": "🆕 Now you can set Pretty XML as your default XML formatter.\n Once done you can use formatting keybind to format, default is usually 'Shift + Alt + F'. \n You can still use Pretty XML command key 'Ctrl + K L' too.\n Linux is supported now."
+    },
+    {
+        "version": "1.2.1",
+        "updateNotes": "🆕 Now you can set Pretty XML as your default XML formatter.\n Once done you can use formatting keybind to format, default is usually 'Shift + Alt + F'. \n You can still use Pretty XML command key 'Ctrl + K L' too.\n Linux is supported now."
     }
 ]
