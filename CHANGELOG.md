@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.2.1: 6-Dec-2021
+
+- Yarn upgrades.
+
 ### 1.2.0: 3-Oct-2021
 
 - New logo added.
