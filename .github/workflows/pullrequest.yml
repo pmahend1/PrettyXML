@@ -19,7 +19,7 @@ jobs:
       - name: Check CHANGELOG.md
         id: checkchangelog
         run: |
-          $changelog = git diff origin/main..$GITHUB_REF -- CHANGELOG.md
+          $changelog = git diff --merge-base main -- CHANGELOG.md
           if ($null -eq $changelog) { 
             throw [System.Exception]("CHANGELOG not changed.")
           }
