@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     branches:
       - main
-      - **
+      - '**'
 
 jobs:
   versioncheck:
