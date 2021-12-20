@@ -18,13 +18,14 @@ export function activate(context: vscode.ExtensionContext)
 		formatter = new Formatter(context);
 		notificationService = new NotificationService(context);
 
-		notificationService.notifyWhatsNewInUpdate();
+		notificationService.notifyWhatsNewInUpdateAsync();
+		notificationService.promptForReviewAsync();
 
 		vscode.workspace.onDidChangeConfiguration((configChangeEvent: vscode.ConfigurationChangeEvent) =>
 		{
 			formatter.loadSettings();
 		});
-
+		
 		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.prettifyxml", () => replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
 
 		let minimizeXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.minimizexml", () => replaceDocumentTextWithProgressForCallback("Minimizing...", formatter.minimizeXml()));
