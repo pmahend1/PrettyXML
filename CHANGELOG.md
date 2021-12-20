@@ -2,6 +2,12 @@
 
 ## Stable
 
+### 1.3.0: 19-Dec-2021
+
+- Added review prompt 
+- Fixed issue with what's new dialog logic.
+- Yarn upgrades.
+
 ### 1.2.1: 6-Dec-2021
 
 - Yarn upgrades.
