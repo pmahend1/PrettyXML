@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.3.1: 22-Dec-2021
+
+- Fixed a bug where release notes information pop up isn't displaying.
+
 ### 1.3.0: 19-Dec-2021
 
 - Added review prompt 
