@@ -101,7 +101,7 @@ export class NotificationService
                 var notes = this.getUpdateNotes(currentVersion);
                 if (notes !== "")
                 {
-                    vscode.window.showInformationMessage(notes);
+                    await vscode.window.showInformationMessage(notes);
                     this.context.globalState.update(this.lastNotifiedDateKey, new Date());
                 }
             }
@@ -137,6 +137,12 @@ export class NotificationService
                         {
                             vscode.env.openExternal(vsCodeReviewUri);
                         }
+                        //cant check if they really reviewed
+                        //remind them after 30 days
+                        var plus30days = new Date();
+                        plus30days.setDate(plus30days.getDate() + 30);
+                        
+                        this.context.globalState.update(this.lastRatingPromptDateKey, plus30days);
                     }
                     else if (selection === "Later")
                     {
