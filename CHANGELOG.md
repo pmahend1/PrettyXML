@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.3.3: 23-Dec-2021
+
+- Missing release notes not displaying bugfix.
+
 ### 1.3.2: 23-Dec-2021
 
 - Missing release notes text added.
