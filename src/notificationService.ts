@@ -72,7 +72,7 @@ export class NotificationService
         let updateNotes: string = "";
         try
         {
-            let filePath = path.join(this.context.extensionPath, "src", "newReleaseNotifications.json");
+            let filePath = path.join(this.context.extensionPath, "lib", "newReleaseNotifications.json");
             var content = fs.readFileSync(filePath, { "encoding": "utf8" });
             let releaseNotes: UpdateNote[] = JSON.parse(content);
             var currentUpdateNote = releaseNotes.find((x) => { return x.version === version; });
