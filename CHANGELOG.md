@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.3.2: 23-Dec-2021
+
+- Missing release notes text added.
+
 ### 1.3.1: 22-Dec-2021
 
 - Fixed a bug where release notes information pop up isn't displaying.
