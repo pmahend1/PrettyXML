@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.3.4: 27-Dec-2021
+
+- Fix for infinite formatting progress on errored XML file. [#88](https://github.com/pmahend1/PrettyXML/issues/88)
+
 ### 1.3.3: 23-Dec-2021
 
 - Missing release notes not displaying bugfix.
