@@ -36,7 +36,7 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
 
                 var formattedText = await vscode.window.withProgress(progressOptions, (progress) =>
                 {
-                    var promise = new Promise<string>((resolve, reject) =>
+                    var promise = new Promise<string>(async (resolve, reject) =>
                     {
                         progress.report({ message: "Formatting...", increment: 0 });
 
@@ -53,12 +53,12 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
                                 var formattedText = await this.formatter.formatXml();
                                 progress.report({ message: "Formatting...", increment: 75 });
                                 resolve(formattedText);
-    
+
                                 progress.report({ message: "Formatting...", increment: 100 });
                             }
                             catch (error) 
                             {
-                                reject(error);
+                                return reject(error);
                             }
                         }, 250);
                     });
@@ -66,12 +66,12 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
                     return promise;
                 });
                 const replacer = TextEdit.replace(documentRange, formattedText);
-                resolve([ replacer ]);
+                return resolve([ replacer ]);
             }
             catch (error)
             {
                 console.error(error);
-                reject(error);
+                return resolve([]);
             }
         });
     }
