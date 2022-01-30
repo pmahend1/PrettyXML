@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.4.0: 29-Jan-2022
+
+- Yarn security upgrades.
+
 ### 1.3.4: 27-Dec-2021
 
 - Fix for infinite formatting progress on errored XML file. [#88](https://github.com/pmahend1/PrettyXML/issues/88)
