@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.5.0: 27-Mar-2022
+
+- Yarn security upgrades.
+
 ### 1.4.0: 29-Jan-2022
 
 - Yarn security upgrades.

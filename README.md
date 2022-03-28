@@ -1,6 +1,6 @@
 # Pretty XML
 
-<img src='./images/logo.png' width='200' height='200' /> 
+<img src='./images/logo.png' width='200' height='200' />
 
 [What is it?](#what-is-it)
 
@@ -22,36 +22,22 @@
 
 [For more information](#for-more-information)
 
-------------------
-
-> 🆕 What's new in version 1.x.x 
->
-> Now you can set Pretty XML as your default XML formatter.  
-> 
-> If you have multiple formatters installed then right click and select 'Format Document with...' and choose 'Configure Default Formatter' to change it.
-> Once done you can use formatting keybind to format , default is usually **Shift + Alt + F**  
-> 
-> You can still use Pretty XML command key Ctrl + K L too.
->
-> Linux support added with version 1.1.0
-
---------------------
-
 ## What is it?
 
 Pretty XML is a XML formatter extension for Visual Studio Code and VSCodium. It formats XML documents just like Visual Studio on Windows.
 
-**Supported file extensions**: 
-- xml
-- xaml
-- axml
-- xsd
-- xsl
-- plist
-- mobileconfig
-- config
-- csproj
-- resx and all other XML type of files.
+**Supported file extensions**:
+
+-   xml
+-   xaml
+-   axml
+-   xsd
+-   xsl
+-   plist
+-   mobileconfig
+-   config
+-   csproj
+-   resx and all other XML type of files.
 
 There is also **Visual Studio for Mac** version of this extension. Check it out at [PrettyXML.VSMac](https://github.com/pmahend1/PrettyXML.VSMac)
 
@@ -63,10 +49,9 @@ Suggestions, improvement PRs are welcome.
 
 ![Deploy.](https://img.shields.io/github/workflow/status/pmahend1/prettyxml/Deploy%20CI?color=brightgreen&label=Deploy%20CI&style=flat-square&logo=github) ![Installs](https://vsmarketplacebadge.apphb.com/installs/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Installs&logo=data:img/png:images/logo.png) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Downloads) ![Rating](https://vsmarketplacebadge.apphb.com/rating-star/PrateekMahendrakar.PrettyXML.svg?style=flat-square&label=Rating)
 
-
 ![prettify gif.](./images/Prettify.gif)
 
---------------------
+---
 
 ## Features
 
@@ -74,11 +59,11 @@ Suggestions, improvement PRs are welcome.
 
 Right Click and Select Prettify XML or use [shortcut](#keyboard-shortcuts)
 
-- First attribute on same line as start tag.
-- All attributes indented aligning with first attribute.
-- If no child for an element then close inline end tag.(Setting)
-- No empty lines.
-- Supports `'` and whitespace unicodes in attribute value for XAML parser compatibility.
+-   First attribute on same line as start tag.
+-   All attributes indented aligning with first attribute.
+-   If no child for an element then close inline end tag.(Setting)
+-   No empty lines.
+-   Supports `'` and whitespace unicodes in attribute value for XAML parser compatibility.
 
 _before_
 
@@ -94,7 +79,7 @@ Minimizes XML.
 
 ![minimize gif.](./images/Minimize.gif)
 
---------------------
+---
 
 ## Keyboard Shortcuts
 
@@ -109,7 +94,7 @@ Minimizes XML.
 >
 > You can change these in **Preferences → Keyboard Shortcuts** if you want.
 
---------------------
+---
 
 ## Settings
 
@@ -128,18 +113,17 @@ These will be for **Prettify XML** command.
 
 ![Settings Image.](./images/settings.png)
 
---------------------
+---
 
 ## Requirements
 
-- VS Code 1.58 or higher.
-> **Important!**
->
-> You will need .Net SDK or mono installed on your machine and should be accessible through terminal.  
-       
-- Linux users may have to install [Muhammad-Sammy C#](https://open-vsx.org/extension/muhammad-sammy/csharp) or [Microsoft C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) extension.
+-   VS Code 1.58 or higher.
+    > **Important!**
+    >
+    > You will need .Net SDK or mono installed on your machine and should be accessible through terminal.
+-   Linux users may have to install [Muhammad-Sammy C#](https://open-vsx.org/extension/muhammad-sammy/csharp) or [Microsoft C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) extension.
 
---------------------
+---
 
 ## Installation
 
@@ -147,20 +131,19 @@ Visual Studio Code - [Visual Studio MarketPlace](https://marketplace.visualstudi
 
 For VSCodium - [open-vsx.org](https://open-vsx.org/extension/PrateekMahendrakar/prettyxml)
 
---------------------
+---
 
 ## Known Issues
 
-- Limited DTD support.
-- Formats valid XML files only. Syntax errors are displayed.
+-   Limited DTD support.
+-   Formats valid XML files only. Syntax errors are displayed.
 
 Issues can be reported at [issues section](https://github.com/pmahend1/PrettyXML/issues)
 
---------------------
+---
 
 ### For more information
 
-- [Source Code](https://github.com/pmahend1/prettyxml)
-- If you want to support this project,  
-[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="150" height="35" />](https://www.buymeacoffee.com/pmahend1)
-
+-   [Source Code](https://github.com/pmahend1/prettyxml)
+-   If you want to support this project,  
+    [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="150" height="35" />](https://www.buymeacoffee.com/pmahend1)
