@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.5.1: 27-Mar-2022
+
+- Fixed bug in release notes URL.  
+
 ### 1.5.0: 27-Mar-2022
 
 - Yarn security upgrades.
