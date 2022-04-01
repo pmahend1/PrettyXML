@@ -59,7 +59,7 @@ export class Formatter
         catch (error)
         {
             var errorMessage = (error as Error)?.message;
-            if (this.checkElectronEdgeException(errorMessage))
+            if (this.isElectronEdgeException(errorMessage))
             {
                 this.runWithCommandLine = true;
             }
@@ -146,7 +146,7 @@ export class Formatter
                 catch (exception)
                 {
                     var errorMessage = (exception as Error)?.message;
-                    if (this.checkElectronEdgeException(errorMessage))
+                    if (this.isElectronEdgeException(errorMessage))
                     {
                         this.runWithCommandLine = true;
                         formattedString = await this.formatWithCommandLine(docText, FormattingActionKind.format);
@@ -205,7 +205,7 @@ export class Formatter
                 catch (error)
                 {
                     var errorMessage = (error as Error)?.message;
-                    if (this.checkElectronEdgeException(errorMessage))
+                    if (this.isElectronEdgeException(errorMessage))
                     {
                         this.runWithCommandLine = true;
                         minimizedXmlText = await this.formatWithCommandLine(docText, FormattingActionKind.minimize);
@@ -276,17 +276,25 @@ export class Formatter
 
     }
 
-    private checkElectronEdgeException(errorMessage: string): boolean
+    private isElectronEdgeException(errorMessage: string): boolean
     {
-        if (errorMessage !== null && errorMessage.includes("The edge module has not been pre-compiled for node.js version"))
+        if (errorMessage)
         {
-            return true;
+            errorMessage = errorMessage.toLocaleLowerCase();
+            if (errorMessage.includes('edge module has not been pre-compiled for node.js') ||
+                errorMessage.includes('edge module has not been pre-compiled for electron')) 
+            {
+                return true;
+            }
+            else
+            {
+                vscode.window.showErrorMessage(errorMessage);
+                console.error(error);
+                return false;
+            }
         }
-
         else
         {
-            vscode.window.showErrorMessage(errorMessage);
-            console.error(error);
             return false;
         }
     }
