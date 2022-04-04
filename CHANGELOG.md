@@ -2,117 +2,121 @@
 
 ## Stable
 
+### 1.5.3: 04-Apr-2022
+
+-   Module did not self-register error work-around added for electron-edge-js.
+
 ### 1.5.2: 01-Apr-2022
 
-- Fixed bug with Electron-Edge-JS module.  
+-   Fixed bug with Electron-Edge-JS module.
 
 ### 1.5.1: 27-Mar-2022
 
-- Fixed bug in release notes URL.  
+-   Fixed bug in release notes URL.
 
 ### 1.5.0: 27-Mar-2022
 
-- Yarn security upgrades.
+-   Yarn security upgrades.
 
 ### 1.4.0: 29-Jan-2022
 
-- Yarn security upgrades.
+-   Yarn security upgrades.
 
 ### 1.3.4: 27-Dec-2021
 
-- Fix for infinite formatting progress on errored XML file. [#88](https://github.com/pmahend1/PrettyXML/issues/88)
+-   Fix for infinite formatting progress on errored XML file. [#88](https://github.com/pmahend1/PrettyXML/issues/88)
 
 ### 1.3.3: 23-Dec-2021
 
-- Missing release notes not displaying bugfix.
+-   Missing release notes not displaying bugfix.
 
 ### 1.3.2: 23-Dec-2021
 
-- Missing release notes text added.
+-   Missing release notes text added.
 
 ### 1.3.1: 22-Dec-2021
 
-- Fixed a bug where release notes information pop up isn't displaying.
+-   Fixed a bug where release notes information pop up isn't displaying.
 
 ### 1.3.0: 19-Dec-2021
 
-- Added review prompt 
-- Fixed issue with what's new dialog logic.
-- Yarn upgrades.
+-   Added review prompt
+-   Fixed issue with what's new dialog logic.
+-   Yarn upgrades.
 
 ### 1.2.1: 6-Dec-2021
 
-- Yarn upgrades.
+-   Yarn upgrades.
 
 ### 1.2.0: 3-Oct-2021
 
-- New logo added.
+-   New logo added.
 
 ### 1.1.2 : 3-Oct-2021
 
-- Fixed a bug where progress bar was not dismissing if there was a formatting error.
+-   Fixed a bug where progress bar was not dismissing if there was a formatting error.
 
 ### 1.1.0 : 18-Sep-2021
 
-- Linux support added
-- Command line mode added internally as back-up in case electron-edge-js binary issue for NodeJs version.
+-   Linux support added
+-   Command line mode added internally as back-up in case electron-edge-js binary issue for NodeJs version.
 
 ### 1.0.2 : 12-Sep-2021
 
-- Fixed *on save* which was running after the document save.
+-   Fixed _on save_ which was running after the document save.
 
 ### 1.0.1 : 10-Sep-2021
 
-- Fixed a bug where *on save* was triggering formatting command for non-xml documents .
+-   Fixed a bug where _on save_ was triggering formatting command for non-xml documents .
 
 ### 1.0.0 : 9-Sep-2021
 
-- Document formatting provider added.🆕
+-   Document formatting provider added.🆕
 
 ## Preview
 
 ### 0.11.0 : 8-Aug-2021
 
-- Electron 13.1.7 specific build.
+-   Electron 13.1.7 specific build.
 
 ### 0.10.0 : 31-Jul-2021
 
-- Added setting  `prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues`
-- Updated **Readme.md**.  
+-   Added setting `prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues`
+-   Updated **Readme.md**.
 
 ### 0.9.0 : 30-Jul-2021
 
-- Added settings : 
-    - `prettyxml.settings.allowSingleQuoteInAttributeValue`
-    - `prettyxml.settings.addSpaceBeforeSelfClosingTag`
-    - `prettyxml.settings.wrapCommentTextWithSpaces`
-- Updated **Readme.md**.  
+-   Added settings :
+    -   `prettyxml.settings.allowSingleQuoteInAttributeValue`
+    -   `prettyxml.settings.addSpaceBeforeSelfClosingTag`
+    -   `prettyxml.settings.wrapCommentTextWithSpaces`
+-   Updated **Readme.md**.
 
 ### 0.8.1
 
-- Fix for [#66:The edge module has not been pre-compiled for node.js version v14.16.0](https://github.com/pmahend1/PrettyXML/issues/66)
+-   Fix for [#66:The edge module has not been pre-compiled for node.js version v14.16.0](https://github.com/pmahend1/PrettyXML/issues/66)
 
-### 0.7.3 
+### 0.7.3
 
-- Yarn security updates
+-   Yarn security updates
 
 ### 0.7.2
 
-- Fixed XML value escape issue [#61: "&amp" in attributes are reformatted as "&"](https://github.com/pmahend1/PrettyXML/issues/61)
+-   Fixed XML value escape issue [#61: "&amp" in attributes are reformatted as "&"](https://github.com/pmahend1/PrettyXML/issues/61)
 
 ### 0.7.1
 
-- Electron-edge-js updated for NodeJs 12.18.3/Electron 11.2.1
-- Fixes [Issue#55: The edge module has not been pre-compiled for node.js version v12.18.3](https://github.com/pmahend1/PrettyXML/issues/55)
+-   Electron-edge-js updated for NodeJs 12.18.3/Electron 11.2.1
+-   Fixes [Issue#55: The edge module has not been pre-compiled for node.js version v12.18.3](https://github.com/pmahend1/PrettyXML/issues/55)
 
 ### 0.6.0
 
-- New Feature **Format On Save** added.
+-   New Feature **Format On Save** added.
 
 ### 0.5.4
 
-- Yarn upgrade.
-- Updated banner color and theme.
+-   Yarn upgrade.
+-   Updated banner color and theme.
 
 ### 0.5.3
 
@@ -144,23 +148,24 @@ Added CIs for PR version check and extension deployment.
 
 ### 0.3.0
 
-Added **PrettyXML: Minimize** command.  
+Added **PrettyXML: Minimize** command.
 
 ### 0.2.2
 
-- Updated packages
-- Fixes [Issue#20:Issue in formatting tag with no attributes and no childs but has separate end tag](https://github.com/pmahend1/PrettyXML/issues/20)
+-   Updated packages
+-   Fixes [Issue#20:Issue in formatting tag with no attributes and no childs but has separate end tag](https://github.com/pmahend1/PrettyXML/issues/20)
 
-### 0.2.1 
+### 0.2.1
 
-Updated default for `prettyxml.settings.useSelfClosingTag` to `true`.  
+Updated default for `prettyxml.settings.useSelfClosingTag` to `true`.
 
 ### 0.2.0
 
-Added Settings 
- - Indent Space Length.
- - Use Single Quotes.
- - Use Self Closing Tags.
+Added Settings
+
+-   Indent Space Length.
+-   Use Single Quotes.
+-   Use Self Closing Tags.
 
 ### 0.1.8
 
@@ -185,7 +190,7 @@ Changed keybinding to **Cmd+K L** for Mac and **Control+K L** for other platform
 
 **Fixes:**
 
-- [This extension stop native ctrl+p in vscode #7](https://github.com/pmahend1/PrettyXML/issues/7)  
+-   [This extension stop native ctrl+p in vscode #7](https://github.com/pmahend1/PrettyXML/issues/7)
 
 ### 0.0.8 & 0.0.9
 
