@@ -282,7 +282,8 @@ export class Formatter
         {
             errorMessage = errorMessage.toLocaleLowerCase();
             if (errorMessage.includes('edge module has not been pre-compiled for node.js') ||
-                errorMessage.includes('edge module has not been pre-compiled for electron')) 
+                errorMessage.includes('edge module has not been pre-compiled for electron') ||
+                (errorMessage.includes('module did not self-register') && errorMessage.includes('edge-js'))) 
             {
                 return true;
             }
