@@ -806,23 +806,6 @@ duplexer2@~0.1.4:
   dependencies:
     readable-stream "^2.0.2"
 
-edge-cs@1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/edge-cs/-/edge-cs-1.2.1.tgz#bd1a9ecdb94ef0ed40c894582046749e57045e5a"
-  integrity sha1-vRqezblO8O1AyJRYIEZ0nlcEXlo=
-
-"electron-edge-js-mac@file:./lib/electron-edge-js-mac":
-  version "14.16.1"
-  dependencies:
-    edge-cs "1.2.1"
-    nan "^2.14.2"
-
-"electron-edge-js@file:./lib/electron-edge-js":
-  version "14.16.1"
-  dependencies:
-    edge-cs "1.2.1"
-    nan "^2.14.2"
-
 electron-rebuild@^3.2.3:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/electron-rebuild/-/electron-rebuild-3.2.7.tgz#0f56c1cc99a6fec0a5b990532283c2a8c838c19b"
@@ -1704,11 +1687,6 @@ ms@2.1.3, ms@^2.0.0:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
-
-nan@^2.14.2:
-  version "2.15.0"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.15.0.tgz#3f34a473ff18e15c1b5626b62903b5ad6e665fee"
-  integrity sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==
 
 nanoid@3.3.1:
   version "3.3.1"
