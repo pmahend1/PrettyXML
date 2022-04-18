@@ -14,13 +14,13 @@ export class JSInputDTO
     AllowWhiteSpaceUnicodesInAttributeValues: boolean;
 
     constructor(xmlString: string,
-        indentLength: number = DefaultSettings.IndentLength,
-        useSingleQuotes: boolean = DefaultSettings.UseSingleQuotes,
-        useSelfClosingTags: boolean = DefaultSettings.UseSelfClosingTags,
-        allowSingleQuoteInAttributeValue: boolean = DefaultSettings.AllowSingleQuoteInAttributeValue,
-        addSpaceBeforeSelfClosingTag: boolean = DefaultSettings.AddSpaceBeforeSelfClosingTag,
-        wrapCommentTextWithSpaces: boolean = DefaultSettings.WrapCommentTextWithSpaces,
-        allowWhiteSpaceUnicodesInAttributeValues: boolean = DefaultSettings.AllowWhiteSpaceUnicodesInAttributeValues)
+                indentLength: number = DefaultSettings.IndentLength,
+                useSingleQuotes: boolean = DefaultSettings.UseSingleQuotes,
+                useSelfClosingTags: boolean = DefaultSettings.UseSelfClosingTags,
+                allowSingleQuoteInAttributeValue: boolean = DefaultSettings.AllowSingleQuoteInAttributeValue,
+                addSpaceBeforeSelfClosingTag: boolean = DefaultSettings.AddSpaceBeforeSelfClosingTag,
+                wrapCommentTextWithSpaces: boolean = DefaultSettings.WrapCommentTextWithSpaces,
+                allowWhiteSpaceUnicodesInAttributeValues: boolean = DefaultSettings.AllowWhiteSpaceUnicodesInAttributeValues)
     {
         this.XMLString = xmlString;
         this.IndentLength = indentLength;

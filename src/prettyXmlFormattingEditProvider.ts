@@ -22,20 +22,41 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
 
     provideDocumentFormattingEdits(document: TextDocument, options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]>
     {
-        let documentRange: Range = DocumentHelper.getEditorRange();
+        let documentRange: Range = DocumentHelper.getDocumentRange(document);
 
-        return new Promise(async (resolve, reject) =>
+        let docText = document?.getText();
+
+        if(!docText)
+        {
+            return [];
+        }
+
+        token.onCancellationRequested((e: any, thisArgs?: any, disposables?:any) =>
+        {
+            if(token.isCancellationRequested)
+            {
+                return [];
+            }
+        });
+        return new Promise(async (resolve) =>
         {
             try
             {
                 var progressOptions = {
                     location: vscode.ProgressLocation.Notification,
                     title: "Pretty XML",
-                    cancellable: false,
+                    cancellable: true,
                 };
 
-                var formattedText = await vscode.window.withProgress(progressOptions, (progress) =>
+                var formattedText = await vscode.window.withProgress(progressOptions, (progress, token) =>
                 {
+                    token.onCancellationRequested((e: any, thisArgs?: any, disposables?:any) =>
+                    {
+                        if(token.isCancellationRequested)
+                        {
+                            return [];
+                        }
+                    });
                     var promise = new Promise<string>(async (resolve, reject) =>
                     {
                         progress.report({ message: "Formatting...", increment: 0 });
@@ -50,7 +71,7 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
                         {
                             try 
                             {
-                                var formattedText = await this.formatter.formatXml();
+                                var formattedText = await this.formatter.formatXml(docText);
                                 progress.report({ message: "Formatting...", increment: 75 });
                                 resolve(formattedText);
 

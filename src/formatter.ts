@@ -65,10 +65,14 @@ export class Formatter
                                      allowWhiteSpaceUnicodesInAttributeValues);
     }
 
-    public async formatXml(): Promise<string>
+    public async formatXml(docText: string = ""): Promise<string>
     {
         let formattedString: string = "";
-        var docText = DocumentHelper.getDocumentText();
+
+        if (!docText)
+        {
+            docText = DocumentHelper.getDocumentText();
+        }
 
         if (docText)
         {
