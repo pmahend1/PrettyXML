@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
 
-export function replaceDocumentTextWithProgressForCallback(progressText: string, task: Thenable<string>) : Thenable<void>
+export function replaceDocumentTextWithProgressForCallback(progressText: string, task: Thenable<string>): Thenable<void>
 {
     var progressOptions = {
         location: vscode.ProgressLocation.Notification,
@@ -11,7 +11,7 @@ export function replaceDocumentTextWithProgressForCallback(progressText: string,
 
     var progressPromise = vscode.window.withProgress(progressOptions, (progress) =>
     {
-        var promise = new Promise<void>((resolve, reject)  =>
+        var promise = new Promise<void>((resolve, reject) =>
         {
             progress.report({ message: progressText, increment: 0 });
 
@@ -26,11 +26,11 @@ export function replaceDocumentTextWithProgressForCallback(progressText: string,
                 {
                     var newText = await task;
                     progress.report({ message: progressText, increment: 75 });
-    
+
                     DocumentHelper.replaceDocumentText(newText);
                     progress.report({ message: progressText, increment: 100 });
                     resolve();
-                } 
+                }
                 catch (error) 
                 {
                     reject(error);

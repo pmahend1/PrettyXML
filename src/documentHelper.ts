@@ -15,13 +15,30 @@ export class DocumentHelper
         return vscode.window.activeTextEditor;
     }
 
-    //get Range of the active document
+    //get Range of the active document in editor
     public static getEditorRange(): vscode.Range
     {
         if (this.Editor)
         {
             //get editor text
             let document = this.Editor.document;
+            var start = new vscode.Position(0, 0);
+            var lastButOne = document.lineAt(document.lineCount - 1);
+            var end = new vscode.Position(document.lineCount, lastButOne.range.end.character);
+            var ranger = new vscode.Range(start, end);
+            return ranger;
+        }
+        else
+        {
+            return new vscode.Range(0, 0, 0, 0);
+        }
+    }
+
+    //get Range of a document
+    public static getDocumentRange(document: vscode.TextDocument): vscode.Range
+    {
+        if (document)
+        {
             var start = new vscode.Position(0, 0);
             var lastButOne = document.lineAt(document.lineCount - 1);
             var end = new vscode.Position(document.lineCount, lastButOne.range.end.character);
@@ -69,9 +86,9 @@ export class DocumentHelper
         }
     }
 
-    public static createLanguageDocumentFilters(language : string): vscode.DocumentFilter[]
+    public static createLanguageDocumentFilters(language: string): vscode.DocumentFilter[]
     {
-        var filters =  [ new DocumentFilter(language, 'file'), new DocumentFilter(language, 'untitled') ];
+        var filters = [ new DocumentFilter(language, 'file'), new DocumentFilter(language, 'untitled') ];
         return filters;
     }
 }
