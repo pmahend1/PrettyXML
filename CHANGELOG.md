@@ -2,6 +2,11 @@
 
 ## Stable
 
+### 1.6.0: 18-Apr-2022
+
+- Removed Electron-Edge-JS dependency.  
+- Added missing SVG support.  
+
 ### 1.5.3: 04-Apr-2022
 
 -   Module did not self-register error work-around added for electron-edge-js.
