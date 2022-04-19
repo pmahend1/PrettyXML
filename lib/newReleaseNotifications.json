@@ -70,5 +70,9 @@
     {
         "version": "1.6.0",
         "updateNotes": "Pretty XML updated to version 1.6.0.\n [See what's new](https://github.com/pmahend1/PrettyXML/blob/main/CHANGELOG.md#160-18-apr-2022)"
+    },
+    {
+        "version": "1.6.1",
+        "updateNotes": "Pretty XML updated to version 1.6.1.\n [See what's new](https://github.com/pmahend1/PrettyXML/blob/main/CHANGELOG.md#161-18-apr-2022)"
     }
 ]
