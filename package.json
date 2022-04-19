@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "1.5.3",
+    "version": "1.6.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -91,7 +91,8 @@
                     ".mobileconfig",
                     ".xaml",
                     ".axml",
-                    ".resx"
+                    ".resx",
+                    ".svg"
                 ]
             }
         ],
@@ -182,8 +183,6 @@
         "@types/compare-versions": "^3.3.0",
         "child_process": "^1.0.2",
         "compare-versions": "^3.6.0",
-        "electron-edge-js": "file:./lib/electron-edge-js",
-        "electron-edge-js-mac": "file:./lib/electron-edge-js-mac",
         "fs": "^0.0.1-security",
         "install": "^0.13.0",
         "path": "^0.12.7"
