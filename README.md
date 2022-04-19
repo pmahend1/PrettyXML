@@ -120,7 +120,7 @@ These will be for **Prettify XML** command.
 -   VS Code 1.58 or higher.
     > **Important!**
     >
-    > You will need .Net SDK or mono installed on your machine and should be accessible through terminal.
+    > You will need .Net 5 or later installed on your machine and should be accessible through terminal.
 -   Linux users may have to install [Muhammad-Sammy C#](https://open-vsx.org/extension/muhammad-sammy/csharp) or [Microsoft C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) extension.
 
 ---
