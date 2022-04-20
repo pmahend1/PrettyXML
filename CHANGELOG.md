@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 1.6.1: 18-Apr-2022
+
+- Added `Don't show again` for review extension prompt since some people got annoyed being asked once in 15-30 days.
+
 ### 1.6.0: 18-Apr-2022
 
 - Removed Electron-Edge-JS dependency.  

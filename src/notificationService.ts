@@ -120,7 +120,7 @@ export class NotificationService
             if (shouldDisplayPrompt)
             {
                 var text = "Loving Pretty XML extension? Would you like to rate and review?";
-                var selection = await vscode.window.showInformationMessage(text, "Sure", "Later");
+                var selection = await vscode.window.showInformationMessage(text, "Sure", "Later", "Don't show again");
                 if (selection)
                 {
                     if (selection === "Sure")
@@ -147,6 +147,13 @@ export class NotificationService
                     else if (selection === "Later")
                     {
                         this.context.globalState.update(this.lastRatingPromptDateKey, new Date());
+                    }
+                    else if(selection === "Don't show again")
+                    {
+                        var oneYear = new Date();
+                        oneYear.setDate(oneYear.getDate() + 365);
+                        
+                        this.context.globalState.update(this.lastRatingPromptDateKey, oneYear);
                     }
                 }
             }
