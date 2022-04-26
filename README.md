@@ -117,11 +117,9 @@ These will be for **Prettify XML** command.
 
 ## Requirements
 
+-   [**.Net 5** or later](https://dotnet.microsoft.com/en-us/download/dotnet) installed on your machine and should be accessible through terminal.
+-   Install [Muhammad-Sammy C#](https://open-vsx.org/extension/muhammad-sammy/csharp) or [Microsoft C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) extension.
 -   VS Code 1.58 or higher.
-    > **Important!**
-    >
-    > You will need .Net 5 or later installed on your machine and should be accessible through terminal.
--   Linux users may have to install [Muhammad-Sammy C#](https://open-vsx.org/extension/muhammad-sammy/csharp) or [Microsoft C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) extension.
 
 ---
 
