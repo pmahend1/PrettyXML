@@ -32,7 +32,7 @@ export class Formatter
                 vscode.window.showErrorMessage('Error in finding extension path');
                 throw new Error('Error in finding extension path');
             }
-            this.dllPath = path.join(this.extensionContext.extensionPath, "lib", "XmlFormatter.CommadLine.dll");
+            this.dllPath = path.join(this.extensionContext.extensionPath, "lib", "XmlFormatter.CommandLine.dll");
         }
         catch (error)
         {
@@ -54,6 +54,7 @@ export class Formatter
         let addSpaceBeforeSelfClosingTag = prettyXmlConfig.get<boolean>('addSpaceBeforeSelfClosingTag');
         let wrapCommentTextWithSpaces = prettyXmlConfig.get<boolean>('wrapCommentTextWithSpaces');
         let allowWhiteSpaceUnicodesInAttributeValues = prettyXmlConfig.get<boolean>('allowWhiteSpaceUnicodesInAttributeValues');
+        let positionFirstAttributeOnSameLine = prettyXmlConfig.get<boolean>('positionFirstAttributeOnSameLine');
 
         this.settings = new Settings(spacelength,
                                      usesinglequotes,
@@ -62,7 +63,8 @@ export class Formatter
                                      allowSingleQuoteInAttributeValue,
                                      addSpaceBeforeSelfClosingTag,
                                      wrapCommentTextWithSpaces,
-                                     allowWhiteSpaceUnicodesInAttributeValues);
+                                     allowWhiteSpaceUnicodesInAttributeValues,
+                                     positionFirstAttributeOnSameLine);
     }
 
     public async formatXml(docText: string = ""): Promise<string>

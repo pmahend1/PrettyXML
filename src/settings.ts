@@ -9,6 +9,7 @@ export interface ISettings
     AddSpaceBeforeSelfClosingTag: boolean;
     WrapCommentTextWithSpaces: boolean;
     AllowWhiteSpaceUnicodesInAttributeValues: boolean;
+    PositionFirstAttributeOnSameLine: boolean;
 }
 
 export const DefaultSettings: ISettings = {
@@ -19,7 +20,8 @@ export const DefaultSettings: ISettings = {
                                             AllowSingleQuoteInAttributeValue: true,
                                             AddSpaceBeforeSelfClosingTag: true,
                                             WrapCommentTextWithSpaces: true,
-                                            AllowWhiteSpaceUnicodesInAttributeValues: true
+                                            AllowWhiteSpaceUnicodesInAttributeValues: true,
+                                            PositionFirstAttributeOnSameLine: true
                                           };
 
 export class Settings
@@ -32,6 +34,7 @@ export class Settings
     AddSpaceBeforeSelfClosingTag?: boolean;
     WrapCommentTextWithSpaces?: boolean;
     AllowWhiteSpaceUnicodesInAttributeValues?: boolean;
+    PositionFirstAttributeOnSameLine?: boolean;
 
     constructor(indentLengh?: number,
                 useSingleQuotes?: boolean,
@@ -40,15 +43,17 @@ export class Settings
                 allowSingleQuoteInAttributeValue?: boolean,
                 addSpaceBeforeSelfClosingTag?: boolean,
                 wrapCommentTextWithSpaces?: boolean,
-                allowWhiteSpaceUnicodesInAttributeValues?: boolean)
+                allowWhiteSpaceUnicodesInAttributeValues?: boolean,
+                positionFirstAttributeOnSameLine?: boolean)
     {
         this.IndentLength = indentLengh ?? DefaultSettings.IndentLength;
         this.UseSingleQuotes = useSingleQuotes ?? DefaultSettings.UseSingleQuotes;
         this.UseSelfClosingTags = useSelfClosingTags ?? DefaultSettings.UseSelfClosingTags;
         this.FormatOnSave = formatOnSave ?? DefaultSettings.FormatOnSave;
-        this.AllowSingleQuoteInAttributeValue = allowSingleQuoteInAttributeValue;
+        this.AllowSingleQuoteInAttributeValue = allowSingleQuoteInAttributeValue ?? DefaultSettings.AllowSingleQuoteInAttributeValue;
         this.AddSpaceBeforeSelfClosingTag = addSpaceBeforeSelfClosingTag ?? DefaultSettings.AddSpaceBeforeSelfClosingTag;
         this.WrapCommentTextWithSpaces = wrapCommentTextWithSpaces ?? DefaultSettings.WrapCommentTextWithSpaces;
-        this.AllowWhiteSpaceUnicodesInAttributeValues = allowWhiteSpaceUnicodesInAttributeValues;
+        this.AllowWhiteSpaceUnicodesInAttributeValues = allowWhiteSpaceUnicodesInAttributeValues ?? DefaultSettings.AllowWhiteSpaceUnicodesInAttributeValues;
+        this.PositionFirstAttributeOnSameLine = positionFirstAttributeOnSameLine ?? DefaultSettings.PositionFirstAttributeOnSameLine;
     }
 }

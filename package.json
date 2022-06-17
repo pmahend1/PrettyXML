@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "1.6.1",
+    "version": "2.0.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -152,6 +152,11 @@
                         "type": "boolean",
                         "markdownDescription": "Allow unicode whitespace characters in attribute values. *Default* is *Checked* \n\n **Checked** : \n\n `&#10;` → `&#xA;` \n\n `&#x9;` → `&#x9;` \n\n `&#9;` → `&#x9;` \n\n **Unchecked** :\n\n `&#10;` → new line  \n\n `&#9;` → tab  \n\n `&#x9;` → tab ",
                         "default": true
+                    },
+                    "prettyxml.settings.positionFirstAttributeOnSameLine": {
+                        "type": "boolean",
+                        "markdownDescription": "Position first attribute on same line. *Default* is *Checked* \n\n **Checked** : \n\n `<Element Attribute=\"Value\"` \n\n **Unchecked** : \n\n `<Element` \n\n &emsp;&emsp; `Attribute=\"Value\"` ",
+                        "default": true
                     }
                 }
             }
@@ -172,7 +177,6 @@
         "@types/vscode": "^1.59.0",
         "@typescript-eslint/eslint-plugin": "^4.29.0",
         "@typescript-eslint/parser": "4.31.0",
-        "electron-rebuild": "^3.2.3",
         "eslint": "^7.6.0",
         "glob": "^7.1.6",
         "mocha": "^9.0.2",
