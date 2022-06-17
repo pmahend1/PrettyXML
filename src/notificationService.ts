@@ -7,17 +7,18 @@ export class NotificationService
 {
     private context: vscode.ExtensionContext;
     public readonly storageKeyPrefix: string;
+    private readonly lastRatingPromptDateKey: string;
+    private readonly versionKey: string;
 
-    private lastNotifiedDateKey: string;
-
-    private lastRatingPromptDateKey: string;
+    private readonly currentVersion: string;
 
     constructor(context: vscode.ExtensionContext)
     {
         this.context = context;
         this.storageKeyPrefix = this.context.extension.id + ".";
-        this.lastNotifiedDateKey = `${ this.storageKeyPrefix }lastNotifiedDate`;
         this.lastRatingPromptDateKey = `${ this.storageKeyPrefix }lastRatingPromptDate`;
+        this.versionKey = `${ this.storageKeyPrefix }version`;
+        this.currentVersion = this.context.extension.packageJSON.version;
     }
 
     private checkIfEligibletToShowUpdateNote(): boolean
@@ -25,44 +26,19 @@ export class NotificationService
         let shouldDisplay: boolean = true;
         try
         {
-            const versionKey = `${ this.storageKeyPrefix }version`;
-            const currentVersion = this.context.extension.packageJSON.version;
-            var lastVersionShown = this.context.globalState.get(versionKey) as string;
-
+            var lastVersionShown = this.context.globalState.get(this.versionKey) as string;
 
             if (lastVersionShown)
             {
-                if (compareVersions.compare(currentVersion, lastVersionShown, '='))
+                if (compareVersions.compare(this.currentVersion, lastVersionShown, '<='))
                 {
-                    var minus7days = new Date();
-                    minus7days.setDate(minus7days.getDate() - 7);
-
-                    var lastNotifiedDateAsJunk = this.context.globalState.get(this.lastNotifiedDateKey) as Date;
-                    if (lastNotifiedDateAsJunk)
-                    {
-                        var lastNotifiedDateAsCompareable = new Date(lastNotifiedDateAsJunk.toString());
-                        shouldDisplay = lastNotifiedDateAsCompareable < minus7days;
-                    }
-                    else
-                    {
-                        shouldDisplay = true;
-                    }
-                }
-                else
-                {
-                    shouldDisplay = true;
+                    shouldDisplay = false;
                 }
             }
-            else
-            {
-                shouldDisplay = true;
-            }
-            this.context.globalState.update(versionKey, currentVersion);
         }
         catch (error)
         {
             console.error(error);
-            shouldDisplay = true;
         }
         return shouldDisplay;
     }
@@ -97,12 +73,11 @@ export class NotificationService
             let shouldDisplay: boolean = this.checkIfEligibletToShowUpdateNote();
             if (shouldDisplay)
             {
-                var currentVersion = this.context.extension.packageJSON.version;
-                var notes = this.getUpdateNotes(currentVersion);
+                var notes = this.getUpdateNotes(this.currentVersion);
                 if (notes !== "")
                 {
                     await vscode.window.showInformationMessage(notes);
-                    this.context.globalState.update(this.lastNotifiedDateKey, new Date());
+                    this.context.globalState.update(this.versionKey, this.currentVersion);
                 }
             }
         }
@@ -141,18 +116,18 @@ export class NotificationService
                         //remind them after 30 days
                         var plus30days = new Date();
                         plus30days.setDate(plus30days.getDate() + 30);
-                        
+
                         this.context.globalState.update(this.lastRatingPromptDateKey, plus30days);
                     }
                     else if (selection === "Later")
                     {
                         this.context.globalState.update(this.lastRatingPromptDateKey, new Date());
                     }
-                    else if(selection === "Don't show again")
+                    else if (selection === "Don't show again")
                     {
                         var oneYear = new Date();
                         oneYear.setDate(oneYear.getDate() + 365);
-                        
+
                         this.context.globalState.update(this.lastRatingPromptDateKey, oneYear);
                     }
                 }
