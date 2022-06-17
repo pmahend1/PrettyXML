@@ -2,14 +2,20 @@
 
 ## Stable
 
+### 2.0.0 : 17-Jun-2022
+
+-   Dependency updated to .Net 6
+-   Position First Attribute On Same Line setting added. Default is `True`
+-   Some notification service clean up.
+
 ### 1.6.1: 18-Apr-2022
 
-- Added `Don't show again` for review extension prompt since some people got annoyed being asked once in 15-30 days.
+-   Added `Don't show again` for review extension prompt since some people got annoyed being asked once in 15-30 days.
 
 ### 1.6.0: 18-Apr-2022
 
-- Removed Electron-Edge-JS dependency.  
-- Added missing SVG support.  
+-   Removed Electron-Edge-JS dependency.
+-   Added missing SVG support.
 
 ### 1.5.3: 04-Apr-2022
 

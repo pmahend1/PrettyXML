@@ -37,9 +37,10 @@ Pretty XML is a XML formatter extension for Visual Studio Code and VSCodium. It 
 -   mobileconfig
 -   config
 -   csproj
+-   svg
 -   resx and all other XML type of files.
 
-There is also **Visual Studio for Mac** version of this extension. Check it out at [PrettyXML.VSMac](https://github.com/pmahend1/PrettyXML.VSMac)
+There is also **Visual Studio for Mac 2019** version of this extension. Check it out at [PrettyXML.VSMac](https://github.com/pmahend1/PrettyXML.VSMac)
 
 Suggestions, improvement PRs are welcome.
 
@@ -110,6 +111,7 @@ These will be for **Prettify XML** command.
 | prettyxml.settings.addSpaceBeforeSelfClosingTag             | true          | Adds space before self closing tag              |
 | prettyxml.settings.wrapCommentTextWithSpaces                | true          | Wraps comment text with a single space          |
 | prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues | true          | Allows white space unicodes in attribute values |
+| prettyxml.settings.positionFirstAttributeOnSameLine         | true          | Position first attribute on same line.          |
 
 ![Settings Image.](./images/settings.png)
 
@@ -117,9 +119,9 @@ These will be for **Prettify XML** command.
 
 ## Requirements
 
--   [**.Net 5** or later](https://dotnet.microsoft.com/en-us/download/dotnet) installed on your machine and should be accessible through terminal.
+-   [**.Net 6** or later](https://dotnet.microsoft.com/en-us/download/dotnet) installed on your machine and should be accessible through terminal.
 -   Install [Muhammad-Sammy C#](https://open-vsx.org/extension/muhammad-sammy/csharp) or [Microsoft C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) extension.
--   VS Code 1.58 or higher.
+-   Visual Studio Code/VSCodium 1.59 or higher.
 
 ---
 
@@ -144,4 +146,4 @@ Issues can be reported at [issues section](https://github.com/pmahend1/PrettyXML
 
 -   [Source Code](https://github.com/pmahend1/prettyxml)
 -   If you want to support this project,  
-    [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="150" height="35" />](https://www.buymeacoffee.com/pmahend1)
+    [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="100" height="25" />](https://www.buymeacoffee.com/pmahend1)
