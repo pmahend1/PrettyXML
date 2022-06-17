@@ -5,7 +5,8 @@
 ### 2.0.0 : 17-Jun-2022
 
 -   Dependency updated to .Net 6
--   Position First Attribute On Same Line setting added. Default is `True`
+-   Position First Attribute On Same Line setting added. Default is `True`.  
+    `False` keeps all attributes on new lines.
 -   Some notification service clean up.
 
 ### 1.6.1: 18-Apr-2022
