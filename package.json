@@ -155,7 +155,7 @@
                     },
                     "prettyxml.settings.positionFirstAttributeOnSameLine": {
                         "type": "boolean",
-                        "markdownDescription": "Position first attribute on same line. *Default* is *Checked* \n\n **Checked** : \n\n `<Element Attribute=\"Value\"` \n\n **Unchecked** :\n\n `<Element`\n\n\t\t`Attribute=\"Value\"` ",
+                        "markdownDescription": "Position first attribute on same line. *Default* is *Checked* \n\n **Checked** : \n\n `<Element Attribute=\"Value\"` \n\n **Unchecked** : \n\n `<Element` \n\n &emsp;&emsp; `Attribute=\"Value\"` ",
                         "default": true
                     }
                 }
