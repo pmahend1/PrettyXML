@@ -9,6 +9,7 @@ export interface ISettings
     AddSpaceBeforeSelfClosingTag: boolean;
     WrapCommentTextWithSpaces: boolean;
     AllowWhiteSpaceUnicodesInAttributeValues: boolean;
+    PositionFirstAttributeOnSameLine: boolean;
 }
 
 export const DefaultSettings: ISettings = {
@@ -19,7 +20,8 @@ export const DefaultSettings: ISettings = {
                                             AllowSingleQuoteInAttributeValue: true,
                                             AddSpaceBeforeSelfClosingTag: true,
                                             WrapCommentTextWithSpaces: true,
-                                            AllowWhiteSpaceUnicodesInAttributeValues: true
+                                            AllowWhiteSpaceUnicodesInAttributeValues: true,
+                                            PositionFirstAttributeOnSameLine: true
                                           };
 
 export class Settings
@@ -33,6 +35,8 @@ export class Settings
     WrapCommentTextWithSpaces?: boolean;
     AllowWhiteSpaceUnicodesInAttributeValues?: boolean;
 
+    PositionFirstAttributeOnSameLine?: boolean;
+
     constructor(indentLengh?: number,
                 useSingleQuotes?: boolean,
                 useSelfClosingTags?: boolean,
@@ -40,7 +44,8 @@ export class Settings
                 allowSingleQuoteInAttributeValue?: boolean,
                 addSpaceBeforeSelfClosingTag?: boolean,
                 wrapCommentTextWithSpaces?: boolean,
-                allowWhiteSpaceUnicodesInAttributeValues?: boolean)
+                allowWhiteSpaceUnicodesInAttributeValues?: boolean,
+                positionFirstAttributeOnSameLine?: boolean)
     {
         this.IndentLength = indentLengh ?? DefaultSettings.IndentLength;
         this.UseSingleQuotes = useSingleQuotes ?? DefaultSettings.UseSingleQuotes;
@@ -50,5 +55,6 @@ export class Settings
         this.AddSpaceBeforeSelfClosingTag = addSpaceBeforeSelfClosingTag ?? DefaultSettings.AddSpaceBeforeSelfClosingTag;
         this.WrapCommentTextWithSpaces = wrapCommentTextWithSpaces ?? DefaultSettings.WrapCommentTextWithSpaces;
         this.AllowWhiteSpaceUnicodesInAttributeValues = allowWhiteSpaceUnicodesInAttributeValues;
+        this.PositionFirstAttributeOnSameLine = positionFirstAttributeOnSameLine ?? DefaultSettings.PositionFirstAttributeOnSameLine;
     }
 }

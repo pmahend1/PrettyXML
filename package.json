@@ -152,6 +152,11 @@
                         "type": "boolean",
                         "markdownDescription": "Allow unicode whitespace characters in attribute values. *Default* is *Checked* \n\n **Checked** : \n\n `&#10;` → `&#xA;` \n\n `&#x9;` → `&#x9;` \n\n `&#9;` → `&#x9;` \n\n **Unchecked** :\n\n `&#10;` → new line  \n\n `&#9;` → tab  \n\n `&#x9;` → tab ",
                         "default": true
+                    },
+                    "prettyxml.settings.positionFirstAttributeOnSameLine": {
+                        "type": "boolean",
+                        "markdownDescription": "Position first attribute on same line. *Default* is *Checked* \n\n **Checked** : \n\n `<Element Attribute=\"Value\"` \n\n **Unchecked** :\n\n `<Element`\n\n\t\t`Attribute=\"Value\"` ",
+                        "default": true
                     }
                 }
             }

@@ -12,6 +12,7 @@ export class JSInputDTO
     AddSpaceBeforeSelfClosingTag: boolean;
     WrapCommentTextWithSpaces: boolean;
     AllowWhiteSpaceUnicodesInAttributeValues: boolean;
+    PositionFirstAttributeOnSameLine: boolean;
 
     constructor(xmlString: string,
                 indentLength: number = DefaultSettings.IndentLength,
@@ -20,7 +21,8 @@ export class JSInputDTO
                 allowSingleQuoteInAttributeValue: boolean = DefaultSettings.AllowSingleQuoteInAttributeValue,
                 addSpaceBeforeSelfClosingTag: boolean = DefaultSettings.AddSpaceBeforeSelfClosingTag,
                 wrapCommentTextWithSpaces: boolean = DefaultSettings.WrapCommentTextWithSpaces,
-                allowWhiteSpaceUnicodesInAttributeValues: boolean = DefaultSettings.AllowWhiteSpaceUnicodesInAttributeValues)
+                allowWhiteSpaceUnicodesInAttributeValues: boolean = DefaultSettings.AllowWhiteSpaceUnicodesInAttributeValues,
+                positionFirstAttributeOnSameLine: boolean = DefaultSettings.PositionFirstAttributeOnSameLine)
     {
         this.XMLString = xmlString;
         this.IndentLength = indentLength;
@@ -30,5 +32,6 @@ export class JSInputDTO
         this.AddSpaceBeforeSelfClosingTag = addSpaceBeforeSelfClosingTag;
         this.WrapCommentTextWithSpaces = wrapCommentTextWithSpaces;
         this.AllowWhiteSpaceUnicodesInAttributeValues = allowWhiteSpaceUnicodesInAttributeValues;
+        this.PositionFirstAttributeOnSameLine = positionFirstAttributeOnSameLine;
     }
 }
