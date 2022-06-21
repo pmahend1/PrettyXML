@@ -2,6 +2,11 @@
 
 ## Stable
 
+### 2.0.1: 20-Jun-2022
+
+-   Updated ReadMe badges.
+-   Yarn upgrades.
+
 ### 2.0.0 : 17-Jun-2022
 
 -   Dependency updated to .Net 6

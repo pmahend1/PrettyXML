@@ -43,29 +43,6 @@ export class NotificationService
         return shouldDisplay;
     }
 
-    private getUpdateNotes(version: string): string
-    {
-        let updateNotes: string = "";
-        try
-        {
-            let filePath = path.join(this.context.extensionPath, "lib", "newReleaseNotifications.json");
-            var content = fs.readFileSync(filePath, { "encoding": "utf8" });
-            let releaseNotes: UpdateNote[] = JSON.parse(content);
-            var currentUpdateNote = releaseNotes.find((x) => { return x.version === version; });
-
-            if (currentUpdateNote)
-            {
-                updateNotes = currentUpdateNote.updateNotes;
-            }
-
-        }
-        catch (error)
-        {
-            console.error(error);
-        }
-        return updateNotes;
-    }
-
     public async notifyWhatsNewInUpdateAsync(): Promise<void>
     {
         try
@@ -73,7 +50,7 @@ export class NotificationService
             let shouldDisplay: boolean = this.checkIfEligibletToShowUpdateNote();
             if (shouldDisplay)
             {
-                var notes = this.getUpdateNotes(this.currentVersion);
+                let notes: string = `Pretty XML updated to version ${ this.currentVersion }.\n [See what's new](https://github.com/pmahend1/PrettyXML/blob/main/CHANGELOG.md)`;
                 if (notes !== "")
                 {
                     await vscode.window.showInformationMessage(notes);
