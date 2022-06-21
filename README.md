@@ -59,10 +59,10 @@ Suggestions, improvement PRs are welcome.
 
 Right Click and Select Prettify XML or use [shortcut](#keyboard-shortcuts)
 
--   All attributes on new lines.
+-   Position each attribute on a separate line.
 -   First attribute on same line as start element start tag.
 -   All attributes indented aligning with first attribute.
--   If no child for an element then close inline end tag.(Setting)
+-   If no child for an element then close inline end tag.
 -   No empty lines.
 -   Supports `'` and whitespace unicodes in attribute value for XAML parser compatibility.
 
