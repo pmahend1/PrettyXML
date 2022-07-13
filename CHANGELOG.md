@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 2.1.0: 13-Jul-2022
+
+-   Yarn upgrades.
+
 ### 2.0.1: 20-Jun-2022
 
 -   Updated ReadMe badges.
