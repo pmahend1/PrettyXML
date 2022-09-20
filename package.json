@@ -111,6 +111,7 @@
                 "properties": {
                     "prettyxml.settings.indentSpaceLength": {
                         "type": "number",
+                        "default": 4,
                         "enum": [
                             2,
                             4,
