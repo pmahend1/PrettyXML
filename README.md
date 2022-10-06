@@ -44,7 +44,7 @@ There is also **Visual Studio for Mac 2019** version of this extension. Check it
 
 Suggestions, improvement PRs are welcome.
 
-[![License](https://img.shields.io/github/license/pmahend1/PrettyXML?style=for-the-badge&label=License&color=9cf)](https://choosealicense.com/licenses/mit/)![Deploy](https://img.shields.io/github/workflow/status/pmahend1/prettyxml/Deploy%20CI?color=darkgreen&label=Deploy%20CI&style=for-the-badge&logo=github&logoColor=black)  
+[![License](https://img.shields.io/github/license/pmahend1/PrettyXML?style=for-the-badge&label=License&color=lightblue)](https://choosealicense.com/licenses/mit/)![Deploy](https://img.shields.io/github/workflow/status/pmahend1/prettyxml/Deploy%20CI?color=darkgreen&label=Deploy%20CI&style=for-the-badge&logo=github&logoColor=black)  
 
 [![Version](https://vsmarketplacebadge.apphb.com/version/PrateekMahendrakar.PrettyXML.svg?logo=visual-studio-code&style=for-the-badge&logoColor=blue&color=blue)](https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml)![Installs](https://vsmarketplacebadge.apphb.com/installs-short/PrateekMahendrakar.PrettyXML.svg?style=for-the-badge&label=Installs&color=blue)![Downloads](https://vsmarketplacebadge.apphb.com/downloads-short/PrateekMahendrakar.PrettyXML.svg?style=for-the-badge&label=Downloads&color=blue)![Rating](https://vsmarketplacebadge.apphb.com/rating-short/PrateekMahendrakar.PrettyXML.svg?style=for-the-badge&label=Rating&color=blue)  
 
