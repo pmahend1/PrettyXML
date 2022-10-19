@@ -5,6 +5,7 @@
 ### 3.0.0: 19-Oct-2022
 
 - Added Setting [**Position All Attributes On First Line**](https://github.com/pmahend1/PrettyXML/issues/104).
+- Removed [deprecated `set-output`](https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/) from GitHub actions.  
 
 ### 2.4.0: 16-Oct-2022
 
