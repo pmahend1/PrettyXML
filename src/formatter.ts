@@ -55,6 +55,7 @@ export class Formatter
         let wrapCommentTextWithSpaces = prettyXmlConfig.get<boolean>('wrapCommentTextWithSpaces');
         let allowWhiteSpaceUnicodesInAttributeValues = prettyXmlConfig.get<boolean>('allowWhiteSpaceUnicodesInAttributeValues');
         let positionFirstAttributeOnSameLine = prettyXmlConfig.get<boolean>('positionFirstAttributeOnSameLine');
+        let positionAllAttributesOnFirstLine = prettyXmlConfig.get<boolean>('positionAllAttributesOnFirstLine');
 
         this.settings = new Settings(spacelength,
                                      usesinglequotes,
@@ -64,7 +65,8 @@ export class Formatter
                                      addSpaceBeforeSelfClosingTag,
                                      wrapCommentTextWithSpaces,
                                      allowWhiteSpaceUnicodesInAttributeValues,
-                                     positionFirstAttributeOnSameLine);
+                                     positionFirstAttributeOnSameLine,
+                                     positionAllAttributesOnFirstLine);
     }
 
     public async formatXml(docText: string = ""): Promise<string>
