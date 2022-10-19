@@ -1,8 +1,6 @@
 import * as vscode from "vscode";
 import * as compareVersions from "compare-versions";
-import * as fs from "fs";
-import { UpdateNote } from "./updateNote";
-import * as path from "path";
+
 export class NotificationService
 {
     private context: vscode.ExtensionContext;

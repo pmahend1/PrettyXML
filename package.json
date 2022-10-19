@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "2.4.0",
+    "version": "3.0.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -156,8 +156,13 @@
                     },
                     "prettyxml.settings.positionFirstAttributeOnSameLine": {
                         "type": "boolean",
-                        "markdownDescription": "Position first attribute on same line. *Default* is *Checked* \n\n **Checked** : \n\n `<Element Attribute=\"Value\"` \n\n **Unchecked** : \n\n `<Element` \n\n &emsp;&emsp; `Attribute=\"Value\"` ",
+                        "markdownDescription": "Position first attribute on same line. *Unchecked* on this setting will be ignored if *Position All Attributes On First Line*=*Checked*. *Default* is *Checked* \n\n **Checked** : \n\n `<Element Attribute=\"Value\"` \n\n **Unchecked** : \n\n `<Element` \n\n &emsp;&emsp; `Attribute=\"Value\"` ",
                         "default": true
+                    },
+                    "prettyxml.settings.positionAllAttributesOnFirstLine": {
+                        "type": "boolean",
+                        "markdownDescription": "Position all attributes on same line as element. Setting this to *Checked* will ignore *Position First Attribute On Same Line*=*Unchecked*. *Default* is *Unchecked.* \n\n **Checked** : \n\n `<Element Attribute1=\"Value1\" Attribute2=\"Value2\"` \n\n **Unchecked** :\n\n`<Element Attribute1=\"Value1\"`\n\n&emsp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`Attribute2=\"Value2\"` ",
+                        "default": false
                     }
                 }
             }

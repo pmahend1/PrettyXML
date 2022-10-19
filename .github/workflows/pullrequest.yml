@@ -26,7 +26,7 @@ jobs:
         run: |
           $version = ((Get-Content .\package.json | ConvertFrom-Json).version).ToString()
           Write-Host 'Current version from package.json: ' $version
-          Write-Host "::set-output name=VERSION::$version"
+          "VERSION=$version" >> $env:GITHUB_OUTPUT
 
       - name: Get published version from VS Code extension REST API
         id: getPublishedVersion
@@ -39,8 +39,8 @@ jobs:
           $response = Invoke-RestMethod 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' -Method Post -Headers $headers -Body $body
           $publishedVersion= ($response.results[0].extensions.versions.version).ToString()
           Write-Host 'Last Published version: '$publishedVersion 
-          Write-Host "::set-output name=PUB_VERSION::$publishedVersion"
-
+          "PUB_VERSION=$publishedVersion" >> $env:GITHUB_OUTPUT
+          
       - name: Compare local version with marketplace version
         id: compare
         run: |

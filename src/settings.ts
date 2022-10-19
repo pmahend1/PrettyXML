@@ -10,6 +10,7 @@ export interface ISettings
     WrapCommentTextWithSpaces: boolean;
     AllowWhiteSpaceUnicodesInAttributeValues: boolean;
     PositionFirstAttributeOnSameLine: boolean;
+    PositionAllAttributesOnFirstLine: boolean;
 }
 
 export const DefaultSettings: ISettings = {
@@ -21,7 +22,8 @@ export const DefaultSettings: ISettings = {
                                             AddSpaceBeforeSelfClosingTag: true,
                                             WrapCommentTextWithSpaces: true,
                                             AllowWhiteSpaceUnicodesInAttributeValues: true,
-                                            PositionFirstAttributeOnSameLine: true
+                                            PositionFirstAttributeOnSameLine: true,
+                                            PositionAllAttributesOnFirstLine: false
                                           };
 
 export class Settings
@@ -35,6 +37,7 @@ export class Settings
     WrapCommentTextWithSpaces?: boolean;
     AllowWhiteSpaceUnicodesInAttributeValues?: boolean;
     PositionFirstAttributeOnSameLine?: boolean;
+    PositionAllAttributesOnFirstLine?: boolean;
 
     constructor(indentLengh?: number,
                 useSingleQuotes?: boolean,
@@ -44,7 +47,8 @@ export class Settings
                 addSpaceBeforeSelfClosingTag?: boolean,
                 wrapCommentTextWithSpaces?: boolean,
                 allowWhiteSpaceUnicodesInAttributeValues?: boolean,
-                positionFirstAttributeOnSameLine?: boolean)
+                positionFirstAttributeOnSameLine?: boolean,
+                positionAllAttributesOnFirstLine?: boolean)
     {
         this.IndentLength = indentLengh ?? DefaultSettings.IndentLength;
         this.UseSingleQuotes = useSingleQuotes ?? DefaultSettings.UseSingleQuotes;
@@ -55,5 +59,6 @@ export class Settings
         this.WrapCommentTextWithSpaces = wrapCommentTextWithSpaces ?? DefaultSettings.WrapCommentTextWithSpaces;
         this.AllowWhiteSpaceUnicodesInAttributeValues = allowWhiteSpaceUnicodesInAttributeValues ?? DefaultSettings.AllowWhiteSpaceUnicodesInAttributeValues;
         this.PositionFirstAttributeOnSameLine = positionFirstAttributeOnSameLine ?? DefaultSettings.PositionFirstAttributeOnSameLine;
+        this.PositionAllAttributesOnFirstLine = positionAllAttributesOnFirstLine ?? DefaultSettings.PositionAllAttributesOnFirstLine;
     }
 }
