@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 3.0.0: 19-Oct-2022
+
+- Added Setting [**Position All Attributes On First Line**](https://github.com/pmahend1/PrettyXML/issues/104).
+
 ### 2.4.0: 16-Oct-2022
 
 - Added ESBuild.
