@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     branches:
       - main
-      - '**'
+      - "**"
 
 jobs:
   versioncheck:
@@ -15,6 +15,13 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
+
+      - name: "Verify ChangeLog.md file has changes"
+        uses: brettcannon/check-for-changed-files@v1
+        with:
+          file-pattern: "changelog.md"
+          skip-label: "skip changelog"
+          failure-message: "${file-pattern} has not been updated; please add release notes or apply the ${skip-label} label to the pull request"
 
       - name: Install SemVer PS modules
         run: |
@@ -40,7 +47,7 @@ jobs:
           $publishedVersion= ($response.results[0].extensions.versions.version).ToString()
           Write-Host 'Last Published version: '$publishedVersion 
           "PUB_VERSION=$publishedVersion" >> $env:GITHUB_OUTPUT
-          
+
       - name: Compare local version with marketplace version
         id: compare
         run: |
