@@ -18,7 +18,7 @@ jobs:
 
       - name: "Verify ChangeLog.md file has changes"
         run: |
-          $changes=git diff --name-only $env:GITHUB_BASE_REF
+          $changes=git diff --name-only origin/$env:GITHUB_BASE_REF
           $fileFilters = @('CHANGELOG*', 'package.json')
           foreach ($filter in $fileFilters) {
               if ($changes -match $filter){
