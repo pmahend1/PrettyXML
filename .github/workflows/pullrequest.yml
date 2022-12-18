@@ -14,14 +14,20 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: "Verify ChangeLog.md file has changes"
-        uses: brettcannon/check-for-changed-files@v1
-        with:
-          file-pattern: "changelog.md"
-          skip-label: "skip changelog"
-          failure-message: "${file-pattern} has not been updated; please add release notes or apply the ${skip-label} label to the pull request"
+        run: |
+          $changes=git diff ${{ github.repository }}..main --name-only
+          $fileFilters = @('CHANGELOG*', 'package.json')
+          foreach ($filter in $fileFilters) {
+              if ($changes -match $filter){
+                  Write-Host "$filter files are modified."
+              } else {
+                  throw [System.Exception]("Files with filter $filter are not modified. ❌")
+              }
+          }
+          Write-Host "Pass ✅"
 
       - name: Install SemVer PS modules
         run: |
