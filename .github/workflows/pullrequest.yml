@@ -21,6 +21,7 @@ jobs:
         uses: jitterbit/get-changed-files@v1
 
       - name: "Verify ChangeLog.md and package.json files have changes"
+        shell: pwsh
         run: |
           $fileFilters=@('README*', 'CHANGELOG*')
           $changesSpaceDelimited=${{ steps.getChangedFiles.outputs.all }}
@@ -35,12 +36,14 @@ jobs:
           Write-Host "Pass ✅"
 
       - name: Install SemVer PS modules
+        shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module -Name PoshSemanticVersion
 
       - name: Get current version from package.json
         id: getpackageversion
+        shell: pwsh
         run: |
           $version = ((Get-Content .\package.json | ConvertFrom-Json).version).ToString()
           Write-Host 'Current version from package.json: ' $version
@@ -48,6 +51,7 @@ jobs:
 
       - name: Get published version from VS Code extension REST API
         id: getPublishedVersion
+        shell: pwsh
         run: |
           $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
           $headers.Add("VSMarketplaceBadge", "1.0")
@@ -61,6 +65,7 @@ jobs:
 
       - name: Compare local version with marketplace version
         id: compare
+        shell: pwsh
         run: |
           Import-Module PoshSemanticVersion
           $com = Compare-SemanticVersion ${{ steps.getpackageversion.outputs.VERSION }} ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}
