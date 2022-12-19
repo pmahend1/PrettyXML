@@ -19,13 +19,14 @@ jobs:
       - name: "Get changed files"
         id: getChangedFiles
         uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
 
       - name: "Verify ChangeLog.md and package.json files have changes"
         shell: pwsh
         run: |
           $fileFilters=@('README*', 'CHANGELOG*')
-          $changesSpaceDelimited=Select-String ${{ steps.getChangedFiles.outputs.all }}
-          $changes=$changesSpaceDelimited.Split(' ')
+          $changes=${{ steps.getChangedFiles.outputs.all }}
           foreach ($filter in $fileFilters) {
             if ($changes -match $filter){
                 Write-Host "$filter files are modified."
