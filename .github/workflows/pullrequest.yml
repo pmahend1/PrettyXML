@@ -26,7 +26,8 @@ jobs:
         shell: pwsh
         run: |
           $fileFilters=@('README*', 'CHANGELOG*')
-          $changes=${{ steps.getChangedFiles.outputs.all }}
+          $changesJson='${{ steps.getChangedFiles.outputs.all }}'
+          $changes=ConvertFrom-Json -InputObject $changesJson
           foreach ($filter in $fileFilters) {
             if ($changes -match $filter){
                 Write-Host "$filter files are modified."
