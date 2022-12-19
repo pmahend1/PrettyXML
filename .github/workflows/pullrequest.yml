@@ -7,22 +7,45 @@ on:
   workflow_dispatch:
     branches:
       - main
-      - '**'
+      - "**"
 
 jobs:
   versioncheck:
     runs-on: windows-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - name: "Get changed files"
+        id: getChangedFiles
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
+
+      - name: "Verify ChangeLog.md and package.json files have changes"
+        shell: pwsh
+        run: |
+          $fileFilters=@('package.json', 'CHANGELOG*')
+          $changesJson='${{ steps.getChangedFiles.outputs.all }}'
+          $changes=ConvertFrom-Json -InputObject $changesJson
+          foreach ($filter in $fileFilters) {
+            if ($changes -match $filter){
+                Write-Host "$filter file is modified."
+            } else {
+                throw [System.Exception]("Files with filter $filter are not modified. ❌")
+            }
+          }
+          Write-Host "Pass ✅"
 
       - name: Install SemVer PS modules
+        shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module -Name PoshSemanticVersion
 
       - name: Get current version from package.json
         id: getpackageversion
+        shell: pwsh
         run: |
           $version = ((Get-Content .\package.json | ConvertFrom-Json).version).ToString()
           Write-Host 'Current version from package.json: ' $version
@@ -30,6 +53,7 @@ jobs:
 
       - name: Get published version from VS Code extension REST API
         id: getPublishedVersion
+        shell: pwsh
         run: |
           $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
           $headers.Add("VSMarketplaceBadge", "1.0")
@@ -40,9 +64,10 @@ jobs:
           $publishedVersion= ($response.results[0].extensions.versions.version).ToString()
           Write-Host 'Last Published version: '$publishedVersion 
           "PUB_VERSION=$publishedVersion" >> $env:GITHUB_OUTPUT
-          
+
       - name: Compare local version with marketplace version
         id: compare
+        shell: pwsh
         run: |
           Import-Module PoshSemanticVersion
           $com = Compare-SemanticVersion ${{ steps.getpackageversion.outputs.VERSION }} ${{ steps.getPublishedVersion.outputs.PUB_VERSION }}

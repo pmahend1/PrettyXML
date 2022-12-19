@@ -2,6 +2,13 @@
 
 ## Stable
 
+### 3.0.1: 19-Dec-2022
+
+- Updated Settings screenshot.
+- Fixed shields.io badges.
+- YARN upgrades.
+- pullrequest.yml checks if changelog and package.json have changed.  
+
 ### 3.0.0: 19-Oct-2022
 
 - Added Setting [**Position All Attributes On First Line**](https://github.com/pmahend1/PrettyXML/issues/104).
