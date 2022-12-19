@@ -22,9 +22,9 @@ jobs:
 
       - name: "Verify ChangeLog.md and package.json files have changes"
         run: |
-          $fileFilters = @("README*", "CHANGELOG*")
+          $fileFilters=@("README*", "CHANGELOG*")
           $changesSpaceDelimited=${{ steps.getChangedFiles.outputs.all }}
-          $changes = $changesSpaceDelimited.Split(" ")
+          $changes=$changesSpaceDelimited.Split(" ")
           foreach ($filter in $fileFilters) {
             if ($changes -match $filter){
                 Write-Host "$filter files are modified."
