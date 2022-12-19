@@ -30,7 +30,7 @@ jobs:
           $changes=ConvertFrom-Json -InputObject $changesJson
           foreach ($filter in $fileFilters) {
             if ($changes -match $filter){
-                Write-Host "$filter files are modified."
+                Write-Host "$filter file is modified."
             } else {
                 throw [System.Exception]("Files with filter $filter are not modified. ❌")
             }
