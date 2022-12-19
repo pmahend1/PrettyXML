@@ -16,16 +16,19 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v3
 
-      - name: "Verify ChangeLog.md file has changes"
+      - name: "Get changed files"
+        id: getChangedFiles
+        uses: jitterbit/get-changed-files@v1
+
+      - name: "Verify ChangeLog.md and package.json files have changes"
         run: |
-          $changes=git diff --name-only origin/$env:GITHUB_BASE_REF
-          $fileFilters = @('CHANGELOG*', 'package.json')
+          $changes=${{ steps.getChangedFiles.outputs.all }}
           foreach ($filter in $fileFilters) {
-              if ($changes -match $filter){
-                  Write-Host "$filter files are modified."
-              } else {
-                  throw [System.Exception]("Files with filter $filter are not modified. ❌")
-              }
+            if ($changes -match $filter){
+                Write-Host "$filter files are modified."
+            } else {
+                throw [System.Exception]("Files with filter $filter are not modified. ❌")
+            }
           }
           Write-Host "Pass ✅"
 
