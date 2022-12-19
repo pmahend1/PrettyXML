@@ -2,7 +2,7 @@
 
 ## Stable
 
-### 3.0.1: 18-Dec-2022
+### 3.0.1: 19-Dec-2022
 
 - Updated Settings screenshot.
 - Fixed shields.io badges.
