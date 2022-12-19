@@ -24,7 +24,7 @@ jobs:
         shell: pwsh
         run: |
           $fileFilters=@('README*', 'CHANGELOG*')
-          $changesSpaceDelimited=[System.String](${{ steps.getChangedFiles.outputs.all }})
+          $changesSpaceDelimited=Select-String ${{ steps.getChangedFiles.outputs.all }}
           $changes=$changesSpaceDelimited.Split(' ')
           foreach ($filter in $fileFilters) {
             if ($changes -match $filter){
