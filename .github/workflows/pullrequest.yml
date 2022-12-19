@@ -25,7 +25,7 @@ jobs:
       - name: "Verify ChangeLog.md and package.json files have changes"
         shell: pwsh
         run: |
-          $fileFilters=@('README*', 'CHANGELOG*')
+          $fileFilters=@('package.json', 'CHANGELOG*')
           $changesJson='${{ steps.getChangedFiles.outputs.all }}'
           $changes=ConvertFrom-Json -InputObject $changesJson
           foreach ($filter in $fileFilters) {
