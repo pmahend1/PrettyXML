@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 3.1.0: 15-Mar-2023
+
+- Yarn upgrades.
+
 ### 3.0.1: 19-Dec-2022
 
 - Updated Settings screenshot.
