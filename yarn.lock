@@ -557,6 +557,11 @@ duplexer2@~0.1.4:
   dependencies:
     readable-stream "^2.0.2"
 
+electron-log@^4.4.8:
+  version "4.4.8"
+  resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-4.4.8.tgz#fcb9f714dbcaefb6ac7984c4683912c74730248a"
+  integrity sha512-QQ4GvrXO+HkgqqEOYbi+DHL7hj5JM+nHi/j+qrN9zeeXVKy8ZABgbu4CnG+BBqDZ2+tbeq9tUC4DZfIWFU5AZA==
+
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
