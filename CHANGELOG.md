@@ -2,6 +2,11 @@
 
 ## Stable
 
+### 3.3.0: 18-May-2023
+
+- Implemented optional logger.
+- Yarn upgrades.
+
 ### 3.2.0: 18-Apr-2023
 
 - Yarn upgrades.

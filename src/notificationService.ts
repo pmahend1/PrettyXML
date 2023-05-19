@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as compareVersions from "compare-versions";
+import { Logger } from "./logger";
 
 export class NotificationService
 {
@@ -19,8 +20,9 @@ export class NotificationService
         this.currentVersion = this.context.extension.packageJSON.version;
     }
 
-    private checkIfEligibletToShowUpdateNote(): boolean
+    private checkIfEligibleToShowUpdateNote(): boolean
     {
+        Logger.instance.info("checkIfEligibleToShowUpdateNote start");
         let shouldDisplay: boolean = true;
         try
         {
@@ -36,16 +38,19 @@ export class NotificationService
         }
         catch (error)
         {
+            Logger.instance.error(error as Error);
             console.error(error);
         }
+        Logger.instance.info("checkIfEligibleToShowUpdateNote end");
         return shouldDisplay;
     }
 
     public async notifyWhatsNewInUpdateAsync(): Promise<void>
     {
+        Logger.instance.info("notifyWhatsNewInUpdateAsync start");
         try
         {
-            let shouldDisplay: boolean = this.checkIfEligibletToShowUpdateNote();
+            let shouldDisplay: boolean = this.checkIfEligibleToShowUpdateNote();
             if (shouldDisplay)
             {
                 let notes: string = `Pretty XML updated to version ${ this.currentVersion }.\n [See what's new](https://github.com/pmahend1/PrettyXML/blob/main/CHANGELOG.md)`;
@@ -58,12 +63,15 @@ export class NotificationService
         }
         catch (error) 
         {
+            Logger.instance.error(error as Error);
             console.error(error);
         }
+        Logger.instance.info("notifyWhatsNewInUpdateAsync end");
     }
 
     public async promptForReviewAsync(): Promise<void>
     {
+        Logger.instance.info("promptForReviewAsync start");
         try
         {
             var shouldDisplayPrompt = this.shouldOpenRatingPrompt();
@@ -110,8 +118,10 @@ export class NotificationService
         }
         catch (error)
         {
+            Logger.instance.error(error as Error);
             console.error(error);
         }
+        Logger.instance.info("promptForReviewAsync end");
     }
 
     private shouldOpenRatingPrompt(): boolean
