@@ -164,7 +164,7 @@
                         "markdownDescription": "Position all attributes on same line as element. Setting this to *Checked* will ignore *Position First Attribute On Same Line*=*Unchecked*. *Default* is *Unchecked.* \n\n **Checked** : \n\n `<Element Attribute1=\"Value1\" Attribute2=\"Value2\"` \n\n **Unchecked** :\n\n`<Element Attribute1=\"Value1\"`\n\n&emsp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`Attribute2=\"Value2\"` ",
                         "default": false
                     },
-                    "prettyxml.settings.enableLogs" : {
+                    "prettyxml.settings.enableLogs": {
                         "type": "boolean",
                         "markdownDescription": "Enable console local logs.",
                         "default": false
@@ -185,7 +185,6 @@
         "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
-
         "@types/glob": "^7.1.3",
         "@types/mocha": "^9.0.0",
         "@types/node": "^16.4.13",
@@ -201,9 +200,6 @@
     },
     "dependencies": {
         "@types/compare-versions": "^3.3.0",
-        "@vscode-logging/logger": "^1.2.3",
-        "@vscode-logging/types": "^0.1.4",
-        "@vscode-logging/wrapper": "^1.0.2",
         "child_process": "^1.0.2",
         "compare-versions": "^3.6.0",
         "fs": "^0.0.1-security",
