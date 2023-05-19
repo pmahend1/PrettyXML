@@ -20,19 +20,19 @@ function isString(value: unknown): value is string {
     return Object.prototype.toString.call(value) === '[object String]';
 }
 
-export class ConsoleLogger implements ILogger {
-    private static _instance: ConsoleLogger;
+export class Logger implements ILogger {
+    private static _instance: Logger;
 
     public static get instance() {
-        if (!ConsoleLogger._instance) {
-            ConsoleLogger._instance = new ConsoleLogger();
+        if (!Logger._instance) {
+            Logger._instance = new Logger();
         }
 
-        return ConsoleLogger._instance;
+        return Logger._instance;
     }
 
     private constructor() {
-        this.outputChannel = vscode.window.createOutputChannel("PrettyXML log");
+        this.outputChannel = vscode.window.createOutputChannel("PrettyXML");
         this.updateConfiguration();
     }
 
@@ -63,7 +63,7 @@ export class ConsoleLogger implements ILogger {
                 `[ ${logLevel} - ${new Date().toLocaleTimeString()}] ${message}`
             );
             if (data) {
-                this.appendLine(ConsoleLogger.data2String(data));
+                this.appendLine(Logger.data2String(data));
             }
         }
     }

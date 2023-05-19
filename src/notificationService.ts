@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as compareVersions from "compare-versions";
-import { ConsoleLogger } from "./logger";
+import { Logger } from "./logger";
 
 export class NotificationService
 {
@@ -22,7 +22,7 @@ export class NotificationService
 
     private checkIfEligibleToShowUpdateNote(): boolean
     {
-        ConsoleLogger.instance.info("checkIfEligibleToShowUpdateNote start");
+        Logger.instance.info("checkIfEligibleToShowUpdateNote start");
         let shouldDisplay: boolean = true;
         try
         {
@@ -38,16 +38,16 @@ export class NotificationService
         }
         catch (error)
         {
-            ConsoleLogger.instance.error(error as Error);
+            Logger.instance.error(error as Error);
             console.error(error);
         }
-        ConsoleLogger.instance.info("checkIfEligibleToShowUpdateNote end");
+        Logger.instance.info("checkIfEligibleToShowUpdateNote end");
         return shouldDisplay;
     }
 
     public async notifyWhatsNewInUpdateAsync(): Promise<void>
     {
-        ConsoleLogger.instance.info("notifyWhatsNewInUpdateAsync start");
+        Logger.instance.info("notifyWhatsNewInUpdateAsync start");
         try
         {
             let shouldDisplay: boolean = this.checkIfEligibleToShowUpdateNote();
@@ -63,15 +63,15 @@ export class NotificationService
         }
         catch (error) 
         {
-            ConsoleLogger.instance.error(error as Error);
+            Logger.instance.error(error as Error);
             console.error(error);
         }
-        ConsoleLogger.instance.info("notifyWhatsNewInUpdateAsync end");
+        Logger.instance.info("notifyWhatsNewInUpdateAsync end");
     }
 
     public async promptForReviewAsync(): Promise<void>
     {
-        ConsoleLogger.instance.info("promptForReviewAsync start");
+        Logger.instance.info("promptForReviewAsync start");
         try
         {
             var shouldDisplayPrompt = this.shouldOpenRatingPrompt();
@@ -118,10 +118,10 @@ export class NotificationService
         }
         catch (error)
         {
-            ConsoleLogger.instance.error(error as Error);
+            Logger.instance.error(error as Error);
             console.error(error);
         }
-        ConsoleLogger.instance.info("promptForReviewAsync end");
+        Logger.instance.info("promptForReviewAsync end");
     }
 
     private shouldOpenRatingPrompt(): boolean

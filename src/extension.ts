@@ -6,7 +6,7 @@ import { Formatter } from "./formatter";
 import { PrettyXmlFormattingEditProvider } from "./prettyXmlFormattingEditProvider";
 import { NotificationService } from "./notificationService";
 import { replaceDocumentTextWithProgressForCallback } from "./helper";
-import { ConsoleLogger } from "./logger";
+import { Logger } from "./logger";
 
 let formatter: Formatter;
 let notificationService: NotificationService;
@@ -22,9 +22,9 @@ export function activate(context: vscode.ExtensionContext): void {
 		notificationService.promptForReviewAsync();
 
 		vscode.workspace.onDidChangeConfiguration((configChangeEvent: vscode.ConfigurationChangeEvent) => {
-			ConsoleLogger.instance.info("workspace.onDidChangeConfiguration start");
+			Logger.instance.info("workspace.onDidChangeConfiguration start");
 			formatter.loadSettings();
-			ConsoleLogger.instance.info("workspace.onDidChangeConfiguration end");
+			Logger.instance.info("workspace.onDidChangeConfiguration end");
 		});
 
 		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.prettifyxml", () => replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 
 		vscode.workspace.onWillSaveTextDocument(async (willSaveEvent) => {
-			ConsoleLogger.instance.info("vscode.workspace.onWillSaveTextDocument start");
+			Logger.instance.info("vscode.workspace.onWillSaveTextDocument start");
 			try {
 				var languageId = willSaveEvent?.document?.languageId;
 				if (languageId) {
@@ -46,16 +46,16 @@ export function activate(context: vscode.ExtensionContext): void {
 					}
 				}
 				else {
-					ConsoleLogger.instance.warning("Invalid languageId");
+					Logger.instance.warning("Invalid languageId");
 				}
 			}
 			catch (exception) {
 				let errorMessage = (exception as Error)?.message;
-				ConsoleLogger.instance.error(exception as Error);
+				Logger.instance.error(exception as Error);
 				vscode.window.showErrorMessage(errorMessage);
 				console.error(exception);
 			}
-			ConsoleLogger.instance.info("vscode.workspace.onWillSaveTextDocument end");
+			Logger.instance.info("vscode.workspace.onWillSaveTextDocument end");
 		});
 
 		const xmlXsdDocSelector = [
@@ -74,12 +74,12 @@ export function activate(context: vscode.ExtensionContext): void {
 	catch (exception) {
 		let errorMessage = (exception as Error)?.message;
 		vscode.window.showErrorMessage(errorMessage);
-		ConsoleLogger.instance.error(exception as Error);
+		Logger.instance.error(exception as Error);
 		console.error(exception);
 	}
 }
 
 //extension deactivate
 export function deactivate() {
-	ConsoleLogger.instance.info("Extension dectivated");
+	Logger.instance.info("Extension dectivated");
  }

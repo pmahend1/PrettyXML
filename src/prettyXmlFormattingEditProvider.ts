@@ -10,7 +10,7 @@ import {
 import *  as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
 import { Formatter } from "./formatter";
-import { ConsoleLogger } from "./logger";
+import { Logger } from "./logger";
 
 export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditProvider {
     private formatter: Formatter;
@@ -19,19 +19,19 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
     }
 
     provideDocumentFormattingEdits(document: TextDocument, options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]> {
-        ConsoleLogger.instance.info("provideDocumentFormattingEdits start");
+        Logger.instance.info("provideDocumentFormattingEdits start");
         let documentRange: Range = DocumentHelper.getDocumentRange(document);
 
         let docText = document?.getText();
 
         if (!docText) {
-            ConsoleLogger.instance.info("docText is null. returning empty []");
+            Logger.instance.warning("docText is null. returning empty []");
             return [];
         }
 
         token.onCancellationRequested((e: any, thisArgs?: any, disposables?: any) => {
             if (token.isCancellationRequested) {
-                ConsoleLogger.instance.info("token.onCancellationRequested. Returning []");
+                Logger.instance.warning("token.onCancellationRequested. Returning []");
                 return [];
             }
         });
@@ -46,7 +46,7 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
                 var formattedText = await vscode.window.withProgress(progressOptions, (progress, token) => {
                     token.onCancellationRequested((e: any, thisArgs?: any, disposables?: any) => {
                         if (token.isCancellationRequested) {
-                            ConsoleLogger.instance.info("vscode.window.withProgress.token.onCancellationRequested. Returning []");
+                            Logger.instance.warning("vscode.window.withProgress.token.onCancellationRequested. Returning []");
                             return [];
                         }
                     });
@@ -67,7 +67,7 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
                                 progress.report({ message: "Formatting...", increment: 100 });
                             }
                             catch (error) {
-                                ConsoleLogger.instance.error(error as Error);
+                                Logger.instance.error(error as Error);
                                 return reject(error);
                             }
                         }, 250);
@@ -76,13 +76,13 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
                     return promise;
                 });
                 const replacer = TextEdit.replace(documentRange, formattedText);
-                ConsoleLogger.instance.info("provideDocumentFormattingEdits start");
+                Logger.instance.info("provideDocumentFormattingEdits start");
                 return resolve([replacer]);
             }
             catch (error) {
-                ConsoleLogger.instance.error(error as Error);
+                Logger.instance.error(error as Error);
                 console.error(error);
-                ConsoleLogger.instance.info("provideDocumentFormattingEdits start");
+                Logger.instance.info("provideDocumentFormattingEdits start");
                 return resolve([]);
             }
         });
