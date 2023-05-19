@@ -11,6 +11,7 @@ export interface ISettings
     AllowWhiteSpaceUnicodesInAttributeValues: boolean;
     PositionFirstAttributeOnSameLine: boolean;
     PositionAllAttributesOnFirstLine: boolean;
+    EnableLogs: boolean;
 }
 
 export const DefaultSettings: ISettings = {
@@ -23,7 +24,8 @@ export const DefaultSettings: ISettings = {
                                             WrapCommentTextWithSpaces: true,
                                             AllowWhiteSpaceUnicodesInAttributeValues: true,
                                             PositionFirstAttributeOnSameLine: true,
-                                            PositionAllAttributesOnFirstLine: false
+                                            PositionAllAttributesOnFirstLine: false,
+                                            EnableLogs: false
                                           };
 
 export class Settings
@@ -38,6 +40,7 @@ export class Settings
     AllowWhiteSpaceUnicodesInAttributeValues?: boolean;
     PositionFirstAttributeOnSameLine?: boolean;
     PositionAllAttributesOnFirstLine?: boolean;
+    EnableLogs?: boolean;
 
     constructor(indentLengh?: number,
                 useSingleQuotes?: boolean,
@@ -48,7 +51,8 @@ export class Settings
                 wrapCommentTextWithSpaces?: boolean,
                 allowWhiteSpaceUnicodesInAttributeValues?: boolean,
                 positionFirstAttributeOnSameLine?: boolean,
-                positionAllAttributesOnFirstLine?: boolean)
+                positionAllAttributesOnFirstLine?: boolean,
+                enableLogs?: boolean)
     {
         this.IndentLength = indentLengh ?? DefaultSettings.IndentLength;
         this.UseSingleQuotes = useSingleQuotes ?? DefaultSettings.UseSingleQuotes;
@@ -60,5 +64,6 @@ export class Settings
         this.AllowWhiteSpaceUnicodesInAttributeValues = allowWhiteSpaceUnicodesInAttributeValues ?? DefaultSettings.AllowWhiteSpaceUnicodesInAttributeValues;
         this.PositionFirstAttributeOnSameLine = positionFirstAttributeOnSameLine ?? DefaultSettings.PositionFirstAttributeOnSameLine;
         this.PositionAllAttributesOnFirstLine = positionAllAttributesOnFirstLine ?? DefaultSettings.PositionAllAttributesOnFirstLine;
+        this.EnableLogs = enableLogs ?? DefaultSettings.EnableLogs;
     }
 }

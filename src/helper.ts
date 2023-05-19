@@ -1,8 +1,10 @@
 import * as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
+import { ConsoleLogger } from "./logger";
 
 export function replaceDocumentTextWithProgressForCallback(progressText: string, task: Thenable<string>): Thenable<void>
 {
+    ConsoleLogger.instance.info("replaceDocumentTextWithProgressForCallback start");
     var progressOptions = {
         location: vscode.ProgressLocation.Notification,
         title: "Pretty XML",
@@ -33,6 +35,7 @@ export function replaceDocumentTextWithProgressForCallback(progressText: string,
                 }
                 catch (error) 
                 {
+                    ConsoleLogger.instance.error(error as Error);
                     reject(error);
                 }
             }, 250);
@@ -40,6 +43,7 @@ export function replaceDocumentTextWithProgressForCallback(progressText: string,
 
         return promise;
     });
+    ConsoleLogger.instance.info("replaceDocumentTextWithProgressForCallback end");
     return progressPromise;
 }
 
