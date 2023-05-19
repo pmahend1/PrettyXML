@@ -20,9 +20,9 @@ export class NotificationService
         this.currentVersion = this.context.extension.packageJSON.version;
     }
 
-    private checkIfEligibletToShowUpdateNote(): boolean
+    private checkIfEligibleToShowUpdateNote(): boolean
     {
-        ConsoleLogger.instance.info("checkIfEligibletToShowUpdateNote start");
+        ConsoleLogger.instance.info("checkIfEligibleToShowUpdateNote start");
         let shouldDisplay: boolean = true;
         try
         {
@@ -41,7 +41,7 @@ export class NotificationService
             ConsoleLogger.instance.error(error as Error);
             console.error(error);
         }
-        ConsoleLogger.instance.info("checkIfEligibletToShowUpdateNote end");
+        ConsoleLogger.instance.info("checkIfEligibleToShowUpdateNote end");
         return shouldDisplay;
     }
 
@@ -50,7 +50,7 @@ export class NotificationService
         ConsoleLogger.instance.info("notifyWhatsNewInUpdateAsync start");
         try
         {
-            let shouldDisplay: boolean = this.checkIfEligibletToShowUpdateNote();
+            let shouldDisplay: boolean = this.checkIfEligibleToShowUpdateNote();
             if (shouldDisplay)
             {
                 let notes: string = `Pretty XML updated to version ${ this.currentVersion }.\n [See what's new](https://github.com/pmahend1/PrettyXML/blob/main/CHANGELOG.md)`;

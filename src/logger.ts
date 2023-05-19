@@ -5,9 +5,15 @@ export interface ILogger {
     error(error: Error): void;
     warning(message: string): void;
     debug(message: string): void;
-    log(message: string): void;
     outputChannel: vscode.OutputChannel;
     updateConfiguration(isEnabled: boolean): void;
+}
+
+enum LogLevel {
+    error = "ERROR",
+    warning = "WARNING",
+    info = "INFO",
+    debug = "DEBUG",
 }
 
 function isString(value: unknown): value is string {
@@ -34,27 +40,27 @@ export class ConsoleLogger implements ILogger {
     public outputChannel: vscode.OutputChannel;
 
     public error(error: Error): void {
-        if (error !== null){
-            this.log(error.stack ?? `${error.name} : ${error.message}`);
+        if (error !== null) {
+            this.log(LogLevel.error, error.stack ?? `${error.name} : ${error.message}`);
         }
     }
 
     public info(message: string): void {
-        this.log(message);
+        this.log(LogLevel.info, message);
     }
 
     public debug(message: string): void {
-        this.log(message);
+        this.log(LogLevel.debug, message);
     }
 
     public warning(message: string): void {
-        this.log(message);
+        this.log(LogLevel.warning, message);
     }
 
-    public log(message: string, data?: unknown): void {
+    private log(logLevel: LogLevel, message: string, data?: unknown): void {
         if (this.enableLogs) {
             this.appendLine(
-                `[Log - ${new Date().toLocaleTimeString()}] ${message}`
+                `[ ${logLevel} - ${new Date().toLocaleTimeString()}] ${message}`
             );
             if (data) {
                 this.appendLine(ConsoleLogger.data2String(data));
@@ -66,15 +72,15 @@ export class ConsoleLogger implements ILogger {
         this.enableLogs = isEnabled;
     }
 
-    public appendLine(value = '') {
+    private appendLine(value = '') {
         return this.outputChannel.appendLine(value);
     }
 
-    public append(value: string) {
+    private append(value: string) {
         return this.outputChannel.append(value);
     }
 
-    public show() {
+    private show() {
         this.outputChannel.show();
     }
 
