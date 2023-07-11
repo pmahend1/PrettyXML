@@ -164,6 +164,11 @@
                         "markdownDescription": "Position all attributes on same line as element. Setting this to *Checked* will ignore *Position First Attribute On Same Line*=*Unchecked*. *Default* is *Unchecked.* \n\n **Checked** : \n\n `<Element Attribute1=\"Value1\" Attribute2=\"Value2\"` \n\n **Unchecked** :\n\n`<Element Attribute1=\"Value1\"`\n\n&emsp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`Attribute2=\"Value2\"` ",
                         "default": false
                     },
+                    "prettyxml.settings.preserveWhiteSpacesInComment": {
+                        "type": "boolean",
+                        "markdownDescription": "Preserves whitespaces in comment. Setting this *Checked* ignores *Wrap Comment Text With Spaces* setting. Default is *Unchecked* \n\n **Checked** : \n\n `<!--`&ensp;&ensp;&ensp;&ensp;`Comment`&ensp;&ensp;&ensp;&ensp;`-->` \n\n **Unchecked** : \n\n `<!--Comment-->`",
+                        "default": false
+                    },
                     "prettyxml.settings.enableLogs": {
                         "type": "boolean",
                         "markdownDescription": "Enable console local logs.",

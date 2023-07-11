@@ -53,6 +53,7 @@ export class Formatter {
         let allowWhiteSpaceUnicodesInAttributeValues = prettyXmlConfig.get<boolean>('allowWhiteSpaceUnicodesInAttributeValues');
         let positionFirstAttributeOnSameLine = prettyXmlConfig.get<boolean>('positionFirstAttributeOnSameLine');
         let positionAllAttributesOnFirstLine = prettyXmlConfig.get<boolean>('positionAllAttributesOnFirstLine');
+        let preserveWhiteSpacesInComment = prettyXmlConfig.get<boolean>('preserveWhiteSpacesInComment');
         let enableLogs = prettyXmlConfig.get<boolean>('enableLogs');
 
         this.settings = new Settings(spacelength,
@@ -65,6 +66,7 @@ export class Formatter {
             allowWhiteSpaceUnicodesInAttributeValues,
             positionFirstAttributeOnSameLine,
             positionAllAttributesOnFirstLine,
+            preserveWhiteSpacesInComment,
             enableLogs);
 
         Logger.instance.updateConfiguration(enableLogs);
