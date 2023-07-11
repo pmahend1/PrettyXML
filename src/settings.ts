@@ -11,6 +11,7 @@ export interface ISettings
     AllowWhiteSpaceUnicodesInAttributeValues: boolean;
     PositionFirstAttributeOnSameLine: boolean;
     PositionAllAttributesOnFirstLine: boolean;
+    PreserveWhiteSpacesInComment: boolean;
     EnableLogs: boolean;
 }
 
@@ -25,6 +26,7 @@ export const DefaultSettings: ISettings = {
                                             AllowWhiteSpaceUnicodesInAttributeValues: true,
                                             PositionFirstAttributeOnSameLine: true,
                                             PositionAllAttributesOnFirstLine: false,
+                                            PreserveWhiteSpacesInComment: false,
                                             EnableLogs: false
                                           };
 
@@ -40,6 +42,7 @@ export class Settings
     AllowWhiteSpaceUnicodesInAttributeValues?: boolean;
     PositionFirstAttributeOnSameLine?: boolean;
     PositionAllAttributesOnFirstLine?: boolean;
+    PreserveWhiteSpacesInComment?: boolean;
     EnableLogs?: boolean;
 
     constructor(indentLengh?: number,
@@ -52,6 +55,7 @@ export class Settings
                 allowWhiteSpaceUnicodesInAttributeValues?: boolean,
                 positionFirstAttributeOnSameLine?: boolean,
                 positionAllAttributesOnFirstLine?: boolean,
+                preserveWhiteSpacesInComment?: boolean,
                 enableLogs?: boolean)
     {
         this.IndentLength = indentLengh ?? DefaultSettings.IndentLength;
@@ -64,6 +68,7 @@ export class Settings
         this.AllowWhiteSpaceUnicodesInAttributeValues = allowWhiteSpaceUnicodesInAttributeValues ?? DefaultSettings.AllowWhiteSpaceUnicodesInAttributeValues;
         this.PositionFirstAttributeOnSameLine = positionFirstAttributeOnSameLine ?? DefaultSettings.PositionFirstAttributeOnSameLine;
         this.PositionAllAttributesOnFirstLine = positionAllAttributesOnFirstLine ?? DefaultSettings.PositionAllAttributesOnFirstLine;
+        this.PreserveWhiteSpacesInComment = preserveWhiteSpacesInComment ?? DefaultSettings.PreserveWhiteSpacesInComment;
         this.EnableLogs = enableLogs ?? DefaultSettings.EnableLogs;
     }
 }
