@@ -146,7 +146,7 @@
                     },
                     "prettyxml.settings.wrapCommentTextWithSpaces": {
                         "type": "boolean",
-                        "markdownDescription": "Wrap Comment text with spaces. *Default* is *Checked* \n\n **Checked** : `<!-- Comment Text -->` \n\n **Unchecked** : `<!--Comment Text-->` ",
+                        "markdownDescription": "Wrap Comment text with spaces. Ignored if *Preserve White Spaces In Comment* is *Checked*. *Default* is *Checked* \n\n **Checked** : `<!-- Comment Text -->` \n\n **Unchecked** : `<!--Comment Text-->` ",
                         "default": true
                     },
                     "prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues": {
