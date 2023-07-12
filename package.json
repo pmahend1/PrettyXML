@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "3.3.0",
+    "version": "3.4.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -146,7 +146,7 @@
                     },
                     "prettyxml.settings.wrapCommentTextWithSpaces": {
                         "type": "boolean",
-                        "markdownDescription": "Wrap Comment text with spaces. *Default* is *Checked* \n\n **Checked** : `<!-- Comment Text -->` \n\n **Unchecked** : `<!--Comment Text-->` ",
+                        "markdownDescription": "Wrap Comment text with spaces. Ignored if *Preserve White Spaces In Comment* is *Checked*. *Default* is *Checked* \n\n **Checked** : `<!-- Comment Text -->` \n\n **Unchecked** : `<!--Comment Text-->` ",
                         "default": true
                     },
                     "prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues": {
@@ -162,6 +162,11 @@
                     "prettyxml.settings.positionAllAttributesOnFirstLine": {
                         "type": "boolean",
                         "markdownDescription": "Position all attributes on same line as element. Setting this to *Checked* will ignore *Position First Attribute On Same Line*=*Unchecked*. *Default* is *Unchecked.* \n\n **Checked** : \n\n `<Element Attribute1=\"Value1\" Attribute2=\"Value2\"` \n\n **Unchecked** :\n\n`<Element Attribute1=\"Value1\"`\n\n&emsp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`Attribute2=\"Value2\"` ",
+                        "default": false
+                    },
+                    "prettyxml.settings.preserveWhiteSpacesInComment": {
+                        "type": "boolean",
+                        "markdownDescription": "Preserves whitespaces in comment. Setting this *Checked* ignores *Wrap Comment Text With Spaces* setting. Default is *Unchecked* \n\n **Checked** : \n\n `<!--`&ensp;&ensp;&ensp;&ensp;`Comment`&ensp;&ensp;&ensp;&ensp;`-->` \n\n **Unchecked** : \n\n `<!--Comment-->`",
                         "default": false
                     },
                     "prettyxml.settings.enableLogs": {

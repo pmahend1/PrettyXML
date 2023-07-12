@@ -2,6 +2,11 @@
 
 ## Stable
 
+### 3.4.0: 11-Jul-2023
+
+- Added setting to preserve whitespaces in comments.
+- Yarn upgrades.
+
 ### 3.3.0: 18-May-2023
 
 - Implemented optional logger.
