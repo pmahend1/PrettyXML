@@ -105,7 +105,7 @@ Minimizes XML.
 These will be for **Prettify XML** command.
 
 | Setting Key                                                 | Default Value | Description                                     |
-| ----------------------------------------------------------- | ------------- | ----------------------------------------------- |
+|-------------------------------------------------------------|---------------|-------------------------------------------------|
 | prettyxml.settings.indentSpaceLength                        | 4             | No. of spaces for indentation.                  |
 | prettyxml.settings.useSingleQuotes                          | false         | Use ' instead of \"                             |
 | prettyxml.settings.useSelfClosingTag                        | true          | If no child nodes then self closing tag />      |
@@ -116,6 +116,8 @@ These will be for **Prettify XML** command.
 | prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues | true          | Allows white space unicodes in attribute values |
 | prettyxml.settings.positionFirstAttributeOnSameLine         | true          | Position first attribute on same line.          |
 | prettyxml.settings.positionAllAttributesOnFirstLine         | false         | Position all attributes on first line           |
+| prettyxml.settings.preserveWhiteSpacesInComment             | false         | Preservesx whitespaces in a comment             |
+| prettyxml.settings.enableLogs                               | false         | Enables logs                                    |
 
 ![Settings Image.](./images/settings.png)
 
