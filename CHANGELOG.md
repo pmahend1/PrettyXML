@@ -2,6 +2,11 @@
 
 ## Stable
 
+### 3.5.0: 30-Jul-2023
+
+- Yarn upgrades.
+- Updated ReadMe to reflect latest settings.
+
 ### 3.4.0: 11-Jul-2023
 
 - Added setting to preserve whitespaces in comments.
