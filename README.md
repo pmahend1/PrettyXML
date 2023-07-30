@@ -40,7 +40,7 @@ Pretty XML is a XML formatter extension for Visual Studio Code and VSCodium. It 
 - svg
 - resx and all other XML type of files.
 
-There is also **Visual Studio for Mac 2019** version of this extension. Check it out at [PrettyXML.VSMac](https://github.com/pmahend1/PrettyXML.VSMac)
+There is also **Visual Studio for Mac** version of this extension. Check it out at [PrettyXML.VSMac](https://github.com/pmahend1/PrettyXML.VSMac)
 
 Suggestions, improvement PRs are welcome.  
 <!-- License|Deploy  -->
