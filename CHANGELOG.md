@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 3.6.0: 20-Sep-2023
+
+- Yarn upgrades.
+
 ### 3.5.0: 30-Jul-2023
 
 - Yarn upgrades.
