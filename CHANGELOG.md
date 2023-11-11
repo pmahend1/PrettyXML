@@ -2,6 +2,11 @@
 
 ## Stable
 
+### 3.7.0: 10-Nov-2023
+
+- Yarn upgrades.
+- Review prompt won't show for the very first time.
+
 ### 3.6.0: 20-Sep-2023
 
 - Yarn upgrades.
