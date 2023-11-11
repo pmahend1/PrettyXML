@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		notificationService = new NotificationService(context);
 
 		notificationService.notifyWhatsNewInUpdateAsync();
-		notificationService.promptForReviewAsync();
+		notificationService.handleReviewPromptAsync();
 
 		vscode.workspace.onDidChangeConfiguration((configChangeEvent: vscode.ConfigurationChangeEvent) => {
 			Logger.instance.info("workspace.onDidChangeConfiguration start");
@@ -30,7 +30,6 @@ export function activate(context: vscode.ExtensionContext): void {
 		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.prettifyxml", () => replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
 
 		let minimizeXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.minimizexml", () => replaceDocumentTextWithProgressForCallback("Minimizing...", formatter.minimizeXml()));
-
 
 		vscode.workspace.onWillSaveTextDocument(async (willSaveEvent) => {
 			Logger.instance.info("vscode.workspace.onWillSaveTextDocument start");
@@ -82,4 +81,4 @@ export function activate(context: vscode.ExtensionContext): void {
 //extension deactivate
 export function deactivate() {
 	Logger.instance.info("Extension dectivated");
- }
+}
