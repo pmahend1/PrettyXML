@@ -40,9 +40,7 @@
         "Formatters"
     ],
     "activationEvents": [
-        "onCommand:prettyxml.prettifyxml",
-        "onLanguage:xml",
-        "onCommand:prettyxml.minimizexml"
+        "onLanguage:xml"
     ],
     "main": "./out/extension.js",
     "contributes": {
