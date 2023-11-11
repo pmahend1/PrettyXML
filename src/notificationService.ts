@@ -126,7 +126,7 @@ export class NotificationService {
         let lastUsedDateKey = `${this.storageKeyPrefix}.lastUsedDate`;
         let lastUsedDate = this.context.globalState.get(lastUsedDateKey) as Date;
 
-        if (lastUsedDate !== null) {
+        if (lastUsedDate) {
             var delayedLastDate = lastUsedDate;
             delayedLastDate.setHours(delayedLastDate.getHours() + 2);
             if (new Date() >= delayedLastDate) {
