@@ -18,8 +18,8 @@ export function activate(context: vscode.ExtensionContext): void {
 		formatter = new Formatter(context);
 		notificationService = new NotificationService(context);
 
-		HandleReviewPrompt(context);
-		notificationService.promptForReviewAsync();
+		notificationService.notifyWhatsNewInUpdateAsync();
+		notificationService.handleReviewPromptAsync();
 
 		vscode.workspace.onDidChangeConfiguration((configChangeEvent: vscode.ConfigurationChangeEvent) => {
 			Logger.instance.info("workspace.onDidChangeConfiguration start");
@@ -30,7 +30,6 @@ export function activate(context: vscode.ExtensionContext): void {
 		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.prettifyxml", () => replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
 
 		let minimizeXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.minimizexml", () => replaceDocumentTextWithProgressForCallback("Minimizing...", formatter.minimizeXml()));
-
 
 		vscode.workspace.onWillSaveTextDocument(async (willSaveEvent) => {
 			Logger.instance.info("vscode.workspace.onWillSaveTextDocument start");
@@ -82,18 +81,4 @@ export function activate(context: vscode.ExtensionContext): void {
 //extension deactivate
 export function deactivate() {
 	Logger.instance.info("Extension dectivated");
-}
-
-function HandleReviewPrompt(context: vscode.ExtensionContext) {
-	let lastUsedDateKey = `${context.extension.id}.lastUsedDate`;
-	let lastUsedDate = context.globalState.get(lastUsedDateKey) as Date;
-
-	if (lastUsedDate !== null) {
-		var delayedLastDate = lastUsedDate;
-		delayedLastDate.setHours(delayedLastDate.getHours() + 2);
-		if (new Date() >= delayedLastDate) {
-			notificationService.notifyWhatsNewInUpdateAsync();
-		}
-	}
-	context.globalState.update(lastUsedDateKey, new Date());
 }
