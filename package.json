@@ -149,7 +149,7 @@
                     },
                     "prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues": {
                         "type": "boolean",
-                        "markdownDescription": "Allow unicode whitespace characters in attribute values. *Default* is *Checked* \n\n **Checked** : \n\n `&#10;` → `&#xA;` \n\n `&#x9;` → `&#x9;` \n\n `&#9;` → `&#x9;` \n\n `>` → `>` \n\n **Unchecked** :\n\n `&#10;` → new line  \n\n `&#9;` → tab  \n\n `&#x9;` → tab \n\n `>` → `&gt;`",
+                        "markdownDescription": "Allow unicode whitespace characters in attribute values. *Default* is *Checked* \n\n **Checked** : \n\n `&#10;` → `&#xA;` \n\n `&#9;` or `&#x9;` → `&#x9;` \n\n `>` → `>` \n\n **Unchecked** :\n\n `&#10;` → new line  \n\n `&#9;` or `&#x9;` → tab \n\n &gt; → `&gt;`",
                         "default": true
                     },
                     "prettyxml.settings.positionFirstAttributeOnSameLine": {
