@@ -2,6 +2,11 @@
 
 ## Stable
 
+### 3.8.0: 21-Dec-2023
+
+- Yarn upgrades
+- Added option to unescape `>` character in attribute values.
+
 ### 3.7.0: 10-Nov-2023
 
 - Yarn upgrades.
