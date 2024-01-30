@@ -32,8 +32,10 @@ export function replaceDocumentTextWithProgressForCallback(progressText: string,
                     if (errorMessage) {
                         Logger.instance.info(`Errored with ${errorMessage}`);
                         if (errorMessage.includes("System.Xml.XmlException: Unexpected end of file has occurred.")) {
-                            var userReadableErrorMessage = errorMessage.replace("System.Xml.XmlException: Unexpected end of file has occurred. Unhandled exception. ","");
+                            var userReadableErrorMessage = errorMessage.replace("System.Xml.XmlException: Unexpected end of file has occurred.","").replace("Unhandled exception. System.Xml.XmlException: ","").replace("Unhandled exception. ", "");
                             vscode.window.showErrorMessage(userReadableErrorMessage);
+                        } else {
+                            vscode.window.showErrorMessage(errorMessage);
                         }
                         
                     }
