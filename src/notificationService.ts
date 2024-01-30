@@ -127,7 +127,7 @@ export class NotificationService {
         let lastUsedDate = this.context.globalState.get(lastUsedDateKey) as Date;
 
         if (lastUsedDate) {
-            var delayedLastDate = lastUsedDate;
+            var delayedLastDate = new Date(lastUsedDate);
             delayedLastDate.setHours(delayedLastDate.getHours() + 2);
             if (new Date() >= delayedLastDate) {
                 await this.promptForReviewAsync();
