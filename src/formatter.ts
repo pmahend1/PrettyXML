@@ -33,8 +33,10 @@ export class Formatter {
             Logger.instance.info(`dllPath : ${this.dllPath}`);
         }
         catch (error) {
-            Logger.instance.error(error as Error);
-            throw error;
+            if (error instanceof Error) {
+                Logger.instance.error(error);
+                throw error;
+            }
         }
     }
 
@@ -134,11 +136,11 @@ export class Formatter {
             let promise = new Promise<string>((resolve, reject) => {
                 cli.on("close", (exitCode: Number) => {
                     if (exitCode !== 0) {
-                        Logger.instance.warning(`childProcess errored with exitCode ${ exitCode }`);
+                        Logger.instance.warning(`childProcess errored with exitCode ${exitCode}`);
                         reject(stdErrData);
                     }
                     else {
-                        Logger.instance.info(`childProcess stdOutData:  ${ stdOutData }`);
+                        Logger.instance.info(`childProcess stdOutData:  ${stdOutData}`);
                         resolve(stdOutData);
                     }
                 });
@@ -148,8 +150,12 @@ export class Formatter {
             return promise;
         }
         catch (error) {
-            let err = error as Error;
-            Logger.instance.error(err);
+            if (error instanceof Error) {
+                Logger.instance.error(error);
+            }
+            else if (typeof error === "string") {
+                Logger.instance.warning(error);
+            }
             Logger.instance.warning("Error formatting with command line. Make sure you have dotnet 6+ installed and it is added to PATH.");
             throw new Error('Error formatting with command line. Make sure you have dotnet 6+ installed and it is added to PATH.');
         }

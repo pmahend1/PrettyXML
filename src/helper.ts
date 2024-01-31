@@ -16,7 +16,7 @@ export function replaceDocumentTextWithProgressForCallback(progressText: string,
 
             setTimeout(() => {
                 progress.report({ message: progressText, increment: 25 });
-            }, 100);
+            }, 50);
 
             setTimeout(async () => {
                 try {
@@ -27,21 +27,19 @@ export function replaceDocumentTextWithProgressForCallback(progressText: string,
                     progress.report({ message: progressText, increment: 100 });
                     resolve();
                 }
-                catch (errorObj) {
-                    var errorMessage = errorObj as string;
-                    if (errorMessage) {
-                        Logger.instance.info(`Errored with ${errorMessage}`);
-                        if (errorMessage.includes("System.Xml.XmlException: Unexpected end of file has occurred.")) {
-                            var userReadableErrorMessage = errorMessage.replace("System.Xml.XmlException: Unexpected end of file has occurred.","").replace("Unhandled exception. System.Xml.XmlException: ","").replace("Unhandled exception. ", "");
+                catch (error) {
+                    if (typeof error === "string") {
+                        Logger.instance.warning(`Errored with ${error}`);
+                        if (error.includes("System.Xml.XmlException: Unexpected end of file has occurred.")) {
+                            var userReadableErrorMessage = error.replace("System.Xml.XmlException: Unexpected end of file has occurred.","").replace("Unhandled exception. System.Xml.XmlException: ","").replace("Unhandled exception. ", "");
                             vscode.window.showErrorMessage(userReadableErrorMessage);
                         } else {
-                            vscode.window.showErrorMessage(errorMessage);
+                            vscode.window.showErrorMessage(error);
                         }
-                        
                     }
-                    reject(errorObj);
+                    reject(error);
                 }
-            }, 250);
+            }, 100);
         });
 
         return promise;
