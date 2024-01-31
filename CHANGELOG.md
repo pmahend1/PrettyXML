@@ -2,6 +2,12 @@
 
 ## Stable
 
+### 4.0.0: 31-Jan-2024
+
+- Removed Newtonsoft.Json dependency.
+- Yarn upgrades.
+- Fixed an issue where errors where not shown to users.
+
 ### 3.8.0: 21-Dec-2023
 
 - Yarn upgrades
