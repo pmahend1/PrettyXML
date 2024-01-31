@@ -48,11 +48,12 @@ export function activate(context: vscode.ExtensionContext): void {
 					Logger.instance.warning("Invalid languageId");
 				}
 			}
-			catch (exception) {
-				let errorMessage = (exception as Error)?.message;
-				Logger.instance.error(exception as Error);
-				vscode.window.showErrorMessage(errorMessage);
-				console.error(exception);
+			catch (error) {
+				if (error instanceof Error) {
+					Logger.instance.error(error);
+					vscode.window.showErrorMessage(error.message);
+					console.error(error);
+				}
 			}
 			Logger.instance.info("vscode.workspace.onWillSaveTextDocument end");
 		});
@@ -70,11 +71,16 @@ export function activate(context: vscode.ExtensionContext): void {
 			minimizeXmlCommand,
 			languageProvider);
 	}
-	catch (exception) {
-		let errorMessage = (exception as Error)?.message;
-		vscode.window.showErrorMessage(errorMessage);
-		Logger.instance.error(exception as Error);
-		console.error(exception);
+	catch (error) {
+		if (error instanceof Error) {
+			vscode.window.showErrorMessage(error.message);
+			Logger.instance.error(error);
+		}
+		else if (typeof error === "string") {
+			vscode.window.showErrorMessage(error);
+			Logger.instance.warning(error);
+		}
+		console.error(error);
 	}
 }
 

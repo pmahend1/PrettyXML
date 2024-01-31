@@ -32,8 +32,10 @@ export class NotificationService {
             }
         }
         catch (error) {
-            Logger.instance.error(error as Error);
-            console.error(error);
+            if (error instanceof Error) {
+                Logger.instance.error(error);
+                console.error(error);
+            }
         }
         Logger.instance.info("checkIfEligibleToShowUpdateNote end");
         return shouldDisplay;
@@ -52,8 +54,10 @@ export class NotificationService {
             }
         }
         catch (error) {
-            Logger.instance.error(error as Error);
-            console.error(error);
+            if (error instanceof Error) {
+                Logger.instance.error(error);
+                console.error(error);
+            }
         }
         Logger.instance.info("notifyWhatsNewInUpdateAsync end");
     }
@@ -97,8 +101,10 @@ export class NotificationService {
             }
         }
         catch (error) {
-            Logger.instance.error(error as Error);
-            console.error(error);
+            if (error instanceof Error) {
+                Logger.instance.error(error);
+                console.error(error);
+            }
         }
         Logger.instance.info("promptForReviewAsync end");
     }
@@ -127,7 +133,7 @@ export class NotificationService {
         let lastUsedDate = this.context.globalState.get(lastUsedDateKey) as Date;
 
         if (lastUsedDate) {
-            var delayedLastDate = lastUsedDate;
+            var delayedLastDate = new Date(lastUsedDate);
             delayedLastDate.setHours(delayedLastDate.getHours() + 2);
             if (new Date() >= delayedLastDate) {
                 await this.promptForReviewAsync();

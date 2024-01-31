@@ -56,7 +56,7 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
                         setTimeout(() => {
                             progress.report({ message: "Formatting...", increment: 25 });
 
-                        }, 100);
+                        }, 50);
 
                         setTimeout(async () => {
                             try {
@@ -67,10 +67,9 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
                                 progress.report({ message: "Formatting...", increment: 100 });
                             }
                             catch (error) {
-                                Logger.instance.error(error as Error);
-                                return reject(error);
+                                reject(error); //log in outer catch block
                             }
-                        }, 250);
+                        }, 100);
                     });
 
                     return promise;
@@ -80,9 +79,17 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
                 return resolve([replacer]);
             }
             catch (error) {
-                Logger.instance.error(error as Error);
-                console.error(error);
-                Logger.instance.info("provideDocumentFormattingEdits start");
+                var errorMessage: string = "";
+                if (typeof error === "string") {
+                    errorMessage = error;
+                    Logger.instance.warning(errorMessage);
+                }
+                else if (error instanceof Error) {
+                    Logger.instance.error(error);
+                    errorMessage = error.message;
+                }
+                vscode.window.showErrorMessage(errorMessage);
+
                 return resolve([]);
             }
         });
