@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 4.0.1: 31-Jan-2024
+
+- Added [`AXAML`](https://docs.avaloniaui.net/docs/basics/user-interface/introduction-to-xaml) support for Avalonia.
+
 ### 4.0.0: 31-Jan-2024
 
 - Removed Newtonsoft.Json dependency.
