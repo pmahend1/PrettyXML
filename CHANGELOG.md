@@ -2,7 +2,7 @@
 
 ## Stable
 
-### 4.0.1: 31-Jan-2024
+### 4.1.0: 31-Jan-2024
 
 - Added [`AXAML`](https://docs.avaloniaui.net/docs/basics/user-interface/introduction-to-xaml) support for Avalonia.
 
