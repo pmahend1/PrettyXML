@@ -89,6 +89,7 @@
                     ".mobileconfig",
                     ".xaml",
                     ".axml",
+                    ".axaml",
                     ".resx",
                     ".svg"
                 ]
