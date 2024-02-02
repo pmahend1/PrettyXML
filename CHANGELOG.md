@@ -2,6 +2,11 @@
 
 ## Stable
 
+### 4.1.1: 01-Feb-2024
+
+- Fixes [#137: Apple Plist/MobileConfig files create error after first format](https://github.com/pmahend1/PrettyXML/issues/137).
+- Yarn upgrades.
+
 ### 4.1.0: 31-Jan-2024
 
 - Added [`AXAML`](https://docs.avaloniaui.net/docs/basics/user-interface/introduction-to-xaml) support for Avalonia.
