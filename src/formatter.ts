@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
-import { DefaultSettings, Settings } from "./settings";
+import { defaultSettings, Settings } from "./settings";
 import * as childProcess from "child_process";
 import * as path from "path";
 import { JsonInputDto } from "./jsonInputDto";
@@ -11,7 +11,7 @@ export class Formatter {
     private extensionContext: vscode.ExtensionContext;
     private dllPath: string = "";
 
-    public settings: Settings = DefaultSettings;
+    public settings: Settings = defaultSettings;
     constructor(context: vscode.ExtensionContext) {
         this.extensionContext = context;
         this.initialize();

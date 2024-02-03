@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { DefaultSettings } from "./settings";
+import { defaultSettings } from "./settings";
 
 export class JSInputDTO
 {
@@ -15,14 +15,14 @@ export class JSInputDTO
     PositionFirstAttributeOnSameLine: boolean;
 
     constructor(xmlString: string,
-                indentLength: number = DefaultSettings.IndentLength,
-                useSingleQuotes: boolean = DefaultSettings.UseSingleQuotes,
-                useSelfClosingTags: boolean = DefaultSettings.UseSelfClosingTags,
-                allowSingleQuoteInAttributeValue: boolean = DefaultSettings.AllowSingleQuoteInAttributeValue,
-                addSpaceBeforeSelfClosingTag: boolean = DefaultSettings.AddSpaceBeforeSelfClosingTag,
-                wrapCommentTextWithSpaces: boolean = DefaultSettings.WrapCommentTextWithSpaces,
-                allowWhiteSpaceUnicodesInAttributeValues: boolean = DefaultSettings.AllowWhiteSpaceUnicodesInAttributeValues,
-                positionFirstAttributeOnSameLine: boolean = DefaultSettings.PositionFirstAttributeOnSameLine)
+                indentLength: number = defaultSettings.indentLength,
+                useSingleQuotes: boolean = defaultSettings.useSingleQuotes,
+                useSelfClosingTags: boolean = defaultSettings.useSelfClosingTags,
+                allowSingleQuoteInAttributeValue: boolean = defaultSettings.allowSingleQuoteInAttributeValue,
+                addSpaceBeforeSelfClosingTag: boolean = defaultSettings.addSpaceBeforeSelfClosingTag,
+                wrapCommentTextWithSpaces: boolean = defaultSettings.wrapCommentTextWithSpaces,
+                allowWhiteSpaceUnicodesInAttributeValues: boolean = defaultSettings.allowWhiteSpaceUnicodesInAttributeValues,
+                positionFirstAttributeOnSameLine: boolean = defaultSettings.positionFirstAttributeOnSameLine)
     {
         this.XMLString = xmlString;
         this.IndentLength = indentLength;
