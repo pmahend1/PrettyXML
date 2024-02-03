@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 4.1.2: 03-Feb-2024
+
+- Fixes [#139: "Position All Attributes On First Line" not work](https://github.com/pmahend1/PrettyXML/issues/139)
+
 ### 4.1.1: 01-Feb-2024
 
 - Fixes [#137: Apple Plist/MobileConfig files create error after first format](https://github.com/pmahend1/PrettyXML/issues/137).
