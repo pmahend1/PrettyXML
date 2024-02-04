@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 4.1.3: 03-Feb-2024
+
+- Fix for [#141: Some comments are lost after format](https://github.com/pmahend1/PrettyXML/issues/141).
+
 ### 4.1.2: 03-Feb-2024
 
 - Fixes [#139: "Position All Attributes On First Line" not work](https://github.com/pmahend1/PrettyXML/issues/139)
