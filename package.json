@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "4.1.3",
+    "version": "4.2.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -166,6 +166,11 @@
                     "prettyxml.settings.preserveWhiteSpacesInComment": {
                         "type": "boolean",
                         "markdownDescription": "Preserves whitespaces in comment. Setting this *Checked* ignores *Wrap Comment Text With Spaces* setting. Default is *Unchecked* \n\n **Checked** : \n\n `<!--`&ensp;&ensp;&ensp;&ensp;`Comment`&ensp;&ensp;&ensp;&ensp;`-->` \n\n **Unchecked** : \n\n `<!--Comment-->`",
+                        "default": false
+                    },
+                    "prettyxml.settings.addSpaceBeforeEndOfXmlDeclaration": {
+                        "type": "boolean",
+                        "markdownDescription": "Adds space before end of XML declaration. Default is *Unchecked* \n\n **Checked** : \n\n `<?xml version=\"1.0\" encoding=\"utf-8\" ?>` \n\n **Unchecked** : \n\n `<?xml version=\"1.0\" encoding=\"utf-8\"?>`",
                         "default": false
                     },
                     "prettyxml.settings.enableLogs": {
