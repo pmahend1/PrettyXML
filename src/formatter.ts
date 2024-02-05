@@ -56,8 +56,10 @@ export class Formatter {
         let positionFirstAttributeOnSameLine = prettyXmlConfig.get<boolean>('positionFirstAttributeOnSameLine');
         let positionAllAttributesOnFirstLine = prettyXmlConfig.get<boolean>('positionAllAttributesOnFirstLine');
         let preserveWhiteSpacesInComment = prettyXmlConfig.get<boolean>('preserveWhiteSpacesInComment');
+        let addSpaceBeforeEndOfXmlDeclaration = prettyXmlConfig.get<boolean>('addSpaceBeforeEndOfXmlDeclaration');
         let enableLogs = prettyXmlConfig.get<boolean>('enableLogs');
-
+        Logger.instance.updateConfiguration(enableLogs);
+        
         this.settings = new Settings(spacelength,
             usesinglequotes,
             useselfclosetag,
@@ -69,9 +71,11 @@ export class Formatter {
             positionFirstAttributeOnSameLine,
             positionAllAttributesOnFirstLine,
             preserveWhiteSpacesInComment,
+            addSpaceBeforeEndOfXmlDeclaration,
             enableLogs);
 
-        Logger.instance.updateConfiguration(enableLogs);
+        Logger.instance.info(`Settings : ${JSON.stringify(this.settings)}`);
+        
         Logger.instance.info("loadSettings end");
     }
 

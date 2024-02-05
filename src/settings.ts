@@ -10,6 +10,7 @@ export interface ISettings {
     positionFirstAttributeOnSameLine: boolean;
     positionAllAttributesOnFirstLine: boolean;
     preserveWhiteSpacesInComment: boolean;
+    addSpaceBeforeEndOfXmlDeclaration: boolean;
     enableLogs: boolean;
 }
 
@@ -25,6 +26,7 @@ export const defaultSettings: ISettings = {
     positionFirstAttributeOnSameLine: true,
     positionAllAttributesOnFirstLine: false,
     preserveWhiteSpacesInComment: false,
+    addSpaceBeforeEndOfXmlDeclaration: false,
     enableLogs: false
 };
 
@@ -40,9 +42,10 @@ export class Settings {
     positionFirstAttributeOnSameLine?: boolean;
     positionAllAttributesOnFirstLine?: boolean;
     preserveWhiteSpacesInComment?: boolean;
+    addSpaceBeforeEndOfXmlDeclaration: boolean;
     enableLogs?: boolean;
 
-    constructor(indentLengh?: number, 
+    constructor(indentLengh?: number,
         useSingleQuotes?: boolean,
         useSelfClosingTags?: boolean,
         formatOnSave?: boolean,
@@ -53,6 +56,7 @@ export class Settings {
         positionFirstAttributeOnSameLine?: boolean,
         positionAllAttributesOnFirstLine?: boolean,
         preserveWhiteSpacesInComment?: boolean,
+        addSpaceBeforeEndOfXmlDeclaration?: boolean,
         enableLogs?: boolean) {
         this.indentLength = indentLengh ?? defaultSettings.indentLength;
         this.useSingleQuotes = useSingleQuotes ?? defaultSettings.useSingleQuotes;
@@ -65,6 +69,7 @@ export class Settings {
         this.positionFirstAttributeOnSameLine = positionFirstAttributeOnSameLine ?? defaultSettings.positionFirstAttributeOnSameLine;
         this.positionAllAttributesOnFirstLine = positionAllAttributesOnFirstLine ?? defaultSettings.positionAllAttributesOnFirstLine;
         this.preserveWhiteSpacesInComment = preserveWhiteSpacesInComment ?? defaultSettings.preserveWhiteSpacesInComment;
+        this.addSpaceBeforeEndOfXmlDeclaration = addSpaceBeforeEndOfXmlDeclaration ?? defaultSettings.addSpaceBeforeEndOfXmlDeclaration;
         this.enableLogs = enableLogs ?? defaultSettings.enableLogs;
     }
 }
