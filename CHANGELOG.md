@@ -2,6 +2,10 @@
 
 ## Stable
 
+### 4.2.0: 04-Feb-2024
+
+- Added setting `addSpaceBeforeEndOfXmlDeclaration`
+
 ### 4.1.3: 03-Feb-2024
 
 - Fix for [#141: Some comments are lost after format](https://github.com/pmahend1/PrettyXML/issues/141).
