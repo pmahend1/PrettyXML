@@ -116,7 +116,8 @@ These will be for **Prettify XML** command.
 | prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues | true          | Allows white space unicodes in attribute values |
 | prettyxml.settings.positionFirstAttributeOnSameLine         | true          | Position first attribute on same line.          |
 | prettyxml.settings.positionAllAttributesOnFirstLine         | false         | Position all attributes on first line           |
-| prettyxml.settings.preserveWhiteSpacesInComment             | false         | Preserves whitespaces in a comment             |
+| prettyxml.settings.preserveWhiteSpacesInComment             | false         | Preserves whitespaces in a comment              |
+| prettyxml.settings.addSpaceBeforeEndOfXmlDeclaration        | false         | Add space before end of XML declaration         |
 | prettyxml.settings.enableLogs                               | false         | Enables logs                                    |
 
 ![Settings Image.](./images/settings.png)
