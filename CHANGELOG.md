@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 4.3.0: 23-Feb-2024
+
+- Fixed some CDATA and text formatting.
+- Yarn upgrades.
+
 ### 4.2.0: 04-Feb-2024
 
 - Added setting `addSpaceBeforeEndOfXmlDeclaration`
