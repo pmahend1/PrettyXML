@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "4.3.0",
+    "version": "4.4.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -172,6 +172,22 @@
                         "type": "boolean",
                         "markdownDescription": "Adds space before end of XML declaration. Default is *Unchecked* \n\n **Checked** : \n\n `<?xml version=\"1.0\" encoding=\"utf-8\" ?>` \n\n **Unchecked** : \n\n `<?xml version=\"1.0\" encoding=\"utf-8\"?>`",
                         "default": false
+                    },
+                    "prettyxml.settings.attributesInNewlineThreshold": {
+                        "type": "number",
+                        "default": 1,
+                        "enum": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9
+                        ],
+                        "markdownDescription": "Attributes count threshold to position attributes in newlines. Default is *1*. This setting only works when **Position first attribute on same line** is enabled.\n\nFor example if threshold=2, all attributes will be on same line if an element has only 2 attributes,\n\notherwise each attribute will be placed on newline."
                     },
                     "prettyxml.settings.enableLogs": {
                         "type": "boolean",
