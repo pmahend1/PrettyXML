@@ -2,6 +2,10 @@
 
 ## Stable
 
+## 4.4.1: 25-Feb-2024
+
+- **Attributes In Newline Threshold** setting information added.
+
 ## 4.4.0: 25-Feb-2024
 
 - **Attributes In Newline Threshold** setting added.

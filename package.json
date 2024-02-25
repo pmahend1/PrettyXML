@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "4.4.0",
+    "version": "4.4.1",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -187,7 +187,7 @@
                             8,
                             9
                         ],
-                        "markdownDescription": "Attributes count threshold to position attributes in newlines. Default is *1*. This setting only works when **Position first attribute on same line** is enabled.\n\nFor example if threshold=2, all attributes will be on same line if an element has only 2 attributes,\n\notherwise each attribute will be placed on newline."
+                        "markdownDescription": "Attributes count threshold to position attributes in newlines. Default is *1*. This setting only works when **Position first attribute on same line** is enabled.\n\nFor example if threshold=2, all attributes will be on same line if an element has only 2 attributes,\n\notherwise each attribute will be placed on newline.\n\nMore Info: [GitHub](https://github.com/pmahend1/PrettyXML?tab=readme-ov-file#attributes-in-newline-threshold)"
                     },
                     "prettyxml.settings.enableLogs": {
                         "type": "boolean",

@@ -104,23 +104,56 @@ Minimizes XML.
 
 These will be for **Prettify XML** command.
 
-| Setting Key                                                 | Default Value | Description                                     |
-|-------------------------------------------------------------|---------------|-------------------------------------------------|
-| prettyxml.settings.indentSpaceLength                        | 4             | No. of spaces for indentation.                  |
-| prettyxml.settings.useSingleQuotes                          | false         | Use ' instead of \"                             |
-| prettyxml.settings.useSelfClosingTag                        | true          | If no child nodes then self closing tag />      |
-| prettyxml.settings.formatOnSave                             | false         | Enable format on save                           |
-| prettyxml.settings.allowSingleQuoteInAttributeValue         | true          | Allows ' in attribute values instead of \&apos; |
-| prettyxml.settings.addSpaceBeforeSelfClosingTag             | true          | Adds space before self closing tag              |
-| prettyxml.settings.wrapCommentTextWithSpaces                | true          | Wraps comment text with a single space          |
-| prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues | true          | Allows white space unicodes in attribute values |
-| prettyxml.settings.positionFirstAttributeOnSameLine         | true          | Position first attribute on same line.          |
-| prettyxml.settings.positionAllAttributesOnFirstLine         | false         | Position all attributes on first line           |
-| prettyxml.settings.preserveWhiteSpacesInComment             | false         | Preserves whitespaces in a comment              |
-| prettyxml.settings.addSpaceBeforeEndOfXmlDeclaration        | false         | Add space before end of XML declaration         |
-| prettyxml.settings.enableLogs                               | false         | Enables logs                                    |
+| Setting Key                                                                         | Default Value | Description                                                    |
+|-------------------------------------------------------------------------------------|---------------|----------------------------------------------------------------|
+| prettyxml.settings.indentSpaceLength                                                | 4             | No. of spaces for indentation.                                 |
+| prettyxml.settings.useSingleQuotes                                                  | false         | Use ' instead of \"                                            |
+| prettyxml.settings.useSelfClosingTag                                                | true          | If no child nodes then self closing tag />                     |
+| prettyxml.settings.formatOnSave                                                     | false         | Enable format on save                                          |
+| prettyxml.settings.allowSingleQuoteInAttributeValue                                 | true          | Allows ' in attribute values instead of \&apos;                |
+| prettyxml.settings.addSpaceBeforeSelfClosingTag                                     | true          | Adds space before self closing tag                             |
+| prettyxml.settings.wrapCommentTextWithSpaces                                        | true          | Wraps comment text with a single space                         |
+| prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues                         | true          | Allows white space unicodes in attribute values                |
+| prettyxml.settings.positionFirstAttributeOnSameLine                                 | true          | Position first attribute on same line.                         |
+| prettyxml.settings.positionAllAttributesOnFirstLine                                 | false         | Position all attributes on first line                          |
+| prettyxml.settings.preserveWhiteSpacesInComment                                     | false         | Preserves whitespaces in a comment.                            |
+| prettyxml.settings.addSpaceBeforeEndOfXmlDeclaration                                | false         | Add space before end of XML declaration.                       |
+| [prettyxml.settings.attributesInNewlineThreshold](#attributes-in-newline-threshold) | 1             | Attributes count threshold to position attributes in newlines. |
+| prettyxml.settings.enableLogs                                                       | false         | Enables logs                                                   |
 
 ![Settings Image.](./images/settings.png)
+
+### Attributes In Newline Threshold
+
+Example:
+
+Value = 2
+
+#### Input#1
+
+```xml
+<Element Attribute1="Value1" Attribute2="Value2" />
+```
+
+#### Output#1
+
+```xml
+<Element Attribute1="Value1" Attribute2="Value2" />
+```
+
+#### Input#2
+
+```xml
+<Element Attribute1="Value1" Attribute2="Value2" Attribute3="Value3" />
+```
+
+#### Output#2
+
+```xml
+<Element Attribute1="Value1"
+         Attribute2="Value2"
+         Attribute3="Value3"/>
+```
 
 ---
 
