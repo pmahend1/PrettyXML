@@ -2,6 +2,10 @@
 
 ## Stable
 
+## 4.4.0: 25-Feb-2024
+
+- **Attributes In Newline Threshold** setting added.
+
 ## 4.3.0: 23-Feb-2024
 
 - Fixed some CDATA and text formatting.
