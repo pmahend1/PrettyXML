@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 4.5.0: 5-Apr-2024
+
+- Yarn upgrades.
+- Added funding info on repository.
+
 ## 4.4.1: 25-Feb-2024
 
 - **Attributes In Newline Threshold** setting information added.
