@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 4.5.1: 16-Apr-2024
+
+- Yarn upgrades.
+- Fixed shield.io badges for open-vsx.
+
 ## 4.5.0: 5-Apr-2024
 
 - Yarn upgrades.
