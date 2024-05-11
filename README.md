@@ -69,7 +69,7 @@ Right Click and Select Prettify XML or use [shortcut](#keyboard-shortcuts)
 - No empty lines.
 - Supports `'` and whitespace unicodes in attribute value for XAML parser compatibility.
 
-**Before**
+Before
 
 ![Before.](./images/before.png)
 
@@ -159,7 +159,7 @@ Value = 2
 
 ## Requirements
 
-- [**.Net 6** or later](https://dotnet.microsoft.com/en-us/download/dotnet) installed on your machine and should be accessible through terminal.
+- [**DotNet 8** or later](https://dotnet.microsoft.com/en-us/download/dotnet) installed on your machine and should be accessible through terminal.
 - Install [Muhammad-Sammy C#](https://open-vsx.org/extension/muhammad-sammy/csharp) or [Microsoft C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) extension.
 - Visual Studio Code/VSCodium 1.59 or higher.
 

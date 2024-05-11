@@ -2,6 +2,10 @@
 
 ## Stable
 
+## 5.0.0: 11-May-2024
+
+- Updated Dotnet dependency to version 8.
+
 ## 4.5.1: 16-Apr-2024
 
 - Yarn upgrades.
