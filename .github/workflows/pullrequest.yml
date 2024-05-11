@@ -61,13 +61,13 @@ jobs:
         id: compare
         shell: pwsh
         run: |
-          $localVersion = [System.Version](${{ steps.getpackageversion.outputs.VERSION }})
-          $storeVersion = [System.Version](${{ steps.getPublishedVersion.outputs.PUB_VERSION }})
+          $localVersion = [System.Version]('${{ steps.getpackageversion.outputs.VERSION }}')
+          $storeVersion = [System.Version]('${{ steps.getPublishedVersion.outputs.PUB_VERSION }}')
          
           if ($localVersion -gt $storeVersion) {
             Write-Host "Version in package.json is higher than latest published version"
             Write-Host "Pass"
           }
           else {
-            throw [System.Exception]("Version can not be same as latest published version! Update package version.")
+            throw [System.Exception]("Version can not be same as latest published version ❌! Update package version.")
           }
