@@ -5,15 +5,13 @@ on:
     branches:
       - main
   workflow_dispatch:
-    branches:
-      - main
 
 jobs:
   deploy:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.1.4
 
       - name: Install vsce and open vsx 
         run: |
