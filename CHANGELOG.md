@@ -2,7 +2,7 @@
 
 ## Stable
 
-## 5.0.1: 18-May-2024
+## 5.0.2: 18-Jun-2024
 
 - Yarn upgrades.
 - Fixes [braces vulnerability](https://github.com/advisories/GHSA-grv7-fg5c-xmjg)
