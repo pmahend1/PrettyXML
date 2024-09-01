@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 5.0.3: 01-Sep-2024
+
+- Yarn upgrades.
+- Fixes [Regular Expression Denial of Service (ReDoS) in micromatch](https://nvd.nist.gov/vuln/detail/CVE-2024-4067)
+
 ## 5.0.1/5.0.2: 18-Jun-2024
 
 - Yarn upgrades.
