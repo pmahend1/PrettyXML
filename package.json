@@ -40,7 +40,9 @@
         "Formatters"
     ],
     "activationEvents": [
-        "onLanguage:xml"
+        "onLanguage:xml",
+        "workspaceContains:**/*.xml",
+        "workspaceContains:**/*.xaml"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -100,7 +102,7 @@
                 {
                     "command": "prettyxml.prettifyxml",
                     "group": "1_modification@100",
-                    "when": "editorLangId == 'xml'"
+                    "when": "editorLangId == 'xml' || editorLangId == 'xaml'"
                 }
             ]
         },

@@ -61,6 +61,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		const xmlXsdDocSelector = [
 			...DocumentHelper.createLanguageDocumentFilters("xml"),
 			...DocumentHelper.createLanguageDocumentFilters("xsd"),
+			...DocumentHelper.createLanguageDocumentFilters("xaml"),
 		];
 		const xmlFormattingEditProvider = new PrettyXmlFormattingEditProvider(formatter);
 
