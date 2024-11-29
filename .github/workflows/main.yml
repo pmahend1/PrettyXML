@@ -11,11 +11,11 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.4
+        uses: actions/checkout@v4.2.2
 
-      - name: Install vsce and open vsx 
+      - name: Install vsce and open vsx
         run: |
-          npm install -g vsce
+          npm install -g @vscode/vsce
           npm install -g ovsx
 
       - name: yarn
