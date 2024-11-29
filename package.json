@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "5.0.3",
+    "version": "5.1.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -34,13 +34,15 @@
         "formatter"
     ],
     "engines": {
-        "vscode": "^1.59.0"
+        "vscode": "^1.95.0"
     },
     "categories": [
         "Formatters"
     ],
     "activationEvents": [
-        "onLanguage:xml"
+        "onLanguage:xml",
+        "workspaceContains:**/*.xml",
+        "workspaceContains:**/*.xaml"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -100,7 +102,7 @@
                 {
                     "command": "prettyxml.prettifyxml",
                     "group": "1_modification@100",
-                    "when": "editorLangId == 'xml'"
+                    "when": "editorLangId == 'xml' || editorLangId == 'xaml'"
                 }
             ]
         },
@@ -199,34 +201,35 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "yarn run esbuild-base --minify",
-        "compile": "tsc -p ./",
-        "lint": "eslint src --ext ts",
-        "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=./out/extension.js --external:vscode --format=cjs --platform=node",
-        "esbuild": "yarn run esbuild-base --sourcemap",
-        "esbuild-watch": "yarn run esbuild-base --sourcemap --watch",
-        "test-compile": "tsc -p ./",
-        "pretest": "yarn run compile && yarn run lint",
-        "test": "node ./out/test/runTest.js"
+        "compile": "webpack --mode development",
+        "watch": "webpack --mode development --watch",
+        "vscode:prepublish": "npm run package",
+        "package": "webpack --mode production --devtool hidden-source-map",
+        "compile-tests": "tsc -p . --outDir out",
+        "pretest": "npm run compile-tests",
+        "test": "vscode-test"
     },
     "devDependencies": {
-        "@types/glob": "^7.1.3",
-        "@types/mocha": "^9.0.0",
-        "@types/node": "^16.4.13",
-        "@types/vscode": "^1.59.0",
-        "@typescript-eslint/eslint-plugin": "^4.29.0",
-        "@typescript-eslint/parser": "4.31.0",
-        "esbuild": "^0.15.10",
-        "eslint": "^7.6.0",
-        "glob": "^7.1.6",
-        "mocha": "^9.0.2",
-        "typescript": "^4.1.3",
-        "vscode-test": "^1.4.0"
+        "@types/glob": "^8.1.0",
+        "@types/mocha": "^10.0.10",
+        "@types/node": "^22.10.1",
+        "@types/vscode": "^1.95.0",
+        "@typescript-eslint/eslint-plugin": "^8.16.0",
+        "@typescript-eslint/parser": "8.16.0",
+        "esbuild": "^0.24.0",
+        "eslint": "^9.15.0",
+        "glob": "^11.0.0",
+        "mocha": "^10.8.2",
+        "ts-loader": "^9.5.1",
+        "typescript": "^5.7.2",
+        "vscode-test": "^1.4.0",
+        "webpack": "^5.96.1",
+        "webpack-cli": "^5.1.4"
     },
     "dependencies": {
-        "@types/compare-versions": "^3.3.0",
+        "@types/compare-versions": "^3.3.3",
         "child_process": "^1.0.2",
-        "compare-versions": "^3.6.0",
+        "compare-versions": "^6.1.1",
         "fs": "^0.0.1-security",
         "path": "^0.12.7"
     }

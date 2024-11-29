@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 5.1.0: 29-Nov-2024
+
+- Fixes [Formatting doesn't seem to work when using with .xaml files.](https://github.com/pmahend1/PrettyXML/issues/167)
+- Yarn upgrades to latest.
+  
 ## 5.0.3: 01-Sep-2024
 
 - Yarn upgrades.

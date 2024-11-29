@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-// imports
 import * as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
 import { Formatter } from "./formatter";
@@ -61,6 +59,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		const xmlXsdDocSelector = [
 			...DocumentHelper.createLanguageDocumentFilters("xml"),
 			...DocumentHelper.createLanguageDocumentFilters("xsd"),
+			...DocumentHelper.createLanguageDocumentFilters("xaml"),
 		];
 		const xmlFormattingEditProvider = new PrettyXmlFormattingEditProvider(formatter);
 

@@ -5,24 +5,19 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "esbuild-watch",
-			"problemMatcher": "$esbuild-watch",
+			"script": "watch",
+			"problemMatcher": "$ts-checker-webpack-watch",//amodio.tsl-problem-matcher
 			"isBackground": true,
-			"label": "npm: esbuild-watch",
+			"label": "npm: watch",
 			"presentation": {
-				"reveal": "never"
+				"reveal": "silent",
+				"showReuseMessage": true,
+				"panel": "dedicated"
 			},
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			}
-		},
-		{
-			"type": "npm",
-			"script": "esbuild",
-			"group": "build",
-			"problemMatcher": "$esbuild",
-			"label": "npm: esbuild",
 		}
 	]
 }
