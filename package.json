@@ -201,15 +201,13 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "yarn run esbuild-base --minify",
-        "compile": "tsc -p ./",
-        "lint": "eslint src --ext ts",
-        "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=./out/extension.js --external:vscode --format=cjs --platform=node",
-        "esbuild": "yarn run esbuild-base --sourcemap",
-        "esbuild-watch": "yarn run esbuild-base --sourcemap --watch",
-        "test-compile": "tsc -p ./",
-        "pretest": "yarn run compile && yarn run lint",
-        "test": "node ./out/test/runTest.js"
+        "compile": "webpack --mode development",
+        "watch": "webpack --mode development --watch",
+        "vscode:prepublish": "npm run package",
+        "package": "webpack --mode production --devtool hidden-source-map",
+        "compile-tests": "tsc -p . --outDir out",
+        "pretest": "npm run compile-tests",
+        "test": "vscode-test"
     },
     "devDependencies": {
         "@types/glob": "^8.1.0",
@@ -222,8 +220,11 @@
         "eslint": "^9.15.0",
         "glob": "^11.0.0",
         "mocha": "^10.8.2",
+        "ts-loader": "^9.5.1",
         "typescript": "^5.7.2",
-        "vscode-test": "^1.4.0"
+        "vscode-test": "^1.4.0",
+        "webpack": "^5.96.1",
+        "webpack-cli": "^5.1.4"
     },
     "dependencies": {
         "@types/compare-versions": "^3.3.3",

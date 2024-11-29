@@ -5,13 +5,12 @@ src/**
 .gitignore
 vsc-extension-quickstart.md
 **/tsconfig.json
+**/tslint.json
 **/.eslintrc.json
 **/*.map
 **/*.ts
-out/*.dll
-**/*.deps.json
-**/*.pdb
+node_modules
+webpack.config.js
+*.yml
 .github/**
-node_modules/nan/**
-node_modules/edge-cs/**
 images/old_logo.png

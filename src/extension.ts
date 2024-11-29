@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-// imports
 import * as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
 import { Formatter } from "./formatter";
