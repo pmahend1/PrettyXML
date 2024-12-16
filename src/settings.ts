@@ -12,6 +12,7 @@ export interface ISettings {
     preserveWhiteSpacesInComment: boolean;
     addSpaceBeforeEndOfXmlDeclaration: boolean;
     attributesInNewlineThreshold: number;
+    wildCardedExceptionsForPositionAllAttributesOnFirstLine?: [string];
     enableLogs: boolean;
 }
 
@@ -29,6 +30,7 @@ export const defaultSettings: ISettings = {
     preserveWhiteSpacesInComment: false,
     addSpaceBeforeEndOfXmlDeclaration: false,
     attributesInNewlineThreshold: 1,
+    wildCardedExceptionsForPositionAllAttributesOnFirstLine: undefined,
     enableLogs: false
 };
 
@@ -46,6 +48,7 @@ export class Settings {
     preserveWhiteSpacesInComment?: boolean;
     addSpaceBeforeEndOfXmlDeclaration: boolean;
     attributesInNewlineThreshold: number;
+    wildCardedExceptionsForPositionAllAttributesOnFirstLine?: string[];
     enableLogs?: boolean;
 
     constructor(indentLengh?: number,
@@ -61,6 +64,7 @@ export class Settings {
         preserveWhiteSpacesInComment?: boolean,
         addSpaceBeforeEndOfXmlDeclaration?: boolean,
         attributesInNewlineThreshold?: number,
+        wildCardedExceptionsForPositionAllAttributesOnFirstLine?: string[],
         enableLogs?: boolean) {
         this.indentLength = indentLengh ?? defaultSettings.indentLength;
         this.useSingleQuotes = useSingleQuotes ?? defaultSettings.useSingleQuotes;
@@ -75,6 +79,7 @@ export class Settings {
         this.preserveWhiteSpacesInComment = preserveWhiteSpacesInComment ?? defaultSettings.preserveWhiteSpacesInComment;
         this.addSpaceBeforeEndOfXmlDeclaration = addSpaceBeforeEndOfXmlDeclaration ?? defaultSettings.addSpaceBeforeEndOfXmlDeclaration;
         this.attributesInNewlineThreshold = attributesInNewlineThreshold ?? defaultSettings.attributesInNewlineThreshold;
+        this.wildCardedExceptionsForPositionAllAttributesOnFirstLine = wildCardedExceptionsForPositionAllAttributesOnFirstLine;
         this.enableLogs = enableLogs ?? defaultSettings.enableLogs;
     }
 }

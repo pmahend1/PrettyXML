@@ -34,7 +34,7 @@ export function activate(context: vscode.ExtensionContext): void {
 			try {
 				var languageId = willSaveEvent?.document?.languageId;
 				if (languageId) {
-					if (languageId === "xml" || languageId === "xsd") {
+					if (languageId === "xml" || languageId === "xsd" || languageId === "xaml") {
 						let prettyXmlConfig = vscode.workspace.getConfiguration("prettyxml.settings");
 						let formatOnSave = prettyXmlConfig.get<boolean>("formatOnSave") ?? false;
 						if (formatOnSave) {
