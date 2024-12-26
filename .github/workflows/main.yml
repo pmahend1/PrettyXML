@@ -1,37 +1,42 @@
 name: Deploy CI
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
+    deploy:
+        runs-on: windows-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4.2.2
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v4.1.0
-        with:
-          node-version: 22
+            - name: Setup Node.js environment
+              uses: actions/setup-node@v4.1.0
+              with:
+                  node-version: 22
 
-      - name: Install vsce and open vsx
-        run: |
-          npm install -g @vscode/vsce
-          npm install -g ovsx
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 9
 
-      - name: yarn
-        run: yarn
+            - name: Install vsce and open vsx
+              run: |
+                  npm install -g @vscode/vsce
+                  npm install -g ovsx
 
-      - name: VSCE Publish
-        run: vsce publish --yarn -p $env:VSCE_PAT
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PRETTYXML }}
+            - name: pnpm
+              run: pnpm install
 
-      - name: Open VSX Publish
-        run: npx ovsx publish --yarn -p $env:OPEN_VSX_PAT
-        env:
-          OPEN_VSX_PAT: ${{ secrets.OPENVSX }}
+            - name: VSCE Publish
+              run: vsce publish -p $env:VSCE_PAT
+              env:
+                  VSCE_PAT: ${{ secrets.VSCE_PRETTYXML }}
+
+            - name: Open VSX Publish
+              run: npx ovsx publish -p $env:OPEN_VSX_PAT
+              env:
+                  OPEN_VSX_PAT: ${{ secrets.OPENVSX }}
