@@ -6,7 +6,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "5.1.0",
+    "version": "5.2.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -34,7 +34,7 @@
         "formatter"
     ],
     "engines": {
-        "vscode": "^1.95.0"
+        "vscode": "^1.96.0"
     },
     "categories": [
         "Formatters"
@@ -165,6 +165,11 @@
                         "markdownDescription": "Position all attributes on same line as element. Setting this to *Checked* will ignore *Position First Attribute On Same Line*=*Unchecked*. *Default* is *Unchecked.* \n\n **Checked** : \n\n `<Element Attribute1=\"Value1\" Attribute2=\"Value2\"` \n\n **Unchecked** :\n\n`<Element Attribute1=\"Value1\"`\n\n&emsp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`Attribute2=\"Value2\"` ",
                         "default": false
                     },
+                    "prettyxml.settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine": {
+                        "type": "array",
+                        "markdownDescription": "Exceptions for Position all attributes on same line as element. Wildcards accepted.",
+                        "default": []
+                    },
                     "prettyxml.settings.preserveWhiteSpacesInComment": {
                         "type": "boolean",
                         "markdownDescription": "Preserves whitespaces in comment. Setting this *Checked* ignores *Wrap Comment Text With Spaces* setting. Default is *Unchecked* \n\n **Checked** : \n\n `<!--`&ensp;&ensp;&ensp;&ensp;`Comment`&ensp;&ensp;&ensp;&ensp;`-->` \n\n **Unchecked** : \n\n `<!--Comment-->`",
@@ -212,25 +217,24 @@
     "devDependencies": {
         "@types/glob": "^8.1.0",
         "@types/mocha": "^10.0.10",
-        "@types/node": "^22.10.1",
-        "@types/vscode": "^1.95.0",
-        "@typescript-eslint/eslint-plugin": "^8.16.0",
-        "@typescript-eslint/parser": "8.16.0",
-        "esbuild": "^0.24.0",
-        "eslint": "^9.15.0",
+        "@types/node": "^22.10.2",
+        "@types/vscode": "^1.96.0",
+        "@typescript-eslint/eslint-plugin": "^8.18.2",
+        "@typescript-eslint/parser": "8.18.2",
+        "@vscode/test-electron": "^2.4.1",
+        "esbuild": "^0.24.2",
+        "eslint": "^9.17.0",
         "glob": "^11.0.0",
-        "mocha": "^10.8.2",
+        "mocha": "^11.0.1",
         "ts-loader": "^9.5.1",
         "typescript": "^5.7.2",
-        "vscode-test": "^1.4.0",
-        "webpack": "^5.96.1",
-        "webpack-cli": "^5.1.4"
+        "webpack": "^5.97.1",
+        "webpack-cli": "^6.0.1"
     },
     "dependencies": {
-        "@types/compare-versions": "^3.3.3",
         "child_process": "^1.0.2",
         "compare-versions": "^6.1.1",
-        "fs": "^0.0.1-security",
+        "fs": "0.0.1-security",
         "path": "^0.12.7"
     }
 }

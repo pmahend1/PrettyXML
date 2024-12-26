@@ -6,6 +6,7 @@ import * as path from "path";
 import { JsonInputDto } from "./jsonInputDto";
 import { FormattingActionKind } from "./formattingActionKind";
 import { Logger } from "./logger";
+import { prettyxml } from "./extension";
 
 export class Formatter {
     private extensionContext: vscode.ExtensionContext;
@@ -43,7 +44,7 @@ export class Formatter {
     public loadSettings() {
         //get settings
         Logger.instance.info("loadSettings start");
-        let prettyXmlConfig = vscode.workspace.getConfiguration('prettyxml.settings');
+        let prettyXmlConfig = vscode.workspace.getConfiguration(`${prettyxml}.settings`);
 
         let spacelength = prettyXmlConfig.get<number>('indentSpaceLength');
         let usesinglequotes = prettyXmlConfig.get<boolean>('useSingleQuotes');
@@ -58,6 +59,7 @@ export class Formatter {
         let preserveWhiteSpacesInComment = prettyXmlConfig.get<boolean>('preserveWhiteSpacesInComment');
         let addSpaceBeforeEndOfXmlDeclaration = prettyXmlConfig.get<boolean>('addSpaceBeforeEndOfXmlDeclaration');
         let attributesInNewlineThreshold = prettyXmlConfig.get<number>("attributesInNewlineThreshold");
+        let wildCardedExceptionsForPositionAllAttributesOnFirstLine = prettyXmlConfig.get<Array<string>>("wildCardedExceptionsForPositionAllAttributesOnFirstLine");
         let enableLogs = prettyXmlConfig.get<boolean>('enableLogs');
         Logger.instance.updateConfiguration(enableLogs);
 
@@ -74,6 +76,7 @@ export class Formatter {
             preserveWhiteSpacesInComment,
             addSpaceBeforeEndOfXmlDeclaration,
             attributesInNewlineThreshold,
+            wildCardedExceptionsForPositionAllAttributesOnFirstLine,
             enableLogs);
 
         Logger.instance.info(`Settings : ${JSON.stringify(this.settings)}`);

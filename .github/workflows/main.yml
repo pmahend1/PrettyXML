@@ -32,7 +32,7 @@ jobs:
               run: pnpm install
 
             - name: VSCE Publish
-              run: vsce publish -p $env:VSCE_PAT
+              run: vsce publish --no-dependencies -p $env:VSCE_PAT
               env:
                   VSCE_PAT: ${{ secrets.VSCE_PRETTYXML }}
 
