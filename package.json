@@ -166,8 +166,8 @@
                         "default": false
                     },
                     "prettyxml.settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine": {
-                        "type": "boolean",
-                        "markdownDeprecationMessage": "Exceptions for Position all attributes on same line as element. Wildcards accepted.",
+                        "type": "array",
+                        "markdownDescription": "Exceptions for Position all attributes on same line as element. Wildcards accepted.",
                         "default": []
                     },
                     "prettyxml.settings.preserveWhiteSpacesInComment": {
