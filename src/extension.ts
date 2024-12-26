@@ -8,6 +8,7 @@ import { Logger } from "./logger";
 
 let formatter: Formatter;
 let notificationService: NotificationService;
+export const prettyxml = "prettyxml";
 
 //extension activate
 export function activate(context: vscode.ExtensionContext): void {
@@ -25,17 +26,17 @@ export function activate(context: vscode.ExtensionContext): void {
 			Logger.instance.info("workspace.onDidChangeConfiguration end");
 		});
 
-		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.prettifyxml", () => replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
+		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand(`${prettyxml}.prettifyxml`, () => replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
 
-		let minimizeXmlCommand = vscode.commands.registerTextEditorCommand("prettyxml.minimizexml", () => replaceDocumentTextWithProgressForCallback("Minimizing...", formatter.minimizeXml()));
+		let minimizeXmlCommand = vscode.commands.registerTextEditorCommand(`${prettyxml}.minimizexml`, () => replaceDocumentTextWithProgressForCallback("Minimizing...", formatter.minimizeXml()));
 
 		vscode.workspace.onWillSaveTextDocument(async (willSaveEvent) => {
 			Logger.instance.info("vscode.workspace.onWillSaveTextDocument start");
 			try {
 				var languageId = willSaveEvent?.document?.languageId;
 				if (languageId) {
-					if (languageId === "xml" || languageId === "xsd") {
-						let prettyXmlConfig = vscode.workspace.getConfiguration("prettyxml.settings");
+					if (languageId === "xml" || languageId === "xsd" || languageId === "xaml") {
+						let prettyXmlConfig = vscode.workspace.getConfiguration(`${prettyxml}.settings`);
 						let formatOnSave = prettyXmlConfig.get<boolean>("formatOnSave") ?? false;
 						if (formatOnSave) {
 							willSaveEvent.waitUntil(replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));

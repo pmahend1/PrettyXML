@@ -1,6 +1,7 @@
 # Pretty XML
 
-<img src='./images/logo.png' width='200' height='200' />
+<!-- markdownlint-disable-next-line MD033 -->
+<img src='./images/logo.png' width='200' height='200' alt="logo" />
 
 [What is it?](#what-is-it)
 
@@ -104,22 +105,23 @@ Minimizes XML.
 
 These will be for **Prettify XML** command.
 
-| Setting Key                                                                         | Default Value | Description                                                    |
-|-------------------------------------------------------------------------------------|---------------|----------------------------------------------------------------|
-| prettyxml.settings.indentSpaceLength                                                | 4             | No. of spaces for indentation.                                 |
-| prettyxml.settings.useSingleQuotes                                                  | false         | Use ' instead of \"                                            |
-| prettyxml.settings.useSelfClosingTag                                                | true          | If no child nodes then self closing tag />                     |
-| prettyxml.settings.formatOnSave                                                     | false         | Enable format on save                                          |
-| prettyxml.settings.allowSingleQuoteInAttributeValue                                 | true          | Allows ' in attribute values instead of \&apos;                |
-| prettyxml.settings.addSpaceBeforeSelfClosingTag                                     | true          | Adds space before self closing tag                             |
-| prettyxml.settings.wrapCommentTextWithSpaces                                        | true          | Wraps comment text with a single space                         |
-| prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues                         | true          | Allows white space unicodes in attribute values                |
-| prettyxml.settings.positionFirstAttributeOnSameLine                                 | true          | Position first attribute on same line.                         |
-| prettyxml.settings.positionAllAttributesOnFirstLine                                 | false         | Position all attributes on first line                          |
-| prettyxml.settings.preserveWhiteSpacesInComment                                     | false         | Preserves whitespaces in a comment.                            |
-| prettyxml.settings.addSpaceBeforeEndOfXmlDeclaration                                | false         | Add space before end of XML declaration.                       |
-| [prettyxml.settings.attributesInNewlineThreshold](#attributes-in-newline-threshold) | 1             | Attributes count threshold to position attributes in newlines. |
-| prettyxml.settings.enableLogs                                                       | false         | Enables logs                                                   |
+| Setting Key                                                                                                                                     | Default Value   | Description                                                                  |
+|-------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|------------------------------------------------------------------------------|
+| prettyxml.settings.indentSpaceLength                                                                                                            | 4               | No. of spaces for indentation.                                               |
+| prettyxml.settings.useSingleQuotes                                                                                                              | false           | Use ' instead of \"                                                          |
+| prettyxml.settings.useSelfClosingTag                                                                                                            | true            | If no child nodes then self closing tag />                                   |
+| prettyxml.settings.formatOnSave                                                                                                                 | false           | Enable format on save                                                        |
+| prettyxml.settings.allowSingleQuoteInAttributeValue                                                                                             | true            | Allows ' in attribute values instead of \&apos;                              |
+| prettyxml.settings.addSpaceBeforeSelfClosingTag                                                                                                 | true            | Adds space before self closing tag                                           |
+| prettyxml.settings.wrapCommentTextWithSpaces                                                                                                    | true            | Wraps comment text with a single space                                       |
+| prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues                                                                                     | true            | Allows white space unicodes in attribute values                              |
+| prettyxml.settings.positionFirstAttributeOnSameLine                                                                                             | true            | Position first attribute on same line.                                       |
+| prettyxml.settings.positionAllAttributesOnFirstLine                                                                                             | false           | Position all attributes on first line                                        |
+| prettyxml.settings.preserveWhiteSpacesInComment                                                                                                 | false           | Preserves whitespaces in a comment.                                          |
+| prettyxml.settings.addSpaceBeforeEndOfXmlDeclaration                                                                                            | false           | Add space before end of XML declaration.                                     |
+| [prettyxml.settings.attributesInNewlineThreshold](#attributes-in-newline-threshold)                                                             | 1               | Attributes count threshold to position attributes in newlines.               |
+| prettyxml.settings.enableLogs                                                                                                                   | false           | Enables logs                                                                 |
+| [prettyxml.settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine](#wild-carded-exceptions-for-position-all-attributes-on-first-line) | Array\<string\> | Wild card exceptions for elements to ignore positionAllAttributesOnFirstLine |
 
 ![Settings Image.](./images/settings.png)
 
@@ -155,6 +157,42 @@ Value = 2
          Attribute3="Value3"/>
 ```
 
+### Wild Carded Exceptions For Position All Attributes On First Line
+
+List of element names to ignore Position All Attributes On First Line setting. Include element names or patterns here.
+
+Example:
+
+```json
+ "prettyxml.settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine": ["Content*"]
+```
+
+#### Input
+
+```xml
+<View>
+    <Content X="X"
+             Y="Y" Z="Z">
+        <Label text="{i18>LabelText}" />
+        <Input id="Input1" 
+               value="{service>description}" />
+    </Content>
+</View>
+```
+
+#### Ouput
+
+```xml
+<View>
+    <Content X="X"
+             Y="Y"
+             Z="Z">
+        <Label text="{i18>LabelText}" />
+        <Input id="Input1" value="{service>description}" />
+    </Content>
+</View>
+```
+
 ---
 
 ## Requirements
@@ -185,5 +223,5 @@ Issues can be reported at [issues section](https://github.com/pmahend1/PrettyXML
 ### For more information
 
 - [Source Code](https://github.com/pmahend1/prettyxml)
-- If you want to support this project,  
-    [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="100" height="25" />](https://www.buymeacoffee.com/pmahend1)
+- If you want to support this project,  <!-- markdownlint-disable-next-line MD033 -->
+    [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="90" height="30" alt="buy-me-coffee"/>](https://www.buymeacoffee.com/pmahend1)

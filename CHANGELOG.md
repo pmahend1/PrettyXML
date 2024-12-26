@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 5.2.0: 26-Dec-2024
+
+- Added feature [Allow the user to specify which elements have attributes on separate lines](https://github.com/pmahend1/PrettyXML/issues/162)
+- Package updates to latest.
+
 ## 5.1.0: 29-Nov-2024
 
 - Fixes [Formatting doesn't seem to work when using with .xaml files.](https://github.com/pmahend1/PrettyXML/issues/167)
