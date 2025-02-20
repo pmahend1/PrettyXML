@@ -196,6 +196,11 @@
                         ],
                         "markdownDescription": "Attributes count threshold to position attributes in newlines. Default is *1*. This setting only works when **Position first attribute on same line** is enabled.\n\nFor example if threshold=2, all attributes will be on same line if an element has only 2 attributes,\n\notherwise each attribute will be placed on newline.\n\nMore Info: [GitHub](https://github.com/pmahend1/PrettyXML?tab=readme-ov-file#attributes-in-newline-threshold)"
                     },
+                    "prettyxml.settings.addEmptyLineBetweenElements": {
+                        "type": "boolean",
+                        "markdownDescription": "Add empty line between elements if element count is greater than 2. Default is *Unchecked*",
+                        "default": false
+                    },
                     "prettyxml.settings.enableLogs": {
                         "type": "boolean",
                         "markdownDescription": "Enable console local logs.",

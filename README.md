@@ -122,6 +122,7 @@ These will be for **Prettify XML** command.
 | [prettyxml.settings.attributesInNewlineThreshold](#attributes-in-newline-threshold)                                                             | 1               | Attributes count threshold to position attributes in newlines.               |
 | prettyxml.settings.enableLogs                                                                                                                   | false           | Enables logs                                                                 |
 | [prettyxml.settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine](#wild-carded-exceptions-for-position-all-attributes-on-first-line) | Array\<string\> | Wild card exceptions for elements to ignore positionAllAttributesOnFirstLine |
+| [prettyxml.settings.addEmptyLineBetweenElements](#add-empty-line-between-elements)                                                              | false           | Add empty line between elements if the child count is greater than 2         |
 
 ![Settings Image.](./images/settings.png)
 
@@ -191,6 +192,32 @@ Example:
         <Input id="Input1" value="{service>description}" />
     </Content>
 </View>
+```
+
+### Add Empty Line Between Elements
+
+If enabled, and child elements count is greater than 2 then adds empty line between elements. Please note it wont add empty element before first element and after last element.
+
+#### Input 1
+
+```xml
+<Root>
+<Element1>Text1</Element1>
+<Element2>Text2</Element2>
+<Element3>Text3</Element3>
+</Root>
+```
+
+#### Output 1
+
+```xml
+<Root>
+    <Element1>Text1</Element1>
+
+    <Element2>Text2</Element2>
+
+    <Element3>Text3</Element3>
+</Root>
 ```
 
 ---

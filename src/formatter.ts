@@ -60,7 +60,8 @@ export class Formatter {
         let addSpaceBeforeEndOfXmlDeclaration = prettyXmlConfig.get<boolean>('addSpaceBeforeEndOfXmlDeclaration');
         let attributesInNewlineThreshold = prettyXmlConfig.get<number>("attributesInNewlineThreshold");
         let wildCardedExceptionsForPositionAllAttributesOnFirstLine = prettyXmlConfig.get<Array<string>>("wildCardedExceptionsForPositionAllAttributesOnFirstLine");
-        let enableLogs = prettyXmlConfig.get<boolean>('enableLogs');
+        let addEmptyLineBetweenElements = prettyXmlConfig.get<boolean>("addEmptyLineBetweenElements");
+        let enableLogs = prettyXmlConfig.get<boolean>("enableLogs");
         Logger.instance.updateConfiguration(enableLogs);
 
         this.settings = new Settings(spacelength,
@@ -77,6 +78,7 @@ export class Formatter {
             addSpaceBeforeEndOfXmlDeclaration,
             attributesInNewlineThreshold,
             wildCardedExceptionsForPositionAllAttributesOnFirstLine,
+            addEmptyLineBetweenElements,
             enableLogs);
 
         Logger.instance.info(`Settings : ${JSON.stringify(this.settings)}`);
