@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 5.3.0: 20-Feb-2025
+
+- Added feature [Add empty line between elements if elements count is greater than 2](https://github.com/pmahend1/PrettyXML/issues/172)
+- Package updates to latest.
+
 ## 5.2.0: 26-Dec-2024
 
 - Added feature [Allow the user to specify which elements have attributes on separate lines](https://github.com/pmahend1/PrettyXML/issues/162)
