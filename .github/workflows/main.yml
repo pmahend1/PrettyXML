@@ -34,13 +34,16 @@ jobs:
       - name: VSCE Publish
         id: vsce
         run: |
-          vsce publish --no-dependencies -p $env:VSCE_PAT
-          $VsixName = Get-ChildItem -Filter *.vsix | Select-Object -First 1 -ExpandProperty Name
-           "VSIX_FILENAME=$VsixName" >> $env:GITHUB_OUTPUT
+          vsce pack --no-dependencies -p $env:VSCE_PAT
+          $VsixName = Get-ChildItem -Filter *.yaml | Select-Object -First 1 -ExpandProperty Name
+          Write-Host "VSIX file name $VsixName"
+          "VSIX_FILENAME=$VsixName" >> $env:GITHUB_OUTPUT
         env:
           VSCE_PAT: ${{ secrets.VSCE_PRETTYXML }}
 
       - name: Open VSX Publish
-        run: npx ovsx publish ${{ steps.vsce.outputs.VSIX_FILENAME }} -p $env:OPEN_VSX_PAT
+        run: |
+          Write-Host ${{ steps.vsce.outputs.VSIX_FILENAME }}
+          Write-Host "npx ovsx publish ${{ steps.vsce.outputs.VSIX_FILENAME }} -p $env:OPEN_VSX_PAT"
         env:
           OPEN_VSX_PAT: ${{ secrets.OPENVSX }}

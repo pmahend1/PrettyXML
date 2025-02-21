@@ -63,7 +63,7 @@ jobs:
         run: |
           $localVersion = [System.Version]('${{ steps.getpackageversion.outputs.VERSION }}')
           $storeVersion = [System.Version]('${{ steps.getPublishedVersion.outputs.PUB_VERSION }}')
-         
+
           if ($localVersion -gt $storeVersion) {
             Write-Host "Version in package.json is higher than latest published version"
             Write-Host "Pass"
