@@ -43,7 +43,7 @@ jobs:
 
       - name: Open VSX Publish
         run: |
-          Write-Host ${{ steps.vsce.outputs.VSIX_FILENAME }}
-          Write-Host "npx ovsx publish ${{ steps.vsce.outputs.VSIX_FILENAME }} -p $env:OPEN_VSX_PAT"
+          Write-Host "Running npx ovsx publish --packagePath ${{ steps.vsce.outputs.VSIX_FILENAME }} -p $env:OPEN_VSX_PAT"
+          npx ovsx publish --packagePath ${{ steps.vsce.outputs.VSIX_FILENAME }} -p $env:OPEN_VSX_PAT
         env:
           OPEN_VSX_PAT: ${{ secrets.OPENVSX }}
