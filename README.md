@@ -196,7 +196,10 @@ Example:
 
 ### Add Empty Line Between Elements
 
-If enabled, and child elements count is greater than 2 then adds empty line between elements. Please note it wont add empty element before first element and after last element.
+If enabled, and child elements count is greater than 2 then adds empty line between elements. 
+
+> [!NOTE]  
+> Please note it wont add empty element before first element and after last element.
 
 #### Input 1
 
