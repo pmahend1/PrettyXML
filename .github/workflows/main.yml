@@ -34,7 +34,7 @@ jobs:
       - name: VSCE Publish
         id: vsce
         run: |
-          vsce pack --no-dependencies -p $env:VSCE_PAT
+          vsce pack --no-dependencies
           $VsixName = Get-ChildItem -Filter *.vsix | Select-Object -First 1 -ExpandProperty Name
           Write-Host "VSIX file name $VsixName"
           "VSIX_FILENAME=$VsixName" >> $env:GITHUB_OUTPUT
