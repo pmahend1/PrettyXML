@@ -21,7 +21,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - name: Install vsce and open vsx
         run: |
@@ -36,11 +36,13 @@ jobs:
         run: |
           vsce publish --no-dependencies -p $env:VSCE_PAT
           $VsixName = Get-ChildItem -Filter *.vsix | Select-Object -First 1 -ExpandProperty Name
-           "VSIX_FILENAME=$VsixName" >> $env:GITHUB_OUTPUT
+          "VSIX_FILENAME=$VsixName" >> $env:GITHUB_OUTPUT
         env:
           VSCE_PAT: ${{ secrets.VSCE_PRETTYXML }}
 
       - name: Open VSX Publish
-        run: npx ovsx publish ${{ steps.vsce.outputs.VSIX_FILENAME }} -p $env:OPEN_VSX_PAT
+        run: |
+          Write-Host "Running npx ovsx publish --packagePath ${{ steps.vsce.outputs.VSIX_FILENAME }} -p $env:OPEN_VSX_PAT"
+          npx ovsx publish --packagePath ${{ steps.vsce.outputs.VSIX_FILENAME }} -p $env:OPEN_VSX_PAT
         env:
           OPEN_VSX_PAT: ${{ secrets.OPENVSX }}
