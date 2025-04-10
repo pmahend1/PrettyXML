@@ -1,10 +1,16 @@
 name: Deploy CI
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
+    inputs:
+      shouldPublishToVSMarketPlace:
+        description: "Publish to Visual Studio MarketPlace?"
+        type: boolean
+        default: true
+      shouldPublishToOpenVsx:
+        description: "Publish to Open-VSX?"
+        type: boolean
+        default: true
 
 jobs:
   deploy:
@@ -14,7 +20,7 @@ jobs:
         uses: actions/checkout@v4.2.2
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v4.1.0
+        uses: actions/setup-node@v4.3.0
         with:
           node-version: 22
 
@@ -22,27 +28,33 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 10
+          run_install: true
 
       - name: Install vsce and open vsx
         run: |
-          npm install -g @vscode/vsce
-          npm install -g ovsx
+          pnpm add -g @vscode/vsce
+          pnpm add -g ovsx
 
-      - name: pnpm
-        run: pnpm install
+      - name: Pack vsix
+        id: pack
+        run: |
+          vsce pack --no-dependencies
+          $VsixName = Get-ChildItem -Filter *.vsix | Select-Object -First 1 -ExpandProperty Name
+          Write-Host "`$VsixName = $VsixName"
+          "VSIX_FILENAME=$VsixName" >> $env:GITHUB_OUTPUT
 
       - name: VSCE Publish
-        id: vsce
+        if: ${{ inputs.shouldPublishToVSMarketPlace }}
         run: |
-          vsce publish --no-dependencies -p $env:VSCE_PAT
-          $VsixName = Get-ChildItem -Filter *.vsix | Select-Object -First 1 -ExpandProperty Name
-          "VSIX_FILENAME=$VsixName" >> $env:GITHUB_OUTPUT
+          Write-Host "Running vsce publish --packagePath ${{ steps.pack.outputs.VSIX_FILENAME }} --pat `$env:VSCE_PAT"
+          vsce publish --packagePath ${{ steps.pack.outputs.VSIX_FILENAME }} --pat $env:VSCE_PAT
         env:
           VSCE_PAT: ${{ secrets.VSCE_PRETTYXML }}
 
       - name: Open VSX Publish
+        if: ${{ inputs.shouldPublishToOpenVsx }}
         run: |
-          Write-Host "Running npx ovsx publish --packagePath ${{ steps.vsce.outputs.VSIX_FILENAME }} -p $env:OPEN_VSX_PAT"
-          npx ovsx publish --packagePath ${{ steps.vsce.outputs.VSIX_FILENAME }} -p $env:OPEN_VSX_PAT
+          Write-Host "Running npx ovsx publish --packagePath ${{ steps.pack.outputs.VSIX_FILENAME }} --pat `$env:OPEN_VSX_PAT"
+          npx ovsx publish --packagePath ${{ steps.pack.outputs.VSIX_FILENAME }} --pat $env:OPEN_VSX_PAT
         env:
           OPEN_VSX_PAT: ${{ secrets.OPENVSX }}
