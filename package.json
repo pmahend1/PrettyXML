@@ -34,7 +34,7 @@
         "formatter"
     ],
     "engines": {
-        "vscode": "^1.97.0"
+        "vscode": "^1.99.1"
     },
     "categories": [
         "Formatters"
@@ -222,18 +222,18 @@
     "devDependencies": {
         "@types/glob": "^8.1.0",
         "@types/mocha": "^10.0.10",
-        "@types/node": "^22.13.4",
-        "@types/vscode": "^1.97.0",
-        "@typescript-eslint/eslint-plugin": "^8.24.1",
-        "@typescript-eslint/parser": "8.24.1",
-        "@vscode/test-electron": "^2.4.1",
-        "esbuild": "^0.25.0",
-        "eslint": "^9.20.1",
+        "@types/node": "^22.14.0",
+        "@types/vscode": "^1.99.1",
+        "@typescript-eslint/eslint-plugin": "^8.29.1",
+        "@typescript-eslint/parser": "8.29.1",
+        "@vscode/test-electron": "^2.5.2",
+        "esbuild": "^0.25.2",
+        "eslint": "^9.24.0",
         "glob": "^11.0.1",
         "mocha": "^11.1.0",
         "ts-loader": "^9.5.2",
-        "typescript": "^5.7.3",
-        "webpack": "^5.98.0",
+        "typescript": "^5.8.3",
+        "webpack": "^5.99.5",
         "webpack-cli": "^6.0.1"
     },
     "dependencies": {
