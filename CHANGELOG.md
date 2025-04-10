@@ -2,7 +2,7 @@
 
 ## Stable
 
-## 6.0.0: 4-Apr-2025
+## 6.0.0: 10-Apr-2025
 
 - Added format selection feature - **Beta**.
   ![Format Selection](./images/FormatSelection.png)
