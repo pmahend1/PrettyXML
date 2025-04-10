@@ -5,6 +5,7 @@ import { PrettyXmlFormattingEditProvider } from "./prettyXmlFormattingEditProvid
 import { NotificationService } from "./notificationService";
 import { replaceDocumentTextWithProgressForCallback } from "./helper";
 import { Logger } from "./logger";
+import { RangeFormatterProvider } from "./rangeFormatterProvider";
 
 let formatter: Formatter;
 let notificationService: NotificationService;
@@ -64,12 +65,16 @@ export function activate(context: vscode.ExtensionContext): void {
 		];
 		const xmlFormattingEditProvider = new PrettyXmlFormattingEditProvider(formatter);
 
-		let languageProvider = vscode.languages.registerDocumentFormattingEditProvider(xmlXsdDocSelector, xmlFormattingEditProvider);
+		let documentFormatterProvider = vscode.languages.registerDocumentFormattingEditProvider(xmlXsdDocSelector, xmlFormattingEditProvider);
+
+		const rangeFormatterProvider = new RangeFormatterProvider(formatter.settings);
+		const selectionFormatter = vscode.languages.registerDocumentRangeFormattingEditProvider(xmlXsdDocSelector, rangeFormatterProvider);
 
 		//subscribe commands
 		context.subscriptions.push(prettifyXmlCommand,
 			minimizeXmlCommand,
-			languageProvider);
+			documentFormatterProvider,
+			selectionFormatter);
 	}
 	catch (error) {
 		if (error instanceof Error) {
