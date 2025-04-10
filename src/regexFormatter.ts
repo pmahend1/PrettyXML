@@ -1,17 +1,17 @@
 import { Settings } from "./settings";
 
 export class TextXmlFormatter {
-    
+
     private settings: Settings;
     constructor(settings: Settings) {
         this.settings = settings;
     }
     public formatXmlPretty(xml: string): string {
-        //@ts-ignore
         const tagRegex = /(<\?xml[^?>]*\?>|<!DOCTYPE[^>]*>|<!\[CDATA\[.*?\]\]>|<!--.*?-->|<\/?[^>]+?>)/gs;
 
         let startIndent = 0;
         let formatted: string[] = [];
+
         if (xml.startsWith(" ")) {
             const firstTagIndex = xml.indexOf("<");
             if (firstTagIndex > 0) {
@@ -20,7 +20,7 @@ export class TextXmlFormatter {
         }
         const indentSize = this.settings.indentLength ?? 4;
         let indentLevel = startIndent / indentSize;
-        
+
         let lastIndex = 0;
         const matches = [...xml.matchAll(tagRegex)];
         var i = 0;
@@ -31,7 +31,7 @@ export class TextXmlFormatter {
             // Handle text between tags
             const text = xml.slice(lastIndex, index).trim();
             if (text) {
-                var n = i === 0 && indentLevel > 0 ? indentLevel - 1 : indentLevel;
+                let n = i === 0 && indentLevel > 0 ? indentLevel - 1 : indentLevel;
                 formatted.push(' '.repeat(n * indentSize) + text);
             }
             i++;
@@ -72,20 +72,21 @@ export class TextXmlFormatter {
         const [, tagName, attrs, selfClosing] = match;
 
         const attrRegex = /([^\s=]+(?:=(?:"[^"]*"|'[^']*'|[^\s"'=<>`]+))?)/g;
-        const attrMatches = [...attrs.matchAll(attrRegex)];
-        if (attrMatches.length === 0) {
+        const childNodeMatches = [...attrs.matchAll(attrRegex)];
+        if (childNodeMatches.length === 0) {
             return `<${tagName}${selfClosing ? ' />' : '>'}`;
         }
 
         const alignIndent = baseIndent + `<${tagName} `.length;
         const alignedAttrs: string[] = [];
 
-        alignedAttrs.push(attrMatches[0][0]); // first attribute inline
+        alignedAttrs.push(childNodeMatches[0][0]); // first attribute inline
+
         let isSelfClosing = false;
-        for (let i = 1; i < attrMatches.length; i++) {
-            if ( attrMatches[i][0].endsWith('/') === false) {
-                alignedAttrs.push(' '.repeat(alignIndent) + attrMatches[i][0]);
-            }else{
+        for (let i = 1; i < childNodeMatches.length; i++) {
+            if (childNodeMatches[i][0].endsWith('/') === false) {
+                alignedAttrs.push(' '.repeat(alignIndent) + childNodeMatches[i][0]);
+            } else {
                 isSelfClosing = true;
             }
         }
