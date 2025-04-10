@@ -70,6 +70,16 @@ Right Click and Select Prettify XML or use [shortcut](#keyboard-shortcuts)
 - No empty lines.
 - Supports `'` and whitespace unicodes in attribute value for XAML parser compatibility.
 
+### 1.a. Format Entire Document
+
+- Lets you format entire valid XML document.
+
+### 1.b. Format Selection - Beta
+
+- Lets you format part of an XML document. XML can be partial and invalid. This is in beta, so feel free to submit pull request with improvements.
+
+![Format Selection Screenshot](./images/FormatSelection.png)
+  
 Before
 
 ![Before.](./images/before.png)
@@ -196,7 +206,7 @@ Example:
 
 ### Add Empty Line Between Elements
 
-If enabled, and child elements count is greater than 2 then adds empty line between elements. 
+If enabled, and child elements count is greater than 2 then adds empty line between elements.
 
 > [!NOTE]  
 > Please note it wont add empty element before first element and after last element.
