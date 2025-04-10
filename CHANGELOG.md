@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 6.0.0: 4-Apr-2025
+
+- Added format selection feature - **Beta**.
+- Package updates.
+
 ## 5.3.0: 20-Feb-2025
 
 - Added feature [Add empty line between elements if elements count is greater than 2](https://github.com/pmahend1/PrettyXML/issues/172)
