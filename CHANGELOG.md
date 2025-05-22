@@ -6,7 +6,7 @@
 
 - Fixed processing instruction not formatting correctly.
 - Package updates.
-- Add sponsor link.
+- Added sponsor link.
 
 ## 6.0.0: 10-Apr-2025
 
