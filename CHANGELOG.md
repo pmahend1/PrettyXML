@@ -2,6 +2,12 @@
 
 ## Stable
 
+## 6.1.0: 21-May-2025
+
+- Fixed processing instruction not formatting correctly.
+- Package updates.
+- Added sponsor link.
+
 ## 6.0.0: 10-Apr-2025
 
 - Added format selection feature - **Beta**.
