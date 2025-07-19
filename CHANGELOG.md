@@ -2,6 +2,10 @@
 
 ## Stable
 
+## 6.2.0: 18-Jul-2025
+
+- Package updates.
+
 ## 6.1.0: 21-May-2025
 
 - Fixed processing instruction not formatting correctly.
