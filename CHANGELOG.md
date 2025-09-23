@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 6.3.0: 22-Sep-2025
+
+- Added setting to add XML declaration if missing.
+- Package updates.
+
 ## 6.2.0: 18-Jul-2025
 
 - Package updates.
