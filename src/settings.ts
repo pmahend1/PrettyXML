@@ -11,6 +11,7 @@ export interface ISettings {
     positionAllAttributesOnFirstLine: boolean;
     preserveWhiteSpacesInComment: boolean;
     addSpaceBeforeEndOfXmlDeclaration: boolean;
+    addXmlDeclarationIfMissing: boolean;
     attributesInNewlineThreshold: number;
     wildCardedExceptionsForPositionAllAttributesOnFirstLine?: [string];
     addEmptyLineBetweenElements: boolean;
@@ -30,6 +31,7 @@ export const defaultSettings: ISettings = {
     positionAllAttributesOnFirstLine: false,
     preserveWhiteSpacesInComment: false,
     addSpaceBeforeEndOfXmlDeclaration: false,
+    addXmlDeclarationIfMissing: true,
     attributesInNewlineThreshold: 1,
     wildCardedExceptionsForPositionAllAttributesOnFirstLine: undefined,
     addEmptyLineBetweenElements: false,
@@ -49,6 +51,7 @@ export class Settings {
     positionAllAttributesOnFirstLine?: boolean;
     preserveWhiteSpacesInComment?: boolean;
     addSpaceBeforeEndOfXmlDeclaration: boolean;
+    addXmlDeclarationIfMissing: boolean;
     attributesInNewlineThreshold: number;
     wildCardedExceptionsForPositionAllAttributesOnFirstLine?: string[];
     addEmptyLineBetweenElements?: boolean;
@@ -66,6 +69,7 @@ export class Settings {
         positionAllAttributesOnFirstLine?: boolean,
         preserveWhiteSpacesInComment?: boolean,
         addSpaceBeforeEndOfXmlDeclaration?: boolean,
+        addXmlDeclarationIfMissing?: boolean,
         attributesInNewlineThreshold?: number,
         wildCardedExceptionsForPositionAllAttributesOnFirstLine?: string[],
         addEmptyLineBetweenElements?: boolean,
@@ -82,6 +86,7 @@ export class Settings {
         this.positionAllAttributesOnFirstLine = positionAllAttributesOnFirstLine ?? defaultSettings.positionAllAttributesOnFirstLine;
         this.preserveWhiteSpacesInComment = preserveWhiteSpacesInComment ?? defaultSettings.preserveWhiteSpacesInComment;
         this.addSpaceBeforeEndOfXmlDeclaration = addSpaceBeforeEndOfXmlDeclaration ?? defaultSettings.addSpaceBeforeEndOfXmlDeclaration;
+        this.addXmlDeclarationIfMissing = addXmlDeclarationIfMissing ?? defaultSettings.addXmlDeclarationIfMissing;
         this.attributesInNewlineThreshold = attributesInNewlineThreshold ?? defaultSettings.attributesInNewlineThreshold;
         this.wildCardedExceptionsForPositionAllAttributesOnFirstLine = wildCardedExceptionsForPositionAllAttributesOnFirstLine;
         this.addEmptyLineBetweenElements = addEmptyLineBetweenElements ?? defaultSettings.addEmptyLineBetweenElements;

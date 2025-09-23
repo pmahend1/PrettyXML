@@ -183,6 +183,11 @@
                         "markdownDescription": "Adds space before end of XML declaration. Default is *Unchecked* \n\n **Checked** : \n\n `<?xml version=\"1.0\" encoding=\"utf-8\" ?>` \n\n **Unchecked** : \n\n `<?xml version=\"1.0\" encoding=\"utf-8\"?>`",
                         "default": false
                     },
+                    "prettyxml.settings.addXmlDeclarationIfMissing": {
+                        "type": "boolean",
+                        "markdownDescription": "Adds XML declaration if missing. Default is *Checked* \n\n **Checked** : \n\n `<?xml version=\"1.0\" encoding=\"utf-8\"?>`\n\n`<Root>`\n\n&ensp;&ensp;&ensp;&ensp;`<Element />`\n\n`</Root>` \n\n **Unchecked** : \n\n `<Root>`\n\n&ensp;&ensp;&ensp;&ensp;`<Element />`\n\n`</Root>`",
+                        "default": true
+                    },
                     "prettyxml.settings.attributesInNewlineThreshold": {
                         "type": "number",
                         "default": 1,
@@ -223,14 +228,14 @@
         "test": "vscode-test"
     },
     "devDependencies": {
-        "@types/node": "^22.16.4",
+        "@types/node": "^22.18.6",
         "@types/vscode": "^1.99.1",
         "@vscode/test-electron": "^2.5.2",
-        "esbuild": "^0.25.7",
-        "eslint": "^9.31.0",
-        "ts-loader": "^9.5.2",
-        "typescript": "^5.8.3",
-        "webpack": "^5.100.2",
+        "esbuild": "^0.25.10",
+        "eslint": "^9.36.0",
+        "ts-loader": "^9.5.4",
+        "typescript": "^5.9.2",
+        "webpack": "^5.101.3",
         "webpack-cli": "^6.0.1"
     },
     "dependencies": {
