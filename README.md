@@ -129,6 +129,7 @@ These will be for **Prettify XML** command.
 | prettyxml.settings.positionAllAttributesOnFirstLine                                                                                             | false           | Position all attributes on first line                                        |
 | prettyxml.settings.preserveWhiteSpacesInComment                                                                                                 | false           | Preserves whitespaces in a comment.                                          |
 | prettyxml.settings.addSpaceBeforeEndOfXmlDeclaration                                                                                            | false           | Add space before end of XML declaration.                                     |
+| [prettyxml.settings.addXmlDeclarationIfMissing](#add-xml-declaration-if-missing)                                                                | true            | Add XML declaration if missing.                                              |
 | [prettyxml.settings.attributesInNewlineThreshold](#attributes-in-newline-threshold)                                                             | 1               | Attributes count threshold to position attributes in newlines.               |
 | prettyxml.settings.enableLogs                                                                                                                   | false           | Enables logs                                                                 |
 | [prettyxml.settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine](#wild-carded-exceptions-for-position-all-attributes-on-first-line) | Array\<string\> | Wild card exceptions for elements to ignore positionAllAttributesOnFirstLine |
@@ -232,6 +233,11 @@ If enabled, and child elements count is greater than 2 then adds empty line betw
     <Element3>Text3</Element3>
 </Root>
 ```
+
+### Add Xml Declaration If Missing
+
+Adds XML declaration `<?xml version="1.0" encoding="utf-8"?>` if missing.
+Default is `true`.
 
 ---
 
