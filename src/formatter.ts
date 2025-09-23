@@ -58,6 +58,7 @@ export class Formatter {
         let positionAllAttributesOnFirstLine = prettyXmlConfig.get<boolean>('positionAllAttributesOnFirstLine');
         let preserveWhiteSpacesInComment = prettyXmlConfig.get<boolean>('preserveWhiteSpacesInComment');
         let addSpaceBeforeEndOfXmlDeclaration = prettyXmlConfig.get<boolean>('addSpaceBeforeEndOfXmlDeclaration');
+        let addXmlDeclarationIfMissing = prettyXmlConfig.get<boolean>("addXmlDeclarationIfMissing");
         let attributesInNewlineThreshold = prettyXmlConfig.get<number>("attributesInNewlineThreshold");
         let wildCardedExceptionsForPositionAllAttributesOnFirstLine = prettyXmlConfig.get<Array<string>>("wildCardedExceptionsForPositionAllAttributesOnFirstLine");
         let addEmptyLineBetweenElements = prettyXmlConfig.get<boolean>("addEmptyLineBetweenElements");
@@ -76,6 +77,7 @@ export class Formatter {
             positionAllAttributesOnFirstLine,
             preserveWhiteSpacesInComment,
             addSpaceBeforeEndOfXmlDeclaration,
+            addXmlDeclarationIfMissing,
             attributesInNewlineThreshold,
             wildCardedExceptionsForPositionAllAttributesOnFirstLine,
             addEmptyLineBetweenElements,
