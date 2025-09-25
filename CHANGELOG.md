@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 6.3.1: 24-Sep-2025
+
+- Fixed an issue where XML declaration setting was not being applied.
+- Code cleanup.
+
 ## 6.3.0: 22-Sep-2025
 
 - Added setting to add XML declaration if missing.
