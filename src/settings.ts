@@ -50,31 +50,33 @@ export class Settings {
     positionFirstAttributeOnSameLine?: boolean;
     positionAllAttributesOnFirstLine?: boolean;
     preserveWhiteSpacesInComment?: boolean;
-    addSpaceBeforeEndOfXmlDeclaration: boolean;
-    addXmlDeclarationIfMissing: boolean;
-    attributesInNewlineThreshold: number;
+    addSpaceBeforeEndOfXmlDeclaration?: boolean;
+    addXmlDeclarationIfMissing?: boolean;
+    attributesInNewlineThreshold?: number;
     wildCardedExceptionsForPositionAllAttributesOnFirstLine?: string[];
     addEmptyLineBetweenElements?: boolean;
     enableLogs?: boolean;
 
-    constructor(indentLengh?: number,
-        useSingleQuotes?: boolean,
-        useSelfClosingTags?: boolean,
-        formatOnSave?: boolean,
-        allowSingleQuoteInAttributeValue?: boolean,
-        addSpaceBeforeSelfClosingTag?: boolean,
-        wrapCommentTextWithSpaces?: boolean,
-        allowWhiteSpaceUnicodesInAttributeValues?: boolean,
-        positionFirstAttributeOnSameLine?: boolean,
-        positionAllAttributesOnFirstLine?: boolean,
-        preserveWhiteSpacesInComment?: boolean,
-        addSpaceBeforeEndOfXmlDeclaration?: boolean,
-        addXmlDeclarationIfMissing?: boolean,
-        attributesInNewlineThreshold?: number,
-        wildCardedExceptionsForPositionAllAttributesOnFirstLine?: string[],
-        addEmptyLineBetweenElements?: boolean,
-        enableLogs?: boolean) {
-        this.indentLength = indentLengh ?? defaultSettings.indentLength;
+    constructor({
+        indentLength,
+        useSingleQuotes,
+        useSelfClosingTags,
+        formatOnSave,
+        allowSingleQuoteInAttributeValue,
+        addSpaceBeforeSelfClosingTag,
+        wrapCommentTextWithSpaces,
+        allowWhiteSpaceUnicodesInAttributeValues,
+        positionFirstAttributeOnSameLine,
+        positionAllAttributesOnFirstLine,
+        preserveWhiteSpacesInComment,
+        addSpaceBeforeEndOfXmlDeclaration,
+        addXmlDeclarationIfMissing,
+        attributesInNewlineThreshold,
+        wildCardedExceptionsForPositionAllAttributesOnFirstLine,
+        addEmptyLineBetweenElements,
+        enableLogs
+    }: Partial<ISettings> = {}) {
+        this.indentLength = indentLength ?? defaultSettings.indentLength;
         this.useSingleQuotes = useSingleQuotes ?? defaultSettings.useSingleQuotes;
         this.useSelfClosingTags = useSelfClosingTags ?? defaultSettings.useSelfClosingTags;
         this.formatOnSave = formatOnSave ?? defaultSettings.formatOnSave;

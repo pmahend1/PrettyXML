@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as compareVersions from "compare-versions";
 import { Logger } from "./logger";
+import { Constants } from "./constants";
 
 export class NotificationService {
     private context: vscode.ExtensionContext;
@@ -13,9 +14,9 @@ export class NotificationService {
 
     constructor(context: vscode.ExtensionContext) {
         this.context = context;
-        this.storageKeyPrefix = this.context.extension.id + ".";
-        this.lastRatingPromptDateKey = `${this.storageKeyPrefix}lastRatingPromptDate`;
-        this.versionKey = `${this.storageKeyPrefix}version`;
+        this.storageKeyPrefix = this.context.extension.id;
+        this.lastRatingPromptDateKey = `${this.storageKeyPrefix}.lastRatingPromptDate`;
+        this.versionKey = `${this.storageKeyPrefix}.version`;
         this.currentVersion = this.context.extension.packageJSON.version;
     }
 
@@ -46,7 +47,7 @@ export class NotificationService {
         try {
             let shouldDisplay: boolean = this.checkIfEligibleToShowUpdateNote();
             if (shouldDisplay) {
-                let notes: string = `Pretty XML updated to version ${this.currentVersion}.\n [See what's new](https://github.com/pmahend1/PrettyXML/blob/main/CHANGELOG.md)`;
+                let notes: string = `${Constants.extensionName} updated to version ${this.currentVersion}.\n [See what's new](${Constants.changeLogUrl})`;
                 if (notes !== "") {
                     await vscode.window.showInformationMessage(notes);
                     this.context.globalState.update(this.versionKey, this.currentVersion);
@@ -67,18 +68,17 @@ export class NotificationService {
         try {
             let shouldDisplayPrompt = this.shouldOpenRatingPrompt();
             if (shouldDisplayPrompt) {
-                var text = "Loving Pretty XML extension? Would you like to rate and review?";
+                var text = `Loving ${Constants.extensionName} extension? Would you like to rate and review?`;
                 var selection = await vscode.window.showInformationMessage(text, "Sure", "Later", "Don't show again");
                 if (selection) {
                     if (selection === "Sure") {
                         var appName = vscode.env.appName.toLowerCase();
-                        let vsCodeReviewUri: vscode.Uri = vscode.Uri.parse("https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml&ssr=false#review-details");
-
-                        if (appName.includes("codium")) {
-                            var codiumReviewUri = vscode.Uri.parse("https://open-vsx.org/extension/PrateekMahendrakar/prettyxml/reviews");
+                        if (appName.includes(Constants.codium)) {
+                            var codiumReviewUri = vscode.Uri.parse(Constants.openVsxReviewUrl);
                             vscode.env.openExternal(codiumReviewUri);
                         }
                         else {
+                            let vsCodeReviewUri: vscode.Uri = vscode.Uri.parse(Constants.vsMarketplaceReviewUrl);
                             vscode.env.openExternal(vsCodeReviewUri);
                         }
                         //cant check if they really reviewed

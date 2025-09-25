@@ -6,7 +6,7 @@ import * as path from "path";
 import { JsonInputDto } from "./jsonInputDto";
 import { FormattingActionKind } from "./formattingActionKind";
 import { Logger } from "./logger";
-import { prettyxml } from "./extension";
+import { Constants } from "./constants";
 
 export class Formatter {
     private extensionContext: vscode.ExtensionContext;
@@ -44,44 +44,46 @@ export class Formatter {
     public loadSettings() {
         //get settings
         Logger.instance.info("loadSettings start");
-        let prettyXmlConfig = vscode.workspace.getConfiguration(`${prettyxml}.settings`);
+        let prettyXmlConfig = vscode.workspace.getConfiguration(`${Constants.prettyxml}.${Constants.settings}`);
 
-        let spacelength = prettyXmlConfig.get<number>('indentSpaceLength');
-        let usesinglequotes = prettyXmlConfig.get<boolean>('useSingleQuotes');
-        let useselfclosetag = prettyXmlConfig.get<boolean>('useSelfClosingTag');
-        let formatOnSave = prettyXmlConfig.get<boolean>('formatOnSave');
-        let allowSingleQuoteInAttributeValue = prettyXmlConfig.get<boolean>('allowSingleQuoteInAttributeValue');
-        let addSpaceBeforeSelfClosingTag = prettyXmlConfig.get<boolean>('addSpaceBeforeSelfClosingTag');
-        let wrapCommentTextWithSpaces = prettyXmlConfig.get<boolean>('wrapCommentTextWithSpaces');
-        let allowWhiteSpaceUnicodesInAttributeValues = prettyXmlConfig.get<boolean>('allowWhiteSpaceUnicodesInAttributeValues');
-        let positionFirstAttributeOnSameLine = prettyXmlConfig.get<boolean>('positionFirstAttributeOnSameLine');
-        let positionAllAttributesOnFirstLine = prettyXmlConfig.get<boolean>('positionAllAttributesOnFirstLine');
-        let preserveWhiteSpacesInComment = prettyXmlConfig.get<boolean>('preserveWhiteSpacesInComment');
-        let addSpaceBeforeEndOfXmlDeclaration = prettyXmlConfig.get<boolean>('addSpaceBeforeEndOfXmlDeclaration');
-        let addXmlDeclarationIfMissing = prettyXmlConfig.get<boolean>("addXmlDeclarationIfMissing");
-        let attributesInNewlineThreshold = prettyXmlConfig.get<number>("attributesInNewlineThreshold");
-        let wildCardedExceptionsForPositionAllAttributesOnFirstLine = prettyXmlConfig.get<Array<string>>("wildCardedExceptionsForPositionAllAttributesOnFirstLine");
-        let addEmptyLineBetweenElements = prettyXmlConfig.get<boolean>("addEmptyLineBetweenElements");
-        let enableLogs = prettyXmlConfig.get<boolean>("enableLogs");
+        let spacelength = prettyXmlConfig.get<number>(Constants.Settings.indentSpaceLength);
+        let usesinglequotes = prettyXmlConfig.get<boolean>(Constants.Settings.useSingleQuotes);
+        let useselfclosetag = prettyXmlConfig.get<boolean>(Constants.Settings.useSelfClosingTag);
+        let formatOnSave = prettyXmlConfig.get<boolean>(Constants.Settings.formatOnSave);
+        let allowSingleQuoteInAttributeValue = prettyXmlConfig.get<boolean>(Constants.Settings.allowSingleQuoteInAttributeValue);
+        let addSpaceBeforeSelfClosingTag = prettyXmlConfig.get<boolean>(Constants.Settings.addSpaceBeforeSelfClosingTag);
+        let wrapCommentTextWithSpaces = prettyXmlConfig.get<boolean>(Constants.Settings.wrapCommentTextWithSpaces);
+        let allowWhiteSpaceUnicodesInAttributeValues = prettyXmlConfig.get<boolean>(Constants.Settings.allowWhiteSpaceUnicodesInAttributeValues);
+        let positionFirstAttributeOnSameLine = prettyXmlConfig.get<boolean>(Constants.Settings.positionFirstAttributeOnSameLine);
+        let positionAllAttributesOnFirstLine = prettyXmlConfig.get<boolean>(Constants.Settings.positionAllAttributesOnFirstLine);
+        let preserveWhiteSpacesInComment = prettyXmlConfig.get<boolean>(Constants.Settings.preserveWhiteSpacesInComment);
+        let addSpaceBeforeEndOfXmlDeclaration = prettyXmlConfig.get<boolean>(Constants.Settings.addSpaceBeforeEndOfXmlDeclaration);
+        let addXmlDeclarationIfMissing = prettyXmlConfig.get<boolean>(Constants.Settings.addXmlDeclarationIfMissing);
+        let attributesInNewlineThreshold = prettyXmlConfig.get<number>(Constants.Settings.attributesInNewlineThreshold);
+        let wildCardedExceptionsForPositionAllAttributesOnFirstLine = prettyXmlConfig.get<Array<string>>(Constants.Settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine);
+        let addEmptyLineBetweenElements = prettyXmlConfig.get<boolean>(Constants.Settings.addEmptyLineBetweenElements);
+        let enableLogs = prettyXmlConfig.get<boolean>(Constants.Settings.enableLogs);
         Logger.instance.updateConfiguration(enableLogs);
 
-        this.settings = new Settings(spacelength,
-            usesinglequotes,
-            useselfclosetag,
-            formatOnSave,
-            allowSingleQuoteInAttributeValue,
-            addSpaceBeforeSelfClosingTag,
-            wrapCommentTextWithSpaces,
-            allowWhiteSpaceUnicodesInAttributeValues,
-            positionFirstAttributeOnSameLine,
-            positionAllAttributesOnFirstLine,
-            preserveWhiteSpacesInComment,
-            addSpaceBeforeEndOfXmlDeclaration,
-            addXmlDeclarationIfMissing,
-            attributesInNewlineThreshold,
-            wildCardedExceptionsForPositionAllAttributesOnFirstLine,
-            addEmptyLineBetweenElements,
-            enableLogs);
+        this.settings = {
+            indentLength: spacelength,
+            useSingleQuotes: usesinglequotes,
+            useSelfClosingTags: useselfclosetag,
+            formatOnSave: formatOnSave,
+            allowSingleQuoteInAttributeValue: allowSingleQuoteInAttributeValue,
+            addSpaceBeforeSelfClosingTag: addSpaceBeforeSelfClosingTag,
+            wrapCommentTextWithSpaces: wrapCommentTextWithSpaces,
+            allowWhiteSpaceUnicodesInAttributeValues: allowWhiteSpaceUnicodesInAttributeValues,
+            positionFirstAttributeOnSameLine: positionFirstAttributeOnSameLine,
+            positionAllAttributesOnFirstLine: positionAllAttributesOnFirstLine,
+            preserveWhiteSpacesInComment: preserveWhiteSpacesInComment,
+            addSpaceBeforeEndOfXmlDeclaration: addSpaceBeforeEndOfXmlDeclaration,
+            addXmlDeclarationIfMissing: addXmlDeclarationIfMissing,
+            attributesInNewlineThreshold: attributesInNewlineThreshold,
+            wildCardedExceptionsForPositionAllAttributesOnFirstLine: wildCardedExceptionsForPositionAllAttributesOnFirstLine,
+            addEmptyLineBetweenElements: addEmptyLineBetweenElements,
+            enableLogs: enableLogs,
+        };
 
         Logger.instance.info(`Settings : ${JSON.stringify(this.settings)}`);
 
@@ -169,8 +171,8 @@ export class Formatter {
             else if (typeof error === "string") {
                 Logger.instance.warning(error);
             }
-            Logger.instance.warning("Error formatting with command line. Make sure you have dotnet 6+ installed and it is added to PATH.");
-            throw new Error('Error formatting with command line. Make sure you have dotnet 6+ installed and it is added to PATH.');
+            Logger.instance.warning("Error formatting with command line. Make sure you have dotnet 8 installed and it is added to PATH.");
+            throw new Error('Error formatting with command line. Make sure you have dotnet 8 installed and it is added to PATH.');
         }
     }
 }
