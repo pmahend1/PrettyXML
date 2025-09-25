@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { Constants } from './constants';
 
 export interface ILogger {
     info(message: string): void;
@@ -32,7 +33,7 @@ export class Logger implements ILogger {
     }
 
     private constructor() {
-        this.outputChannel = vscode.window.createOutputChannel("PrettyXML");
+        this.outputChannel = vscode.window.createOutputChannel(Constants.extensionName);
         this.updateConfiguration();
     }
 
