@@ -36,7 +36,11 @@ export function activate(context: vscode.ExtensionContext): void {
 			try {
 				var languageId = willSaveEvent?.document?.languageId;
 				if (languageId) {
-					if (languageId === Constants.LanguageIDs.xml || languageId === Constants.LanguageIDs.xsd || languageId === Constants.LanguageIDs.xaml) {
+					if (languageId === Constants.LanguageIDs.xml ||
+						languageId === Constants.LanguageIDs.xsd ||
+						languageId === Constants.LanguageIDs.xsl ||
+						languageId === Constants.LanguageIDs.xslt ||
+						languageId === Constants.LanguageIDs.xaml) {
 						let prettyXmlConfig = vscode.workspace.getConfiguration(`${Constants.prettyxml}.${Constants.settings}`);
 						let formatOnSave = prettyXmlConfig.get<boolean>(Constants.Settings.formatOnSave) ?? false;
 						if (formatOnSave) {
@@ -58,17 +62,19 @@ export function activate(context: vscode.ExtensionContext): void {
 			Logger.instance.info("vscode.workspace.onWillSaveTextDocument end");
 		});
 
-		const xmlXsdDocSelector = [
+		const languageIdSelector = [
 			...DocumentHelper.createLanguageDocumentFilters(Constants.LanguageIDs.xml),
 			...DocumentHelper.createLanguageDocumentFilters(Constants.LanguageIDs.xsd),
 			...DocumentHelper.createLanguageDocumentFilters(Constants.LanguageIDs.xaml),
+			...DocumentHelper.createLanguageDocumentFilters(Constants.LanguageIDs.xsl),
+			...DocumentHelper.createLanguageDocumentFilters(Constants.LanguageIDs.xslt)
 		];
 		const xmlFormattingEditProvider = new PrettyXmlFormattingEditProvider(formatter);
 
-		let documentFormatterProvider = vscode.languages.registerDocumentFormattingEditProvider(xmlXsdDocSelector, xmlFormattingEditProvider);
+		let documentFormatterProvider = vscode.languages.registerDocumentFormattingEditProvider(languageIdSelector, xmlFormattingEditProvider);
 
 		const rangeFormatterProvider = new RangeFormatterProvider(formatter.settings);
-		const selectionFormatter = vscode.languages.registerDocumentRangeFormattingEditProvider(xmlXsdDocSelector, rangeFormatterProvider);
+		const selectionFormatter = vscode.languages.registerDocumentRangeFormattingEditProvider(languageIdSelector, rangeFormatterProvider);
 
 		//subscribe commands
 		context.subscriptions.push(prettifyXmlCommand,

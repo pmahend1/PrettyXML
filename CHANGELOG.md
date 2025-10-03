@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 6.4.0: 03-Oct-2025
+
+- Added support for `xsl` and `xslt` file types.
+- Package updates.
+
 ## 6.3.1: 24-Sep-2025
 
 - Fixed an issue where XML declaration setting was not being applied.
