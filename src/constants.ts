@@ -30,7 +30,9 @@ export const Constants = {
     LanguageIDs: {
         xml: "xml",
         xsd: "xsd",
-        xaml: "xaml"
+        xaml: "xaml",
+        xsl: "xsl",
+        xslt: "xslt"
     },
 
     Commands: {
