@@ -2,6 +2,10 @@
 
 ## Stable
 
+## 6.4.1: 06-Oct-2025
+
+- Fixed a bug where [format on save was triggered even though PrettyXML was not set as default formatter for a language ID.](https://github.com/pmahend1/PrettyXML/issues/196)
+
 ## 6.4.0: 03-Oct-2025
 
 - Added support for `xsl` and `xslt` file types.
