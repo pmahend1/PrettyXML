@@ -7,7 +7,7 @@ export interface ILogger {
     warning(message: string): void;
     debug(message: string): void;
     outputChannel: vscode.OutputChannel;
-    updateConfiguration(isEnabled: boolean): void;
+    setIsEnabled(isEnabled: boolean): void;
 }
 
 enum LogLevel {
@@ -23,6 +23,7 @@ function isString(value: unknown): value is string {
 
 export class Logger implements ILogger {
     private static _instance: Logger;
+    private isDebug: boolean = false;
 
     public static get instance() {
         if (!Logger._instance) {
@@ -32,9 +33,13 @@ export class Logger implements ILogger {
         return Logger._instance;
     }
 
+    public setDebug(isDebug: boolean) {
+        this.isDebug = isDebug;
+    }
+
     private constructor() {
         this.outputChannel = vscode.window.createOutputChannel(Constants.extensionName);
-        this.updateConfiguration();
+        this.setIsEnabled();
     }
 
     private enableLogs?: boolean;
@@ -59,17 +64,24 @@ export class Logger implements ILogger {
     }
 
     private log(logLevel: LogLevel, message: string, data?: unknown): void {
+        const logMessage = `[ ${logLevel} - ${new Date().toLocaleTimeString()}] ${message}`;
         if (this.enableLogs) {
-            this.appendLine(
-                `[ ${logLevel} - ${new Date().toLocaleTimeString()}] ${message}`
-            );
+            this.appendLine(logMessage);
             if (data) {
-                this.appendLine(Logger.data2String(data));
+                const dataString = Logger.data2String(data);
+                this.appendLine(dataString);
+            }
+        }
+        if (this.isDebug) {
+            console.log(logMessage);
+            const dataString = Logger.data2String(data);
+            if (data) {
+                console.log(dataString);
             }
         }
     }
 
-    public updateConfiguration(isEnabled: boolean = false) {
+    public setIsEnabled(isEnabled: boolean = false) {
         this.enableLogs = isEnabled;
     }
 

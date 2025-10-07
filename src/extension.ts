@@ -17,6 +17,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 		formatter = new Formatter(context);
 		notificationService = new NotificationService(context);
+		Logger.instance.setDebug(context.extensionMode === vscode.ExtensionMode.Development);
 
 		notificationService.notifyWhatsNewInUpdateAsync();
 		notificationService.handleReviewPromptAsync();
@@ -34,18 +35,14 @@ export function activate(context: vscode.ExtensionContext): void {
 		vscode.workspace.onWillSaveTextDocument(async (willSaveEvent) => {
 			Logger.instance.info("vscode.workspace.onWillSaveTextDocument start");
 			try {
+				if (!formatter.settings.formatOnSave) {
+					return;
+				}
 				var languageId = willSaveEvent?.document?.languageId;
 				if (languageId) {
-					if (languageId === Constants.LanguageIDs.xml ||
-						languageId === Constants.LanguageIDs.xsd ||
-						languageId === Constants.LanguageIDs.xsl ||
-						languageId === Constants.LanguageIDs.xslt ||
-						languageId === Constants.LanguageIDs.xaml) {
-						let prettyXmlConfig = vscode.workspace.getConfiguration(`${Constants.prettyxml}.${Constants.settings}`);
-						let formatOnSave = prettyXmlConfig.get<boolean>(Constants.Settings.formatOnSave) ?? false;
-						if (formatOnSave) {
-							willSaveEvent.waitUntil(replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
-						}
+					let shouldFormatOnSave = isDefaultFormatter(languageId);
+					if (shouldFormatOnSave) {
+						willSaveEvent.waitUntil(replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
 					}
 				}
 				else {
@@ -92,6 +89,16 @@ export function activate(context: vscode.ExtensionContext): void {
 			Logger.instance.warning(error);
 		}
 		console.error(error);
+	}
+}
+
+function isDefaultFormatter(languageID: string): boolean {
+	try {
+		const languageSettings = vscode.workspace.getConfiguration(`[${languageID}]`) as any;
+		const defaultFormatter = languageSettings[Constants.defaultEditor];
+		return defaultFormatter === Constants.id;
+	} catch (error) {
+		return false;
 	}
 }
 

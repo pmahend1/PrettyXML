@@ -1,11 +1,13 @@
 export const Constants = {
     extensionName: "Pretty XML",
     prettyxml: "prettyxml",
+    id: "PrateekMahendrakar.prettyxml",
     settings: "settings",
     changeLogUrl: "https://github.com/pmahend1/PrettyXML/blob/main/CHANGELOG.md",
     vsMarketplaceReviewUrl: "https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml&ssr=false#review-details",
     openVsxReviewUrl: "https://open-vsx.org/extension/PrateekMahendrakar/prettyxml/reviews",
     codium: "codium",
+    defaultEditor: "editor.defaultFormatter",
 
     Settings: {
         indentSpaceLength: "indentSpaceLength",
