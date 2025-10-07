@@ -9,7 +9,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "6.4.0",
+    "version": "6.4.1",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -232,7 +232,7 @@
         "@types/vscode": "^1.99.1",
         "@vscode/test-electron": "^2.5.2",
         "esbuild": "^0.25.10",
-        "eslint": "^9.36.0",
+        "eslint": "^9.37.0",
         "ts-loader": "^9.5.4",
         "typescript": "^5.9.3",
         "webpack": "^5.102.0",

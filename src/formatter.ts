@@ -63,7 +63,7 @@ export class Formatter {
         let wildCardedExceptionsForPositionAllAttributesOnFirstLine = prettyXmlConfig.get<Array<string>>(Constants.Settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine);
         let addEmptyLineBetweenElements = prettyXmlConfig.get<boolean>(Constants.Settings.addEmptyLineBetweenElements);
         let enableLogs = prettyXmlConfig.get<boolean>(Constants.Settings.enableLogs);
-        Logger.instance.updateConfiguration(enableLogs);
+        Logger.instance.setIsEnabled(enableLogs);
 
         this.settings = {
             indentLength: spacelength,
