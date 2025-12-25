@@ -243,9 +243,9 @@ Default is `true`.
 
 ## Requirements
 
-- [**DotNet 8** or later](https://dotnet.microsoft.com/en-us/download/dotnet) installed on your machine and should be accessible through terminal.
+- [**DotNet 10**](https://dotnet.microsoft.com/en-us/download/dotnet) installed on your machine and should be accessible through terminal.
 - Install [Muhammad-Sammy C#](https://open-vsx.org/extension/muhammad-sammy/csharp) or [Microsoft C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) extension.
-- Visual Studio Code/VSCodium 1.59 or higher.
+- Visual Studio Code/VSCodium 1.99.1 or higher.
 
 ---
 

@@ -1,36 +1,36 @@
 {
   "runtimeTarget": {
-    "name": ".NETCoreApp,Version=v8.0",
+    "name": ".NETCoreApp,Version=v10.0",
     "signature": ""
   },
   "compilationOptions": {},
   "targets": {
-    ".NETCoreApp,Version=v8.0": {
-      "XmlFormatter.CommandLine/1.0.0": {
+    ".NETCoreApp,Version=v10.0": {
+      "XmlFormatter.CommandLine/2.0.0": {
         "dependencies": {
-          "XmlFormatter": "1.0.0"
+          "XmlFormatter": "2.0.0"
         },
         "runtime": {
           "XmlFormatter.CommandLine.dll": {}
         }
       },
-      "XmlFormatter/1.0.0": {
+      "XmlFormatter/2.0.0": {
         "runtime": {
           "XmlFormatter.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
           }
         }
       }
     }
   },
   "libraries": {
-    "XmlFormatter.CommandLine/1.0.0": {
+    "XmlFormatter.CommandLine/2.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "XmlFormatter/1.0.0": {
+    "XmlFormatter/2.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

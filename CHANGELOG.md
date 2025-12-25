@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 6.5.0: 25-Dec-2025
+
+- Changed dotnet dependency from Dotnet 8 to Dotnet 10.
+- Package updates.
+
 ## 6.4.1: 06-Oct-2025
 
 - Fixed a bug where [format on save was triggered even though PrettyXML was not set as default formatter for a language ID.](https://github.com/pmahend1/PrettyXML/issues/196)
