@@ -2,6 +2,10 @@
 
 ## Stable
 
+## 6.6.0: 25-Dec-2025
+
+- Added [Preserve New Lines](README.md#preserve-new-lines) setting.
+
 ## 6.5.0: 25-Dec-2025
 
 - Changed dotnet dependency from Dotnet 8 to Dotnet 10.

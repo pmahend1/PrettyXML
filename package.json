@@ -9,7 +9,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "6.5.0",
+    "version": "6.6.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -207,6 +207,11 @@
                     "prettyxml.settings.addEmptyLineBetweenElements": {
                         "type": "boolean",
                         "markdownDescription": "Add empty line between elements if element count is greater than 2. Default is *Unchecked*",
+                        "default": false
+                    },
+                    "prettyxml.settings.preserveNewLines": {
+                        "type": "boolean",
+                        "markdownDescription": "Preserve existing new lines between elements. Default is *Unchecked*",
                         "default": false
                     },
                     "prettyxml.settings.enableLogs": {

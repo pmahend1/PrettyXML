@@ -15,6 +15,7 @@ export interface ISettings {
     attributesInNewlineThreshold: number;
     wildCardedExceptionsForPositionAllAttributesOnFirstLine?: [string];
     addEmptyLineBetweenElements: boolean;
+    preserveNewLines: boolean;
     enableLogs: boolean;
 }
 
@@ -35,6 +36,7 @@ export const defaultSettings: ISettings = {
     attributesInNewlineThreshold: 1,
     wildCardedExceptionsForPositionAllAttributesOnFirstLine: undefined,
     addEmptyLineBetweenElements: false,
+    preserveNewLines: false,
     enableLogs: false
 };
 
@@ -55,6 +57,7 @@ export class Settings {
     attributesInNewlineThreshold?: number;
     wildCardedExceptionsForPositionAllAttributesOnFirstLine?: string[];
     addEmptyLineBetweenElements?: boolean;
+    preserveNewLines?: boolean;
     enableLogs?: boolean;
 
     constructor({
@@ -74,6 +77,7 @@ export class Settings {
         attributesInNewlineThreshold,
         wildCardedExceptionsForPositionAllAttributesOnFirstLine,
         addEmptyLineBetweenElements,
+        preserveNewLines,
         enableLogs
     }: Partial<ISettings> = {}) {
         this.indentLength = indentLength ?? defaultSettings.indentLength;
@@ -92,6 +96,7 @@ export class Settings {
         this.attributesInNewlineThreshold = attributesInNewlineThreshold ?? defaultSettings.attributesInNewlineThreshold;
         this.wildCardedExceptionsForPositionAllAttributesOnFirstLine = wildCardedExceptionsForPositionAllAttributesOnFirstLine;
         this.addEmptyLineBetweenElements = addEmptyLineBetweenElements ?? defaultSettings.addEmptyLineBetweenElements;
+        this.preserveNewLines = preserveNewLines ?? defaultSettings.preserveNewLines;
         this.enableLogs = enableLogs ?? defaultSettings.enableLogs;
     }
 }
