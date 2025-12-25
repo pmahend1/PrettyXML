@@ -134,6 +134,7 @@ These will be for **Prettify XML** command.
 | prettyxml.settings.enableLogs                                                                                                                   | false           | Enables logs                                                                 |
 | [prettyxml.settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine](#wild-carded-exceptions-for-position-all-attributes-on-first-line) | Array\<string\> | Wild card exceptions for elements to ignore positionAllAttributesOnFirstLine |
 | [prettyxml.settings.addEmptyLineBetweenElements](#add-empty-line-between-elements)                                                              | false           | Add empty line between elements if the child count is greater than 2         |
+| [prettyxml.settings.preserveNewLines](#preserve-new-lines)                                                                                      | false           | Preserve existing new lines between elements.                                |
 
 ![Settings Image.](./images/settings.png)
 
@@ -143,25 +144,25 @@ Example:
 
 Value = 2
 
-#### Input#1
+#### Input 1
 
 ```xml
 <Element Attribute1="Value1" Attribute2="Value2" />
 ```
 
-#### Output#1
+#### Output 1
 
 ```xml
 <Element Attribute1="Value1" Attribute2="Value2" />
 ```
 
-#### Input#2
+#### Input 2
 
 ```xml
 <Element Attribute1="Value1" Attribute2="Value2" Attribute3="Value3" />
 ```
 
-#### Output#2
+#### Output 2
 
 ```xml
 <Element Attribute1="Value1"
@@ -179,7 +180,7 @@ Example:
  "prettyxml.settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine": ["Content*"]
 ```
 
-#### Input
+#### Input 3
 
 ```xml
 <View>
@@ -192,7 +193,7 @@ Example:
 </View>
 ```
 
-#### Ouput
+#### Ouput 3
 
 ```xml
 <View>
@@ -212,7 +213,7 @@ If enabled, and child elements count is greater than 2 then adds empty line betw
 > [!NOTE]  
 > Please note it wont add empty element before first element and after last element.
 
-#### Input 1
+#### Input 4
 
 ```xml
 <Root>
@@ -222,7 +223,7 @@ If enabled, and child elements count is greater than 2 then adds empty line betw
 </Root>
 ```
 
-#### Output 1
+#### Output 4
 
 ```xml
 <Root>
@@ -238,6 +239,67 @@ If enabled, and child elements count is greater than 2 then adds empty line betw
 
 Adds XML declaration `<?xml version="1.0" encoding="utf-8"?>` if missing.
 Default is `true`.
+
+### Preserve New Lines
+
+Preserves existing new lines between elements.
+
+Example: Value = **false**
+
+#### Input 5
+
+```xml
+<Root>
+      <Element1>Text1</Element1>
+
+
+    <Element2>Text2</Element2>
+
+        <Element3>Text3</Element3>
+    <Element3>Text4</Element3>
+</Root>
+```
+
+#### Output 5
+
+```xml
+<Root>
+    <Element1>Text1</Element1>
+    <Element2>Text2</Element2>
+    <Element3>Text3</Element3>
+    <Element3>Text4</Element3>
+</Root>
+```
+
+Example: Value = **true**
+
+#### Input 6
+
+```xml
+<Root>
+      <Element1>Text1</Element1>
+
+
+    <Element2>Text2</Element2>
+
+        <Element3>Text3</Element3>
+    <Element3>Text4</Element3>
+</Root>
+```
+
+#### Output 6
+
+```xml
+<Root>
+    <Element1>Text1</Element1>
+
+    
+    <Element2>Text2</Element2>
+        
+    <Element3>Text3</Element3>
+    <Element3>Text4</Element3>
+</Root>
+```
 
 ---
 
