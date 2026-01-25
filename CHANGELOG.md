@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 6.7.0: 24-Jan-2026
+
+- Added [Preserve Comment Line Placement](README.md#preserve-comment-placement) setting.
+- Package updates.
+
 ## 6.6.0: 25-Dec-2025
 
 - Added [Preserve New Lines](README.md#preserve-new-lines) setting.

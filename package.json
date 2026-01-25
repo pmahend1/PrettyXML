@@ -9,7 +9,7 @@
     },
     "readme": "https://github.com/pmahend1/PrettyXML/blob/main/README.md",
     "description": "XML formatter extension for Visual Studio Code. Formats XML documents just like Visual Studio.",
-    "version": "6.6.0",
+    "version": "6.7.0",
     "publisher": "PrateekMahendrakar",
     "repository": {
         "url": "https://github.com/pmahend1/prettyxml.git"
@@ -214,6 +214,11 @@
                         "markdownDescription": "Preserve existing new lines between elements. Default is *Unchecked*",
                         "default": false
                     },
+                    "prettyxml.settings.preserveCommentPlacement": {
+                        "type": "boolean",
+                        "markdownDescription": "Preserve existing comment line placement. Default is *Unchecked* \n\n **Checked** : Comments remains in their original lines. \n\n **Unchecked** : Comments may be repositioned into other lines according to formatting rules.",
+                        "default": false
+                    },
                     "prettyxml.settings.enableLogs": {
                         "type": "boolean",
                         "markdownDescription": "Enable console local logs.",
@@ -233,7 +238,7 @@
         "test": "vscode-test"
     },
     "devDependencies": {
-        "@types/node": "^22.19.3",
+        "@types/node": "^22.19.7",
         "@types/vscode": "^1.99.1",
         "@vscode/test-electron": "^2.5.2",
         "esbuild": "^0.25.12",

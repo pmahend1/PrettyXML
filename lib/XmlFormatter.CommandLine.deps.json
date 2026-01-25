@@ -6,31 +6,31 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v10.0": {
-      "XmlFormatter.CommandLine/2.1.0": {
+      "XmlFormatter.CommandLine/2.2.0": {
         "dependencies": {
-          "XmlFormatter": "2.1.0"
+          "XmlFormatter": "2.2.0"
         },
         "runtime": {
           "XmlFormatter.CommandLine.dll": {}
         }
       },
-      "XmlFormatter/2.1.0": {
+      "XmlFormatter/2.2.0": {
         "runtime": {
           "XmlFormatter.dll": {
-            "assemblyVersion": "2.1.0.0",
-            "fileVersion": "2.1.0.0"
+            "assemblyVersion": "2.2.0.0",
+            "fileVersion": "2.2.0.0"
           }
         }
       }
     }
   },
   "libraries": {
-    "XmlFormatter.CommandLine/2.1.0": {
+    "XmlFormatter.CommandLine/2.2.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "XmlFormatter/2.1.0": {
+    "XmlFormatter/2.2.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

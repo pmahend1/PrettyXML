@@ -135,6 +135,7 @@ These will be for **Prettify XML** command.
 | [prettyxml.settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine](#wild-carded-exceptions-for-position-all-attributes-on-first-line) | Array\<string\> | Wild card exceptions for elements to ignore positionAllAttributesOnFirstLine |
 | [prettyxml.settings.addEmptyLineBetweenElements](#add-empty-line-between-elements)                                                              | false           | Add empty line between elements if the child count is greater than 2         |
 | [prettyxml.settings.preserveNewLines](#preserve-new-lines)                                                                                      | false           | Preserve existing new lines between elements.                                |
+| [prettyxml.settings.preserveCommentPlacement](#preserve-comment-placement)                                                                      | false           | Preserve comment line placement.                                             |
 
 ![Settings Image.](./images/settings.png)
 
@@ -298,6 +299,59 @@ Example: Value = **true**
         
     <Element3>Text3</Element3>
     <Element3>Text4</Element3>
+</Root>
+```
+
+### Preserve Comment Placement
+
+Preserve existing comment line placement. Default is *Unchecked*
+
+**Checked** : Comments remains in their original lines.
+**Unchecked** : Comments may be repositioned into other lines according to formatting rules.
+
+Example: Value = **false**
+
+#### Input 7
+
+```xml
+<Root>
+    <Element1>Text1</Element1>  <!--A comment-->
+    <Element2>Text2</Element2><!--Another comment-->
+    <Element3>Text3</Element3>
+</Root>
+```
+
+#### Output 7
+
+```xml
+<Root>
+    <Element1>Text1</Element1>
+    <!--A comment-->
+    <Element2>Text2</Element2>
+    <!--Another comment-->
+    <Element3>Text3</Element3>
+</Root>
+```
+
+Example: Value = **true**
+
+#### Input 8
+
+```xml
+<Root>
+    <Element1>Text1</Element1>    <!--A comment-->
+    <Element2>Text2</Element2>   <!--Another comment-->
+    <Element3>Text3</Element3>
+</Root>
+```
+
+#### Output 8
+
+```xml
+<Root>
+    <Element1>Text1</Element1><!--A comment-->
+    <Element2>Text2</Element2><!--Another comment-->
+    <Element3>Text3</Element3>
 </Root>
 ```
 
