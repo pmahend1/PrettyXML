@@ -63,6 +63,7 @@ export class Formatter {
         let wildCardedExceptionsForPositionAllAttributesOnFirstLine = prettyXmlConfig.get<Array<string>>(Constants.Settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine);
         let addEmptyLineBetweenElements = prettyXmlConfig.get<boolean>(Constants.Settings.addEmptyLineBetweenElements);
         let preserveNewLines = prettyXmlConfig.get<boolean>(Constants.Settings.preserveNewLines);
+        let preserveCommentPlacement = prettyXmlConfig.get<boolean>(Constants.Settings.preserveCommentPlacement);
         let enableLogs = prettyXmlConfig.get<boolean>(Constants.Settings.enableLogs);
         Logger.instance.setIsEnabled(enableLogs);
 
@@ -84,6 +85,7 @@ export class Formatter {
             wildCardedExceptionsForPositionAllAttributesOnFirstLine: wildCardedExceptionsForPositionAllAttributesOnFirstLine,
             addEmptyLineBetweenElements: addEmptyLineBetweenElements,
             preserveNewLines: preserveNewLines,
+            preserveCommentPlacement: preserveCommentPlacement,
             enableLogs: enableLogs,
         };
 
