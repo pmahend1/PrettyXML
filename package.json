@@ -37,7 +37,7 @@
         "formatter"
     ],
     "engines": {
-        "vscode": "^1.99.1"
+        "vscode": "^1.110.0"
     },
     "categories": [
         "Formatters"
@@ -238,20 +238,17 @@
         "test": "vscode-test"
     },
     "devDependencies": {
-        "@types/node": "^22.19.7",
-        "@types/vscode": "^1.99.1",
+        "@types/node": "^22.19.17",
+        "@types/vscode": "^1.110.0",
         "@vscode/test-electron": "^2.5.2",
         "esbuild": "^0.25.12",
-        "eslint": "^9.39.2",
-        "ts-loader": "^9.5.4",
+        "eslint": "^9.39.4",
+        "ts-loader": "^9.5.7",
         "typescript": "^5.9.3",
-        "webpack": "^5.104.1",
+        "webpack": "^5.105.4",
         "webpack-cli": "^6.0.1"
     },
     "dependencies": {
-        "child_process": "^1.0.2",
-        "compare-versions": "^6.1.1",
-        "fs": "0.0.1-security",
-        "path": "^0.12.7"
+        "compare-versions": "^6.1.1"
     }
 }
