@@ -2,6 +2,10 @@
 
 ## Stable
 
+## 6.8.0: 4-Apr-2026
+
+- Package updates.
+
 ## 6.7.0: 24-Jan-2026
 
 - Added [Preserve Comment Line Placement](README.md#preserve-comment-placement) setting.
