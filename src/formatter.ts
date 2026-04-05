@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
 import { defaultSettings, Settings } from "./settings";
-import * as childProcess from "child_process";
-import * as path from "path";
+import * as childProcess from "node:child_process";
+import * as path from "node:path";
 import { JsonInputDto } from "./jsonInputDto";
 import { FormattingActionKind } from "./formattingActionKind";
 import { Logger } from "./logger";
