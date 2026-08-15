@@ -228,6 +228,7 @@
             }
         ]
     },
+    "packageManager": "pnpm@11.21.0",
     "scripts": {
         "compile": "webpack --mode development",
         "watch": "webpack --mode development --watch",
