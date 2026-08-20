@@ -2,6 +2,12 @@
 
 ## Stable
 
+## 6.9.0: 19-Aug-2026
+
+- Fixed Unicode multi-byte surrogate pair character corruption (#208,#211).
+- Fixed inline element whitespace retention for elements like `<xsl:text> </xsl:text>` (#209).
+- Updated XmlFormatter engine to v2.3.0.
+
 ## 6.8.0: 4-Apr-2026
 
 - Package updates.
