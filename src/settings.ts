@@ -15,6 +15,7 @@ export interface ISettings {
     attributesInNewlineThreshold: number;
     wildCardedExceptionsForPositionAllAttributesOnFirstLine?: [string];
     addEmptyLineBetweenElements: boolean;
+    addEmptyEol: boolean;
     preserveNewLines: boolean;
     preserveCommentPlacement: boolean;
     enableLogs: boolean;
@@ -37,6 +38,7 @@ export const defaultSettings: ISettings = {
     attributesInNewlineThreshold: 1,
     wildCardedExceptionsForPositionAllAttributesOnFirstLine: undefined,
     addEmptyLineBetweenElements: false,
+    addEmptyEol: false,
     preserveNewLines: false,
     preserveCommentPlacement: false,
     enableLogs: false
@@ -59,6 +61,7 @@ export class Settings {
     attributesInNewlineThreshold?: number;
     wildCardedExceptionsForPositionAllAttributesOnFirstLine?: string[];
     addEmptyLineBetweenElements?: boolean;
+    addEmptyEol?: boolean;
     preserveNewLines?: boolean;
     preserveCommentPlacement?: boolean;
     enableLogs?: boolean;
@@ -80,6 +83,7 @@ export class Settings {
         attributesInNewlineThreshold,
         wildCardedExceptionsForPositionAllAttributesOnFirstLine,
         addEmptyLineBetweenElements,
+        addEmptyEol,
         preserveNewLines,
         preserveCommentPlacement,
         enableLogs
@@ -100,6 +104,7 @@ export class Settings {
         this.attributesInNewlineThreshold = attributesInNewlineThreshold ?? defaultSettings.attributesInNewlineThreshold;
         this.wildCardedExceptionsForPositionAllAttributesOnFirstLine = wildCardedExceptionsForPositionAllAttributesOnFirstLine;
         this.addEmptyLineBetweenElements = addEmptyLineBetweenElements ?? defaultSettings.addEmptyLineBetweenElements;
+        this.addEmptyEol = addEmptyEol ?? defaultSettings.addEmptyEol;
         this.preserveNewLines = preserveNewLines ?? defaultSettings.preserveNewLines;
         this.preserveCommentPlacement = preserveCommentPlacement ?? defaultSettings.preserveCommentPlacement;
         this.enableLogs = enableLogs ?? defaultSettings.enableLogs;

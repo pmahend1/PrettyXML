@@ -62,6 +62,7 @@ export class Formatter {
         let attributesInNewlineThreshold = prettyXmlConfig.get<number>(Constants.Settings.attributesInNewlineThreshold);
         let wildCardedExceptionsForPositionAllAttributesOnFirstLine = prettyXmlConfig.get<Array<string>>(Constants.Settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine);
         let addEmptyLineBetweenElements = prettyXmlConfig.get<boolean>(Constants.Settings.addEmptyLineBetweenElements);
+        let addEmptyEol = prettyXmlConfig.get<boolean>(Constants.Settings.addEmptyEol);
         let preserveNewLines = prettyXmlConfig.get<boolean>(Constants.Settings.preserveNewLines);
         let preserveCommentPlacement = prettyXmlConfig.get<boolean>(Constants.Settings.preserveCommentPlacement);
         let enableLogs = prettyXmlConfig.get<boolean>(Constants.Settings.enableLogs);
@@ -84,6 +85,7 @@ export class Formatter {
             attributesInNewlineThreshold: attributesInNewlineThreshold,
             wildCardedExceptionsForPositionAllAttributesOnFirstLine: wildCardedExceptionsForPositionAllAttributesOnFirstLine,
             addEmptyLineBetweenElements: addEmptyLineBetweenElements,
+            addEmptyEol: addEmptyEol,
             preserveNewLines: preserveNewLines,
             preserveCommentPlacement: preserveCommentPlacement,
             enableLogs: enableLogs,
@@ -105,6 +107,12 @@ export class Formatter {
 
         if (docText) {
             formattedString = await this.formatWithCommandLine(docText, FormattingActionKind.format);
+            if (this.settings.addEmptyEol && formattedString.length > 0) {
+                if (!formattedString.endsWith("\n") && !formattedString.endsWith("\r\n")) {
+                    const eol = formattedString.includes("\r\n") || docText.includes("\r\n") ? "\r\n" : "\n";
+                    formattedString += eol;
+                }
+            }
             Logger.instance.info(`Formatted text: ${formattedString}`);
             Logger.instance.info("formatXml end");
             return formattedString;
@@ -121,6 +129,12 @@ export class Formatter {
         var docText = DocumentHelper.getDocumentText();
         if (docText) {
             minimizedXmlText = await this.formatWithCommandLine(docText, FormattingActionKind.minimize);
+            if (this.settings.addEmptyEol && minimizedXmlText.length > 0) {
+                if (!minimizedXmlText.endsWith("\n") && !minimizedXmlText.endsWith("\r\n")) {
+                    const eol = minimizedXmlText.includes("\r\n") || docText.includes("\r\n") ? "\r\n" : "\n";
+                    minimizedXmlText += eol;
+                }
+            }
             Logger.instance.info(`minimizedXmlText: ${minimizedXmlText}`);
             return minimizedXmlText;
         }

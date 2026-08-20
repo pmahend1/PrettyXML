@@ -26,6 +26,7 @@ export const Constants = {
         attributesInNewlineThreshold: "attributesInNewlineThreshold",
         wildCardedExceptionsForPositionAllAttributesOnFirstLine: "wildCardedExceptionsForPositionAllAttributesOnFirstLine",
         addEmptyLineBetweenElements: "addEmptyLineBetweenElements",
+        addEmptyEol: "addEmptyEol",
         preserveNewLines: "preserveNewLines",
         preserveCommentPlacement: "preserveCommentPlacement",
         enableLogs: "enableLogs",
