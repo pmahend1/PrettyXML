@@ -7,7 +7,7 @@ export class TextXmlFormatter {
         this.settings = settings;
     }
     public formatXmlPretty(xml: string): string {
-        const tagRegex = /(<\?.*?\?>|<!DOCTYPE[^>]*>|<!\[CDATA\[.*?\]\]>|<!--.*?-->|<\/?[^>]+?>)/gsu;
+        const tagRegex = /(<\?.*?\?>|<!DOCTYPE(?:\s+\[[\s\S]*?\]|[^>\[]*(?:\[[\s\S]*?\])?)*?>|<!\[CDATA\[.*?\]\]>|<!--.*?-->|<\/?[^>]+?>)/gsu;
 
         let startIndent = 0;
         let formatted: string[] = [];
