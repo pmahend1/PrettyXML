@@ -70,7 +70,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 		let documentFormatterProvider = vscode.languages.registerDocumentFormattingEditProvider(languageIdSelector, xmlFormattingEditProvider);
 
-		const rangeFormatterProvider = new RangeFormatterProvider(formatter.settings);
+		const rangeFormatterProvider = new RangeFormatterProvider(formatter);
 		const selectionFormatter = vscode.languages.registerDocumentRangeFormattingEditProvider(languageIdSelector, rangeFormatterProvider);
 
 		//subscribe commands
