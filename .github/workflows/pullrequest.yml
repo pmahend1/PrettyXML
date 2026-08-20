@@ -30,6 +30,19 @@ jobs:
           }
           Write-Host "All required files are updated. Pass ✅"
 
+      - name: Verify VS Code engine and types match
+        shell: pwsh
+        run: |
+          $pkg = Get-Content .\package.json | ConvertFrom-Json
+          $engine = $pkg.engines.vscode
+          $types = $pkg.devDependencies.'@types/vscode'
+
+          if ($engine -ne $types) {
+            Write-Error "Mismatch: engines.vscode ($engine) does not match @types/vscode ($types) ❌"
+            exit 1
+          }
+          Write-Host "engines.vscode matches @types/vscode ($engine) ✅"
+
       - name: Get current version from package.json
         id: getpackageversion
         shell: pwsh
