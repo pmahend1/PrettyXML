@@ -129,12 +129,6 @@ export class Formatter {
         var docText = DocumentHelper.getDocumentText();
         if (docText) {
             minimizedXmlText = await this.formatWithCommandLine(docText, FormattingActionKind.minimize);
-            if (this.settings.addEmptyEol && minimizedXmlText.length > 0) {
-                if (!minimizedXmlText.endsWith("\n") && !minimizedXmlText.endsWith("\r\n")) {
-                    const eol = minimizedXmlText.includes("\r\n") || docText.includes("\r\n") ? "\r\n" : "\n";
-                    minimizedXmlText += eol;
-                }
-            }
             Logger.instance.info(`minimizedXmlText: ${minimizedXmlText}`);
             return minimizedXmlText;
         }
