@@ -7,6 +7,7 @@ import { JsonInputDto } from "./jsonInputDto";
 import { FormattingActionKind } from "./formattingActionKind";
 import { Logger } from "./logger";
 import { Constants } from "./constants";
+import { appendEolIfMissing, preserveOriginalEol } from "./eolHelper";
 
 export class Formatter {
     private extensionContext: vscode.ExtensionContext;
@@ -107,11 +108,10 @@ export class Formatter {
 
         if (docText) {
             formattedString = await this.formatWithCommandLine(docText, FormattingActionKind.format);
-            if (this.settings.addEmptyEol && formattedString.length > 0) {
-                if (!formattedString.endsWith("\n") && !formattedString.endsWith("\r\n")) {
-                    const eol = formattedString.includes("\r\n") || docText.includes("\r\n") ? "\r\n" : "\n";
-                    formattedString += eol;
-                }
+            if (this.settings.addEmptyEol) {
+                formattedString = appendEolIfMissing(formattedString, docText);
+            } else {
+                formattedString = preserveOriginalEol(formattedString, docText);
             }
             Logger.instance.info(`Formatted text: ${formattedString}`);
             Logger.instance.info("formatXml end");
@@ -129,6 +129,7 @@ export class Formatter {
         var docText = DocumentHelper.getDocumentText();
         if (docText) {
             minimizedXmlText = await this.formatWithCommandLine(docText, FormattingActionKind.minimize);
+            minimizedXmlText = preserveOriginalEol(minimizedXmlText, docText);
             Logger.instance.info(`minimizedXmlText: ${minimizedXmlText}`);
             return minimizedXmlText;
         }
