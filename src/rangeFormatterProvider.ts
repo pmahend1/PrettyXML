@@ -43,12 +43,12 @@ export class RangeFormatterProvider implements DocumentRangeFormattingEditProvid
     provideDocumentRangesFormattingEdits?(document: TextDocument, ranges: Range[], options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]> {
         if (document) {
             const currentSettings = this.getSettings();
-            const edits = new Array<TextEdit>();
+            const regexFormatter = new TextXmlFormatter(currentSettings);
+            const edits: TextEdit[] = [];
             for (let i = 0; i < ranges.length; i++) {
                 const range = ranges[i];
                 const text = document.getText(range);
                 if (text) {
-                    const regexFormatter = new TextXmlFormatter(currentSettings);
                     let formattedText = regexFormatter.formatXmlPretty(text);
                     formattedText = this.appendEolIfNeeded(formattedText, text, document, range, currentSettings);
                     const replacer = TextEdit.replace(range, formattedText);

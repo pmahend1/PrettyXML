@@ -123,10 +123,10 @@ export class Formatter {
         }
     }
 
-    async minimizeXml(): Promise<string> {
+    public async minimizeXml(): Promise<string> {
         Logger.instance.info("minimizeXml start");
         let minimizedXmlText: string = "";
-        var docText = DocumentHelper.getDocumentText();
+        let docText = DocumentHelper.getDocumentText();
         if (docText) {
             minimizedXmlText = await this.formatWithCommandLine(docText, FormattingActionKind.minimize);
             minimizedXmlText = preserveOriginalEol(minimizedXmlText, docText);
