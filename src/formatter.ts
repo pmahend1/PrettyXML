@@ -7,6 +7,7 @@ import { JsonInputDto } from "./jsonInputDto";
 import { FormattingActionKind } from "./formattingActionKind";
 import { Logger } from "./logger";
 import { Constants } from "./constants";
+import { appendEolIfMissing, preserveOriginalEol } from "./eolHelper";
 
 export class Formatter {
     private extensionContext: vscode.ExtensionContext;
@@ -62,6 +63,7 @@ export class Formatter {
         let attributesInNewlineThreshold = prettyXmlConfig.get<number>(Constants.Settings.attributesInNewlineThreshold);
         let wildCardedExceptionsForPositionAllAttributesOnFirstLine = prettyXmlConfig.get<Array<string>>(Constants.Settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine);
         let addEmptyLineBetweenElements = prettyXmlConfig.get<boolean>(Constants.Settings.addEmptyLineBetweenElements);
+        let addEmptyEol = prettyXmlConfig.get<boolean>(Constants.Settings.addEmptyEol);
         let preserveNewLines = prettyXmlConfig.get<boolean>(Constants.Settings.preserveNewLines);
         let preserveCommentPlacement = prettyXmlConfig.get<boolean>(Constants.Settings.preserveCommentPlacement);
         let enableLogs = prettyXmlConfig.get<boolean>(Constants.Settings.enableLogs);
@@ -84,6 +86,7 @@ export class Formatter {
             attributesInNewlineThreshold: attributesInNewlineThreshold,
             wildCardedExceptionsForPositionAllAttributesOnFirstLine: wildCardedExceptionsForPositionAllAttributesOnFirstLine,
             addEmptyLineBetweenElements: addEmptyLineBetweenElements,
+            addEmptyEol: addEmptyEol,
             preserveNewLines: preserveNewLines,
             preserveCommentPlacement: preserveCommentPlacement,
             enableLogs: enableLogs,
@@ -105,6 +108,11 @@ export class Formatter {
 
         if (docText) {
             formattedString = await this.formatWithCommandLine(docText, FormattingActionKind.format);
+            if (this.settings.addEmptyEol) {
+                formattedString = appendEolIfMissing(formattedString, docText);
+            } else {
+                formattedString = preserveOriginalEol(formattedString, docText);
+            }
             Logger.instance.info(`Formatted text: ${formattedString}`);
             Logger.instance.info("formatXml end");
             return formattedString;
@@ -115,12 +123,13 @@ export class Formatter {
         }
     }
 
-    async minimizeXml(): Promise<string> {
+    public async minimizeXml(): Promise<string> {
         Logger.instance.info("minimizeXml start");
         let minimizedXmlText: string = "";
-        var docText = DocumentHelper.getDocumentText();
+        let docText = DocumentHelper.getDocumentText();
         if (docText) {
             minimizedXmlText = await this.formatWithCommandLine(docText, FormattingActionKind.minimize);
+            minimizedXmlText = preserveOriginalEol(minimizedXmlText, docText);
             Logger.instance.info(`minimizedXmlText: ${minimizedXmlText}`);
             return minimizedXmlText;
         }

@@ -2,6 +2,7 @@ import { CancellationToken, DocumentRangeFormattingEditProvider, FormattingOptio
 import { Formatter } from "./formatter";
 import { TextXmlFormatter } from "./regexFormatter";
 import { defaultSettings, Settings } from "./settings";
+import { appendEolIfMissing, preserveOriginalEol } from "./eolHelper";
 
 export class RangeFormatterProvider implements DocumentRangeFormattingEditProvider {
 
@@ -28,8 +29,10 @@ export class RangeFormatterProvider implements DocumentRangeFormattingEditProvid
         if (document) {
             const text = document.getText(range);
             if (text) {
-                const regexFormatter = new TextXmlFormatter(this.getSettings());
-                const formattedText = regexFormatter.formatXmlPretty(text);
+                const settings = this.getSettings();
+                const regexFormatter = new TextXmlFormatter(settings);
+                let formattedText = regexFormatter.formatXmlPretty(text);
+                formattedText = this.appendEolIfNeeded(formattedText, text, document, range, settings);
                 const replacer = TextEdit.replace(range, formattedText);
                 return [replacer];
             }
@@ -40,13 +43,14 @@ export class RangeFormatterProvider implements DocumentRangeFormattingEditProvid
     provideDocumentRangesFormattingEdits?(document: TextDocument, ranges: Range[], options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]> {
         if (document) {
             const currentSettings = this.getSettings();
-            const edits = new Array<TextEdit>();
+            const regexFormatter = new TextXmlFormatter(currentSettings);
+            const edits: TextEdit[] = [];
             for (let i = 0; i < ranges.length; i++) {
                 const range = ranges[i];
                 const text = document.getText(range);
                 if (text) {
-                    const regexFormatter = new TextXmlFormatter(currentSettings);
-                    const formattedText = regexFormatter.formatXmlPretty(text);
+                    let formattedText = regexFormatter.formatXmlPretty(text);
+                    formattedText = this.appendEolIfNeeded(formattedText, text, document, range, currentSettings);
                     const replacer = TextEdit.replace(range, formattedText);
                     edits.push(replacer);
                 }
@@ -54,5 +58,20 @@ export class RangeFormatterProvider implements DocumentRangeFormattingEditProvid
             return edits;
         }
         return [];
+    }
+
+    private appendEolIfNeeded(formattedText: string, originalText: string, document: TextDocument, range: Range, settings: Settings): string {
+        if (formattedText.length === 0) {
+            return formattedText;
+        }
+        const lastLine = document.lineAt(document.lineCount - 1);
+        const isAtDocumentEnd = range.end.line >= lastLine.lineNumber && range.end.character >= lastLine.range.end.character;
+        if (!isAtDocumentEnd) {
+            return formattedText;
+        }
+        if (settings.addEmptyEol) {
+            return appendEolIfMissing(formattedText, originalText);
+        }
+        return preserveOriginalEol(formattedText, originalText);
     }
 }

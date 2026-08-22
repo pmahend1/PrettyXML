@@ -3,3 +3,5 @@ out
 .vscode-test/
 *.vsix
 *.DS_Store
+AGENTS.md
+CLAUDE.md

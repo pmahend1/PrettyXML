@@ -134,6 +134,7 @@ These will be for **Prettify XML** command.
 | prettyxml.settings.enableLogs                                                                                                                   | false           | Enables logs                                                                 |
 | [prettyxml.settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine](#wild-carded-exceptions-for-position-all-attributes-on-first-line) | Array\<string\> | Wild card exceptions for elements to ignore positionAllAttributesOnFirstLine |
 | [prettyxml.settings.addEmptyLineBetweenElements](#add-empty-line-between-elements)                                                              | false           | Add empty line between elements if the child count is greater than 2         |
+| [prettyxml.settings.addEmptyEol](#add-empty-eol)                                                                                                | false           | Add empty EOL to files if it does not exist.                                 |
 | [prettyxml.settings.preserveNewLines](#preserve-new-lines)                                                                                      | false           | Preserve existing new lines between elements.                                |
 | [prettyxml.settings.preserveCommentPlacement](#preserve-comment-placement)                                                                      | false           | Preserve comment line placement.                                             |
 
@@ -354,6 +355,15 @@ Example: Value = **true**
     <Element3>Text3</Element3>
 </Root>
 ```
+
+### Add Empty EOL
+
+Adds an empty line (trailing newline) at the end of formatted files if one does not exist.
+
+Default is `false` (*Unchecked*).
+
+- **Checked (`true`)**: Ensures the formatted document ends with a trailing newline (matching CRLF or LF based on the file).
+- **Unchecked (`false`)**: Preserves the original file's trailing line ending without forcing one if it did not exist.
 
 ---
 

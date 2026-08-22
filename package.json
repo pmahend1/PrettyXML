@@ -210,6 +210,11 @@
                         "markdownDescription": "Add empty line between elements if element count is greater than 2. Default is *Unchecked*",
                         "default": false
                     },
+                    "prettyxml.settings.addEmptyEol": {
+                        "type": "boolean",
+                        "markdownDescription": "Add empty EOL to files if it does not exist. Default is *Unchecked*",
+                        "default": false
+                    },
                     "prettyxml.settings.preserveNewLines": {
                         "type": "boolean",
                         "markdownDescription": "Preserve existing new lines between elements. Default is *Unchecked*",
@@ -237,7 +242,8 @@
         "package": "webpack --mode production --devtool hidden-source-map",
         "compile-tests": "tsc -p . --outDir out",
         "pretest": "npm run compile-tests",
-        "test": "vscode-test"
+        "test": "vscode-test",
+        "unit-test": "vitest run"
     },
     "devDependencies": {
         "@types/node": "^24.13.3",
@@ -249,6 +255,7 @@
         "ovsx": "^1.1.1",
         "ts-loader": "^9.6.2",
         "typescript": "^6.0.3",
+        "vitest": "^4.1.11",
         "webpack": "^5.109.2",
         "webpack-cli": "^7.2.2"
     },
