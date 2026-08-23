@@ -8,6 +8,7 @@ export interface ILogger {
     debug(message: string): void;
     outputChannel: vscode.OutputChannel;
     setIsEnabled(isEnabled: boolean): void;
+    readonly isEnabled: boolean;
 }
 
 enum LogLevel {
@@ -83,6 +84,10 @@ export class Logger implements ILogger {
 
     public setIsEnabled(isEnabled: boolean = false) {
         this.enableLogs = isEnabled;
+    }
+
+    public get isEnabled(): boolean {
+        return this.enableLogs === true;
     }
 
     private appendLine(value = '') {

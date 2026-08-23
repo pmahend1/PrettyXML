@@ -8,6 +8,7 @@ import { FormattingActionKind } from "./formattingActionKind";
 import { Logger } from "./logger";
 import { Constants } from "./constants";
 import { appendEolIfMissing, preserveOriginalEol } from "./eolHelper";
+import { PerfTrace } from "./perf";
 
 export class Formatter {
     private extensionContext: vscode.ExtensionContext;
@@ -142,17 +143,24 @@ export class Formatter {
     public async formatWithCommandLine(docText: string, actionKind: FormattingActionKind): Promise<string> {
         try {
             Logger.instance.info("formatWithCommandLine start");
+            const trace = PerfTrace.start(`cli.${actionKind}`);
             var jsinput: JsonInputDto = new JsonInputDto(docText, actionKind, this.settings);
             var inputstr = JSON.stringify(jsinput);
             Logger.instance.info(`converted input to json ${inputstr}`);
             const cli = childProcess.spawn('dotnet', [this.dllPath], { stdio: ['pipe'] });
+            trace?.mark("spawn");
 
             Logger.instance.info(`Starting dotnet childProcess at ${this.dllPath} `);
             let stdOutData = "";
             let stdErrData = "";
+            let hasMarkedFirstByte = false;
 
             cli.stdout.setEncoding("utf8");
             cli.stdout.on("data", data => {
+                if (!hasMarkedFirstByte) {
+                    hasMarkedFirstByte = true;
+                    trace?.mark("dotnetStartupAndFormat");
+                }
                 stdOutData += data;
             });
 
@@ -163,6 +171,8 @@ export class Formatter {
 
             let promise = new Promise<string>((resolve, reject) => {
                 cli.on("close", (exitCode: Number) => {
+                    trace?.mark("drain");
+                    trace?.end(`inputChars=${inputstr.length} outputChars=${stdOutData.length} exit=${exitCode}`);
                     if (exitCode !== 0) {
                         Logger.instance.warning(`childProcess errored with exitCode ${exitCode}`);
                         reject(stdErrData);
@@ -175,6 +185,7 @@ export class Formatter {
             });
 
             cli.stdin.end(inputstr, "utf-8");
+            trace?.mark("stdinWritten");
             return promise;
         }
         catch (error) {

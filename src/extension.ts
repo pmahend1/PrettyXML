@@ -7,6 +7,7 @@ import { replaceDocumentTextWithProgressForCallback } from "./helper";
 import { Logger } from "./logger";
 import { RangeFormatterProvider } from "./rangeFormatterProvider";
 import { Constants } from "./constants";
+import { PerfTrace } from "./perf";
 
 let formatter: Formatter;
 let notificationService: NotificationService;
@@ -42,6 +43,7 @@ export function activate(context: vscode.ExtensionContext): void {
 				if (languageId) {
 					let shouldFormatOnSave = isDefaultFormatter(languageId);
 					if (shouldFormatOnSave) {
+						PerfTrace.noteFormatTrigger(willSaveEvent.document.uri.toString(), "onWillSave");
 						willSaveEvent.waitUntil(replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
 					}
 				}

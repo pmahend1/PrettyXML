@@ -11,6 +11,7 @@ import *  as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
 import { Formatter } from "./formatter";
 import { Logger } from "./logger";
+import { PerfTrace } from "./perf";
 
 export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditProvider {
     private formatter: Formatter;
@@ -20,6 +21,8 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
 
     provideDocumentFormattingEdits(document: TextDocument, options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]> {
         Logger.instance.info("provideDocumentFormattingEdits start");
+        const trace = PerfTrace.start("provider");
+        PerfTrace.noteFormatTrigger(document.uri.toString(), "provider");
         let documentRange: Range = DocumentHelper.getDocumentRange(document);
 
         let docText = document?.getText();
@@ -60,7 +63,9 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
 
                         setTimeout(async () => {
                             try {
+                                trace?.mark("artificialDelay");
                                 var formattedText = await this.formatter.formatXml(docText);
+                                trace?.mark("formatXml");
                                 progress.report({ message: "Formatting...", increment: 75 });
                                 resolve(formattedText);
 
@@ -75,10 +80,13 @@ export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditPr
                     return promise;
                 });
                 const replacer = TextEdit.replace(documentRange, formattedText);
+                trace?.mark("buildEdit");
+                trace?.end(`chars=${docText.length}`);
                 Logger.instance.info("provideDocumentFormattingEdits start");
                 return resolve([replacer]);
             }
             catch (error) {
+                trace?.end("failed");
                 var errorMessage: string = "";
                 if (typeof error === "string") {
                     errorMessage = error;
