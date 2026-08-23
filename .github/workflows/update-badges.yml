@@ -2,8 +2,8 @@ name: Update Marketplace Badge Stats
 
 on:
   schedule:
-    # Runs 4 times a day at 00:00, 06:00, 12:00, 18:00 UTC
-    - cron: '0 */6 * * *'
+    # Runs 4 times a day at 00:17, 06:17, 12:17, 18:17 UTC
+    - cron: "17 */6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -53,18 +53,44 @@ jobs:
               -Headers $headers `
               -Body $body
 
-          $stats = $response.results[0].extensions[0].statistics
-          $installs = ($stats | Where-Object { $_.statisticName -eq "install" }).value
-          $downloads = ($stats | Where-Object { $_.statisticName -eq "downloadCount" }).value
+          $extension = $response.results[0].extensions[0]
+          $stats     = $extension.statistics
 
-          if (-not $installs)  { $installs  = 0 }
-          if (-not $downloads) { $downloads = 0 }
+          $installs    = ($stats | Where-Object { $_.statisticName -eq "install" }).value
+          $updates     = ($stats | Where-Object { $_.statisticName -eq "updateCount" }).value
+          $rating      = ($stats | Where-Object { $_.statisticName -eq "averagerating" }).value
+          $ratingCount = ($stats | Where-Object { $_.statisticName -eq "ratingcount" }).value
+          $version     = $extension.versions[0].version
+
+          if (-not $installs)    { $installs    = 0 }
+          if (-not $updates)     { $updates     = 0 }
+          if (-not $rating)      { $rating      = 0 }
+          if (-not $ratingCount) { $ratingCount = 0 }
+
+          $installs = [long]$installs
+          $updates  = [long]$updates
+
+          # The Marketplace "downloadCount" statistic counts only manual .vsix
+          # downloads (a few thousand). Total downloads is fresh installs plus
+          # in-product updates, which is what the retired Shields badge reported.
+          $downloads = $installs + $updates
+
+          if (-not $version) {
+              throw "VS Marketplace response did not contain a version."
+          }
+
+          # Render as "4.6/5 (153)" to match the Open VSX rating badge format.
+          $ratingText = "{0:N1}/5 ({1})" -f [double]$rating, [int]$ratingCount
 
           Write-Host "VS Marketplace installs:  $installs"
           Write-Host "VS Marketplace downloads: $downloads"
+          Write-Host "VS Marketplace version:   $version"
+          Write-Host "VS Marketplace rating:    $ratingText"
 
           "VSMP_INSTALLS=$installs"   >> $env:GITHUB_OUTPUT
           "VSMP_DOWNLOADS=$downloads" >> $env:GITHUB_OUTPUT
+          "VSMP_VERSION=$version"     >> $env:GITHUB_OUTPUT
+          "VSMP_RATING=$ratingText"   >> $env:GITHUB_OUTPUT
         id: fetch-vsmp
 
       # ------------------------------------------------------------------
@@ -102,15 +128,70 @@ jobs:
       - name: Write Shields endpoint JSON files
         shell: pwsh
         env:
-          VSMP_INSTALLS:  ${{ steps.fetch-vsmp.outputs.VSMP_INSTALLS }}
+          VSMP_INSTALLS: ${{ steps.fetch-vsmp.outputs.VSMP_INSTALLS }}
           VSMP_DOWNLOADS: ${{ steps.fetch-vsmp.outputs.VSMP_DOWNLOADS }}
+          VSMP_VERSION: ${{ steps.fetch-vsmp.outputs.VSMP_VERSION }}
+          VSMP_RATING: ${{ steps.fetch-vsmp.outputs.VSMP_RATING }}
           OVSX_DOWNLOADS: ${{ steps.fetch-ovsx.outputs.OVSX_DOWNLOADS }}
         run: |
+          # Port of the Shields.io `metric` text formatter, so counts read the
+          # same way the retired visual-studio-marketplace badges did (2.2M, 409k).
+          function Format-Metric([long]$n) {
+              $prefixes = @("k", "M", "G", "T", "P", "E", "Z", "Y")
+              $invariant = [System.Globalization.CultureInfo]::InvariantCulture
+
+              for ($i = $prefixes.Length - 1; $i -ge 0; $i--) {
+                  $limit = [Math]::Pow(1000, $i + 1)
+                  $absN  = [Math]::Abs($n)
+                  if ($absN -lt $limit) { continue }
+
+                  $scaled = $absN / $limit
+                  if ($scaled -lt 10) {
+                      # For "small" numbers, keep one decimal unless it is 0.
+                      $oneDecimal = [Math]::Round($scaled, 1).ToString("0.0", $invariant)
+                      if (-not $oneDecimal.EndsWith("0")) {
+                          $res = "$oneDecimal$($prefixes[$i])"
+                          return $(if ($n -lt 0) { "-$res" } else { $res })
+                      }
+                  }
+
+                  $rounded = [Math]::Round($scaled, [MidpointRounding]::AwayFromZero)
+                  if ($rounded -lt 1000) {
+                      $res = "$rounded$($prefixes[$i])"
+                  } else {
+                      $res = "1$($prefixes[$i + 1])"
+                  }
+                  return $(if ($n -lt 0) { "-$res" } else { $res })
+              }
+
+              return "$n"
+          }
+
+          # --- VS Marketplace Version ---
+          $vsmpVersionJson = @{
+              schemaVersion = 1
+              label         = "Visual Studio MarketPlace"
+              message       = "v$env:VSMP_VERSION"
+              color         = "blue"
+          } | ConvertTo-Json -Compress
+          Set-Content -Path ".github/badges/vsmp-version.json" -Value $vsmpVersionJson -Encoding UTF8
+          Write-Host "Wrote .github/badges/vsmp-version.json"
+
+          # --- VS Marketplace Rating ---
+          $vsmpRatingJson = @{
+              schemaVersion = 1
+              label         = "Rating"
+              message       = "$env:VSMP_RATING"
+              color         = "blue"
+          } | ConvertTo-Json -Compress
+          Set-Content -Path ".github/badges/vsmp-rating.json" -Value $vsmpRatingJson -Encoding UTF8
+          Write-Host "Wrote .github/badges/vsmp-rating.json"
+
           # --- VS Marketplace Installs ---
           $vsmpInstallsJson = @{
               schemaVersion = 1
-              label         = "Marketplace Installs"
-              message       = "$env:VSMP_INSTALLS"
+              label         = "Installs"
+              message       = Format-Metric ([long]$env:VSMP_INSTALLS)
               color         = "blue"
           } | ConvertTo-Json -Compress
           Set-Content -Path ".github/badges/vsmp-installs.json" -Value $vsmpInstallsJson -Encoding UTF8
@@ -119,8 +200,8 @@ jobs:
           # --- VS Marketplace Downloads ---
           $vsmpDownloadsJson = @{
               schemaVersion = 1
-              label         = "Marketplace Downloads"
-              message       = "$env:VSMP_DOWNLOADS"
+              label         = "Downloads"
+              message       = Format-Metric ([long]$env:VSMP_DOWNLOADS)
               color         = "blue"
           } | ConvertTo-Json -Compress
           Set-Content -Path ".github/badges/vsmp-downloads.json" -Value $vsmpDownloadsJson -Encoding UTF8
@@ -129,8 +210,8 @@ jobs:
           # --- Open VSX Downloads ---
           $ovsxDownloadsJson = @{
               schemaVersion = 1
-              label         = "Open VSX Downloads"
-              message       = "$env:OVSX_DOWNLOADS"
+              label         = "Downloads"
+              message       = Format-Metric ([long]$env:OVSX_DOWNLOADS)
               color         = "darkcyan"
           } | ConvertTo-Json -Compress
           Set-Content -Path ".github/badges/ovsx-downloads.json" -Value $ovsxDownloadsJson -Encoding UTF8
@@ -190,4 +271,3 @@ jobs:
           } else {
               Write-Host "No badge changes detected. Skipping commit."
           }
-
