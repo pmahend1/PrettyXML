@@ -151,3 +151,57 @@ describe('DLL integration — non-ASCII characters are not escaped (#216)', () =
         expect(disabled).toContain('a="line1\nline2\ttab"');
     }, 15000);
 });
+
+describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211)', () => {
+    /*
+     * #211: whitespace unicodes in attribute values must survive as entities.
+     * Engine 2.2.0 turned &#xD; into a literal CR, corrupting the transform's
+     * line endings. The #216 fix must not reopen that.
+     */
+    it('#211 keeps &#xD;&#xA; escaped in attribute values', async () => {
+        const result = await runDll('<Root sep="&#xD;&#xA;" b="x" />',
+                                    'Format',
+                                    { allowWhiteSpaceUnicodesInAttributeValues: true });
+        expect(result).toContain('sep="&#xD;&#xA;"');
+        expect(result).not.toContain('\r');
+    }, 15000);
+
+    it('#209 retains a lone space inside xsl:text when preserveNewLines is on', async () => {
+        const input = [
+            '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0">',
+            '<xsl:template match="/"><xsl:value-of select="a" /><xsl:text> </xsl:text><xsl:value-of select="b" /></xsl:template>',
+            '</xsl:stylesheet>',
+        ].join('\n');
+        const result = await runDll(input, 'Format', { preserveNewLines: true });
+        expect(result).toContain('<xsl:text> </xsl:text>');
+        expect(result).not.toContain('<xsl:text />');
+    }, 15000);
+
+    /*
+     * #208: &#160; in element text. The #216 fix stops re-escaping it, so it
+     * comes back as a literal U+00A0 rather than as an entity. That is the same
+     * XML, and what must never return is the corruption the issue reported:
+     * a replacement character, a lone surrogate, or a plain space.
+     */
+    it('#208 emits a real non-breaking space, not a corrupted character', async () => {
+        const result = await runDll('<Root><xsl:text xmlns:xsl="u"> |&#160;Something</xsl:text></Root>', 'Format');
+        const textNode = result.match(/>([^<]*)<\/xsl:text>/)?.[1] ?? '';
+        expect(textNode).toContain('\u00A0');
+        expect(textNode).not.toContain('\uFFFD');
+        expect(textNode).toBe(' |\u00A0Something');
+    }, 15000);
+
+    it('#208 astral characters survive without lone surrogates', async () => {
+        const result = await runDll('<Root a="\u{1F600}">\u{1F600} \u{1D11E} \u{10437}</Root>', 'Format');
+        const textNode = result.match(/>([^<]*)<\/Root>/)?.[1] ?? '';
+        expect(textNode).toBe('\u{1F600} \u{1D11E} \u{10437}');
+        expect([...textNode].some(c => c.codePointAt(0)! >= 0xD800 && c.codePointAt(0)! <= 0xDFFF)).toBe(false);
+    }, 15000);
+
+    it('Formatting is idempotent for non-ASCII content', async () => {
+        const input = '<Root a="Straße"><xsl:text xmlns:xsl="u"> |&#160;ü 😀</xsl:text></Root>';
+        const first = await runDll(input, 'Format');
+        const second = await runDll(first, 'Format');
+        expect(second).toBe(first);
+    }, 15000);
+});
