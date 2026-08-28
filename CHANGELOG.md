@@ -2,6 +2,12 @@
 
 ## Stable
 
+## 6.9.1: 28-Aug-2026
+
+- Fixed non-ASCII characters (umlauts, accents, CJK, emoji) being escaped to numeric character references such as `&#xFC;` while formatting ([#216](https://github.com/pmahend1/PrettyXML/issues/216)).
+- Numeric character references in the source now resolve to the characters they denote — `&#160;` becomes a literal non-breaking space. 6.9.0 re-escaped these on output as `&#xA0;`; it also re-escaped every other non-ASCII character, which is the cause of [#216](https://github.com/pmahend1/PrettyXML/issues/216). Whitespace unicodes in attribute values (`&#9;`, `&#10;`, `&#xD;`) still stay escaped under `allowWhiteSpaceUnicodesInAttributeValues`, since XML attribute-value normalization would otherwise destroy them ([#211](https://github.com/pmahend1/PrettyXML/issues/211)).
+- Updated XmlFormatter engine to v2.3.1.
+
 ## 6.9.0: 19-Aug-2026
 
 - Fixed Unicode multi-byte surrogate pair character corruption (#208,#211).
