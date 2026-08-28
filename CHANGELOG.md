@@ -2,6 +2,11 @@
 
 ## Stable
 
+## 6.9.1: 28-Aug-2026
+
+- Fixed non-ASCII characters (umlauts, accents, CJK, emoji) being escaped to numeric character references such as `&#xFC;` while formatting ([#216](https://github.com/pmahend1/PrettyXML/issues/216)).
+- Updated XmlFormatter engine to v2.3.1.
+
 ## 6.9.0: 19-Aug-2026
 
 - Fixed Unicode multi-byte surrogate pair character corruption (#208,#211).

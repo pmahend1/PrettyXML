@@ -3,7 +3,9 @@ import * as childProcess from 'node:child_process';
 import * as path from 'node:path';
 
 const dllPath = path.resolve(process.cwd(), 'lib/XmlFormatter.CommandLine.dll');
-function runDll(xmlString: string, actionKind: 'Format' | 'Minimize'): Promise<string> {
+function runDll(xmlString: string,
+                actionKind: 'Format' | 'Minimize',
+                formattingOptionOverrides: Record<string, unknown> = {}): Promise<string> {
     const input = JSON.stringify({
         xmlString,
         formattingOptions: {
@@ -26,6 +28,7 @@ function runDll(xmlString: string, actionKind: 'Format' | 'Minimize'): Promise<s
             preserveNewLines: false,
             preserveCommentPlacement: false,
             enableLogs: false,
+            ...formattingOptionOverrides,
         },
         actionKind,
     });
@@ -90,7 +93,61 @@ describe('DLL integration — EOL behavior', () => {
         const input = '<Root greeting="こんにちは">✨ XML 🚀</Root>\r\n';
         const result = await runDll(input, 'Format');
         expect(result).not.toMatch(/[\r\n]$/);
-        expect(result).toContain('&#x3053;&#x3093;&#x306B;&#x3061;&#x306F;');
-        expect(result).toContain('&#x2728; XML &#x1F680;');
+        expect(result).toContain('greeting="こんにちは"');
+        expect(result).toContain('✨ XML 🚀');
+    }, 15000);
+});
+
+describe('DLL integration — non-ASCII characters are not escaped (#216)', () => {
+    const xslWithUmlauts = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0">',
+        '<xsl:template match="/"><xsl:text>ü</xsl:text><xsl:sequence select="\'ü\'" /></xsl:template>',
+        '</xsl:stylesheet>',
+    ].join('\n');
+
+    it.each([true, false])(
+        'Format keeps umlauts literal with allowWhiteSpaceUnicodesInAttributeValues=%s',
+        async (allowWhiteSpaceUnicodesInAttributeValues) => {
+            const result = await runDll(xslWithUmlauts, 'Format', { allowWhiteSpaceUnicodesInAttributeValues });
+            expect(result).toContain('<xsl:text>ü</xsl:text>');
+            expect(result).toContain('select="\'ü\'"');
+            expect(result).not.toContain('&#x');
+        },
+        15000);
+
+    it('Minimize keeps umlauts literal', async () => {
+        const result = await runDll(xslWithUmlauts, 'Minimize');
+        expect(result).toContain('<xsl:text>ü</xsl:text>');
+        expect(result).not.toContain('&#x');
+    }, 15000);
+
+    it('Format keeps accented, CJK and astral characters literal in text and attributes', async () => {
+        const result = await runDll('<Root a="Straße" b="こんにちは" c="😀">äöüß ✨ 🚀</Root>', 'Format');
+        expect(result).toContain('a="Straße"');
+        expect(result).toContain('b="こんにちは"');
+        expect(result).toContain('c="😀"');
+        expect(result).toContain('äöüß ✨ 🚀');
+        expect(result).not.toContain('&#x');
+    }, 15000);
+
+    it('Format resolves numeric character references in the input to literal characters', async () => {
+        const result = await runDll('<Root>&#xFC;</Root>', 'Format');
+        expect(result).toContain('<Root>ü</Root>');
+    }, 15000);
+
+    /*
+     * allowWhiteSpaceUnicodesInAttributeValues escapes whitespace unicodes only.
+     * The #216 fix must not have widened it back into escaping every non-ASCII
+     * character, nor narrowed it into dropping the whitespace escaping.
+     */
+    it('Format still escapes whitespace unicodes in attribute values when enabled', async () => {
+        const input = '<Root a="line1&#10;line2&#9;tab" />';
+
+        const enabled = await runDll(input, 'Format', { allowWhiteSpaceUnicodesInAttributeValues: true });
+        expect(enabled).toContain('a="line1&#xA;line2&#x9;tab"');
+
+        const disabled = await runDll(input, 'Format', { allowWhiteSpaceUnicodesInAttributeValues: false });
+        expect(disabled).toContain('a="line1\nline2\ttab"');
     }, 15000);
 });
