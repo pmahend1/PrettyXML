@@ -59,6 +59,11 @@ jobs:
               throw [System.Exception]("ESLint exited $eslintExit without writing a report. ❌")
           }
 
+          # 0 = clean, 1 = lint errors (reported below). Anything else is ESLint itself failing.
+          if ($eslintExit -gt 1) {
+              throw [System.Exception]("ESLint exited $eslintExit. ❌")
+          }
+
           $root = (Get-Location).Path
           $report = Get-Content $reportPath -Raw | ConvertFrom-Json
           $findings = foreach ($file in $report) {
@@ -97,7 +102,9 @@ jobs:
               [void]$summary.AppendLine("| --- | --- | --- | --- | --- |")
               foreach ($f in $findings) {
                   $icon = if ($f.Level -eq "error") { "❌" } else { "⚠️" }
-                  $cell = $f.Message.Replace("|", "\|")
+                  # Escape the cell separator and flatten newlines; a fatal parse error
+                  # carries a multi-line code frame that would otherwise break the table.
+                  $cell = $f.Message.Replace("|", "\|").Replace("`r`n", "<br>").Replace("`r", "<br>").Replace("`n", "<br>")
                   [void]$summary.AppendLine("| $icon | $($f.File) | $($f.Line) | $($f.Rule) | $cell |")
               }
           }

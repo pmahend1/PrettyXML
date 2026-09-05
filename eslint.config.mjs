@@ -3,12 +3,13 @@ import stylistic from "@stylistic/eslint-plugin";
 import tseslint from "typescript-eslint";
 
 export default defineConfig([
+    // Build output carries `eslint-disable` comments copied from source; without
+    // these, `eslint .` reports unknown-rule errors against the compiled JS.
     globalIgnores([
         "out/**",
         "dist/**",
         "lib/**",
-        "webpack.config.js",
-        "src/test/**"
+        "webpack.config.js"
     ]),
     {
         files: ["src/**/*.ts"],
