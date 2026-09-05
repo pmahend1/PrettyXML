@@ -6,7 +6,7 @@
 		{
 			"type": "npm",
 			"script": "watch",
-			"problemMatcher": "$ts-checker-webpack-watch",//amodio.tsl-problem-matcher
+			"problemMatcher": "$ts-webpack-watch", //amodio.tsl-problem-matcher
 			"isBackground": true,
 			"label": "npm: watch",
 			"presentation": {
@@ -24,6 +24,9 @@
 			"script": "lint",
 			"problemMatcher": "$eslint-stylish",
 			"label": "npm: lint",
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
 			"presentation": {
 				"reveal": "silent",
 				"panel": "dedicated"

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Constants } from './constants';
+import { constants } from './constants';
 
 export interface ILogger {
     info(message: string): void;
@@ -38,7 +38,7 @@ export class Logger implements ILogger {
     }
 
     private constructor() {
-        this.outputChannel = vscode.window.createOutputChannel(Constants.extensionName);
+        this.outputChannel = vscode.window.createOutputChannel(constants.extensionName);
         this.setIsEnabled();
     }
 

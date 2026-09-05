@@ -6,7 +6,7 @@ import { NotificationService } from "./notificationService";
 import { replaceDocumentTextWithProgressForCallback } from "./helper";
 import { Logger } from "./logger";
 import { RangeFormatterProvider } from "./rangeFormatterProvider";
-import { Constants } from "./constants";
+import { constants } from "./constants";
 
 let formatter: Formatter;
 let notificationService: NotificationService;
@@ -28,9 +28,9 @@ export function activate(context: vscode.ExtensionContext): void {
 			Logger.instance.info("workspace.onDidChangeConfiguration end");
 		});
 
-		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand(Constants.Commands.prettifyxml, () => replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
+		let prettifyXmlCommand = vscode.commands.registerTextEditorCommand(constants.commands.prettifyxml, () => replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
 
-		let minimizeXmlCommand = vscode.commands.registerTextEditorCommand(Constants.Commands.minimize, () => replaceDocumentTextWithProgressForCallback("Minimizing...", formatter.minimizeXml()));
+		let minimizeXmlCommand = vscode.commands.registerTextEditorCommand(constants.commands.minimize, () => replaceDocumentTextWithProgressForCallback("Minimizing...", formatter.minimizeXml()));
 
 		vscode.workspace.onWillSaveTextDocument(async (willSaveEvent) => {
 			Logger.instance.info("vscode.workspace.onWillSaveTextDocument start");
@@ -60,11 +60,11 @@ export function activate(context: vscode.ExtensionContext): void {
 		});
 
 		const languageIdSelector = [
-			...DocumentHelper.createLanguageDocumentFilters(Constants.LanguageIDs.xml),
-			...DocumentHelper.createLanguageDocumentFilters(Constants.LanguageIDs.xsd),
-			...DocumentHelper.createLanguageDocumentFilters(Constants.LanguageIDs.xaml),
-			...DocumentHelper.createLanguageDocumentFilters(Constants.LanguageIDs.xsl),
-			...DocumentHelper.createLanguageDocumentFilters(Constants.LanguageIDs.xslt)
+			...DocumentHelper.createLanguageDocumentFilters(constants.languageIds.xml),
+			...DocumentHelper.createLanguageDocumentFilters(constants.languageIds.xsd),
+			...DocumentHelper.createLanguageDocumentFilters(constants.languageIds.xaml),
+			...DocumentHelper.createLanguageDocumentFilters(constants.languageIds.xsl),
+			...DocumentHelper.createLanguageDocumentFilters(constants.languageIds.xslt)
 		];
 		const xmlFormattingEditProvider = new PrettyXmlFormattingEditProvider(formatter);
 
@@ -95,8 +95,8 @@ export function activate(context: vscode.ExtensionContext): void {
 function isDefaultFormatter(languageID: string): boolean {
 	try {
 		const languageSettings = vscode.workspace.getConfiguration(`[${languageID}]`) as any;
-		const defaultFormatter = languageSettings[Constants.defaultEditor];
-		return defaultFormatter === Constants.id;
+		const defaultFormatter = languageSettings[constants.defaultEditor];
+		return defaultFormatter === constants.id;
 	} catch (error) {
 		return false;
 	}
