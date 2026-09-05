@@ -1,15 +1,15 @@
-export const Constants = {
+export const constants = {
     extensionName: "Pretty XML",
     prettyxml: "prettyxml",
     id: "PrateekMahendrakar.prettyxml",
-    settings: "settings",
+    settingsText: "settings",
     changeLogUrl: "https://github.com/pmahend1/PrettyXML/blob/main/CHANGELOG.md",
     vsMarketplaceReviewUrl: "https://marketplace.visualstudio.com/items?itemName=PrateekMahendrakar.prettyxml&ssr=false#review-details",
     openVsxReviewUrl: "https://open-vsx.org/extension/PrateekMahendrakar/prettyxml/reviews",
     codium: "codium",
     defaultEditor: "editor.defaultFormatter",
 
-    Settings: {
+    settings: {
         indentSpaceLength: "indentSpaceLength",
         useSingleQuotes: "useSingleQuotes",
         useSelfClosingTag: "useSelfClosingTag",
@@ -32,7 +32,7 @@ export const Constants = {
         enableLogs: "enableLogs",
     },
 
-    LanguageIDs: {
+    languageIds: {
         xml: "xml",
         xsd: "xsd",
         xaml: "xaml",
@@ -40,7 +40,7 @@ export const Constants = {
         xslt: "xslt"
     },
 
-    Commands: {
+    commands: {
         prettifyxml: `prettyxml.prettifyxml`,
         minimize: `prettyxml.minimizexml`,
     }

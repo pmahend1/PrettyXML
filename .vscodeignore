@@ -6,11 +6,15 @@ src/**
 vsc-extension-quickstart.md
 **/tsconfig.json
 **/tslint.json
-**/.eslintrc.json
+eslint.config.mjs
 **/*.map
 **/*.ts
 node_modules
+.claude/**
 webpack.config.js
 *.yml
 .github/**
 images/old_logo.png
+pnpm-lock.yaml
+pnpm-workspace.yaml
+vitest.config.mts

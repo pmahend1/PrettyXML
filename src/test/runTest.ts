@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as vscodeTest from '@vscode/test-electron'
+import * as vscodeTest from '@vscode/test-electron';
 
 async function main() {
 	try {

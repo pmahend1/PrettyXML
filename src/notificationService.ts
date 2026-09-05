@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as compareVersions from "compare-versions";
 import { Logger } from "./logger";
-import { Constants } from "./constants";
+import { constants } from "./constants";
 
 export class NotificationService {
     private context: vscode.ExtensionContext;
@@ -47,7 +47,7 @@ export class NotificationService {
         try {
             let shouldDisplay: boolean = this.checkIfEligibleToShowUpdateNote();
             if (shouldDisplay) {
-                let notes: string = `${Constants.extensionName} updated to version ${this.currentVersion}.\n [See what's new](${Constants.changeLogUrl})`;
+                let notes: string = `${constants.extensionName} updated to version ${this.currentVersion}.\n [See what's new](${constants.changeLogUrl})`;
                 if (notes !== "") {
                     await vscode.window.showInformationMessage(notes);
                     this.context.globalState.update(this.versionKey, this.currentVersion);
@@ -68,17 +68,17 @@ export class NotificationService {
         try {
             let shouldDisplayPrompt = this.shouldOpenRatingPrompt();
             if (shouldDisplayPrompt) {
-                var text = `Loving ${Constants.extensionName} extension? Would you like to rate and review?`;
+                var text = `Loving ${constants.extensionName} extension? Would you like to rate and review?`;
                 var selection = await vscode.window.showInformationMessage(text, "Sure", "Later", "Don't show again");
                 if (selection) {
                     if (selection === "Sure") {
                         var appName = vscode.env.appName.toLowerCase();
-                        if (appName.includes(Constants.codium)) {
-                            var codiumReviewUri = vscode.Uri.parse(Constants.openVsxReviewUrl);
+                        if (appName.includes(constants.codium)) {
+                            var codiumReviewUri = vscode.Uri.parse(constants.openVsxReviewUrl);
                             vscode.env.openExternal(codiumReviewUri);
                         }
                         else {
-                            let vsCodeReviewUri: vscode.Uri = vscode.Uri.parse(Constants.vsMarketplaceReviewUrl);
+                            let vsCodeReviewUri: vscode.Uri = vscode.Uri.parse(constants.vsMarketplaceReviewUrl);
                             vscode.env.openExternal(vsCodeReviewUri);
                         }
                         //cant check if they really reviewed

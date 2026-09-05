@@ -1,4 +1,4 @@
-name: Version Check
+name: Pull Request Checks
 
 on:
   pull_request:
@@ -6,77 +6,111 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  versioncheck:
+  engines:
     runs-on: windows-latest
     steps:
       - name: Checkout branch
         uses: actions/checkout@v7
-      - name: Verify ChangeLog and package.json changes
-        shell: pwsh
-        run: |
-          git fetch origin main --depth=1
 
-          $changes = git diff --name-only origin/main HEAD
-
-          $fileFilters = @('package.json', 'CHANGELOG')
-          foreach ($filter in $fileFilters) {
-            if ($changes -like "*$filter*") {
-              Write-Host "✅ $filter file is modified."
-            } else {
-              Write-Error "Files with filter $filter are not modified. ❌"
-              exit 1 # Fails the workflow immediately
-            }
-          }
-          Write-Host "All required files are updated. Pass ✅"
-
-      - name: Verify VS Code engine and types match
-        shell: pwsh
-        run: |
-          $pkg = Get-Content .\package.json | ConvertFrom-Json
-          $engine = $pkg.engines.vscode
-          $types = $pkg.devDependencies.'@types/vscode'
-
-          if ($engine -ne $types) {
-            Write-Error "Mismatch: engines.vscode ($engine) does not match @types/vscode ($types) ❌"
-            exit 1
-          }
-          Write-Host "engines.vscode matches @types/vscode ($engine) ✅"
-
-      - name: Get current version from package.json
-        id: getpackageversion
+      - name: Verify engines.vscode matches @types/vscode
         shell: pwsh
         run: |
           $package = Get-Content .\package.json | ConvertFrom-Json
-          $version = $package.version
-          Write-Host 'Current version from package.json: ' $version
-          "VERSION=$version" >> $env:GITHUB_OUTPUT
+          $engines = $package.engines.vscode
+          $types = $package.devDependencies."@types/vscode"
+          Write-Host "engines.vscode : $engines"
+          Write-Host "@types/vscode  : $types"
+          if ($engines -ne $types) {
+              throw [System.Exception]("engines.vscode ($engines) does not match @types/vscode ($types). ❌ Keep them identical so the API surface compiled against is the one declared as supported.")
+          }
+          Write-Host "Pass ✅"
 
-      - name: Get published version from VS Code extension REST API
-        id: getPublishedVersion
+  lint:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: "package.json"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
         shell: pwsh
         run: |
-          $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-          $headers.Add("VSMarketplaceBadge", "1.0")
-          $headers.Add("Accept", "application/json;api-version=3.0-preview.1")
-          $headers.Add("Content-Type", "application/json")
-          $body = "{`"filters`":[{`"criteria`":[{`"filterType`":7,`"value`":`"PrateekMahendrakar.PrettyXML`"},{`"filterType`":12,`"value`":4096}]}],`"flags`":914}"
-          $response = Invoke-RestMethod 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery' -Method Post -Headers $headers -Body $body
-          $publishedVersion= ($response.results[0].extensions.versions.version).ToString()
-          Write-Host 'Last Published version: '$publishedVersion 
-          "PUB_VERSION=$publishedVersion" >> $env:GITHUB_OUTPUT
+          $reportPath = Join-Path $env:RUNNER_TEMP "eslint-report.json"
+          $PSNativeCommandUseErrorActionPreference = $false
+          pnpm exec eslint src --format json --output-file "$reportPath"
+          $eslintExit = $LASTEXITCODE
 
-      - name: Compare local version with marketplace version
-        id: compare
-        shell: pwsh
-        run: |
-          $localVersion = [System.Version]('${{ steps.getpackageversion.outputs.VERSION }}')
-          $storeVersion = [System.Version]('${{ steps.getPublishedVersion.outputs.PUB_VERSION }}')
+          if (-not (Test-Path $reportPath)) {
+              throw [System.Exception]("ESLint exited $eslintExit without writing a report. ❌")
+          }
 
-          if ($localVersion -gt $storeVersion) {
-            Write-Host "Version in package.json is higher than latest published version"
-            Write-Host "Pass"
+          # 0 = clean, 1 = lint errors (reported below). Anything else is ESLint itself failing.
+          if ($eslintExit -gt 1) {
+              throw [System.Exception]("ESLint exited $eslintExit. ❌")
           }
-          else {
-            throw [System.Exception]("Version can not be same as latest published version ❌! Update package version.")
+
+          $root = (Get-Location).Path
+          $report = Get-Content $reportPath -Raw | ConvertFrom-Json
+          $findings = foreach ($file in $report) {
+              $relative = [System.IO.Path]::GetRelativePath($root, $file.filePath).Replace("\", "/")
+              foreach ($m in $file.messages) {
+                  $level = if ($m.severity -eq 2) { "error" } else { "warning" }
+                  # Parse failures are fatal severity-2 messages carrying no ruleId.
+                  $rule = if ([string]::IsNullOrEmpty($m.ruleId)) { "eslint" } else { $m.ruleId }
+                  [pscustomobject]@{
+                      File    = $relative
+                      Line    = $m.line
+                      Column  = $m.column
+                      Level   = $level
+                      Rule    = $rule
+                      Message = $m.message
+                  }
+              }
           }
+          $findings = @($findings)
+          $errors = @($findings | Where-Object { $_.Level -eq "error" })
+          $warnings = @($findings | Where-Object { $_.Level -eq "warning" })
+
+          # Inline annotations on the PR diff. GitHub needs %, CR and LF escaped.
+          foreach ($f in $findings) {
+              $text = $f.Message.Replace("%", "%25").Replace("`r", "%0D").Replace("`n", "%0A")
+              Write-Host "::$($f.Level) file=$($f.File),line=$($f.Line),col=$($f.Column),title=$($f.Rule)::$text"
+          }
+
+          $summary = [System.Text.StringBuilder]::new()
+          [void]$summary.AppendLine("## ESLint")
+          [void]$summary.AppendLine("")
+          [void]$summary.AppendLine("$($errors.Count) error(s), $($warnings.Count) warning(s).")
+          if ($findings.Count -gt 0) {
+              [void]$summary.AppendLine("")
+              [void]$summary.AppendLine("| | File | Line | Rule | Message |")
+              [void]$summary.AppendLine("| --- | --- | --- | --- | --- |")
+              foreach ($f in $findings) {
+                  $icon = if ($f.Level -eq "error") { "❌" } else { "⚠️" }
+                  # Escape the cell separator and flatten newlines; a fatal parse error
+                  # carries a multi-line code frame that would otherwise break the table.
+                  $cell = $f.Message.Replace("|", "\|").Replace("`r`n", "<br>").Replace("`r", "<br>").Replace("`n", "<br>")
+                  [void]$summary.AppendLine("| $icon | $($f.File) | $($f.Line) | $($f.Rule) | $cell |")
+              }
+          }
+          $summary.ToString() | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+
+          if ($errors.Count -gt 0) {
+              throw [System.Exception]("ESLint found $($errors.Count) error(s). ❌")
+          }
+          Write-Host "No ESLint errors. Pass ✅ ($($warnings.Count) warning(s) ignored.)"
