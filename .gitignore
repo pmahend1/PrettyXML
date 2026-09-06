@@ -1,6 +1,5 @@
 node_modules/*
 out
-.vscode-test/
 *.vsix
 *.DS_Store
 AGENTS.md

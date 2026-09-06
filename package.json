@@ -245,17 +245,13 @@
         "watch": "webpack --mode development --watch",
         "vscode:prepublish": "npm run package",
         "package": "webpack --mode production --devtool hidden-source-map",
-        "compile-tests": "tsc -p . --outDir out",
-        "pretest": "npm run compile-tests",
-        "test": "vscode-test",
         "lint": "eslint src",
-        "unit-test": "vitest run"
+        "test": "vitest run"
     },
     "devDependencies": {
         "@stylistic/eslint-plugin": "^5.10.0",
         "@types/node": "^24.13.3",
         "@types/vscode": "^1.125.0",
-        "@vscode/test-electron": "^3.1.0",
         "@vscode/vsce": "^3.9.2",
         "esbuild": "^0.28.2",
         "eslint": "^10.9.1",
