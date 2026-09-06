@@ -20,6 +20,8 @@ export default defineConfig([
         rules: {
             "@typescript-eslint/naming-convention": "warn",
             "@stylistic/semi": "warn",
+            "@stylistic/function-call-argument-newline": ["error", "consistent"],
+            "@stylistic/function-paren-newline": ["error", "multiline"],
             "curly": "error",
             "eqeqeq": "error",
             "no-throw-literal": "error"

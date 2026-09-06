@@ -74,10 +74,12 @@ export function activate(context: vscode.ExtensionContext): void {
 		const selectionFormatter = vscode.languages.registerDocumentRangeFormattingEditProvider(languageIdSelector, rangeFormatterProvider);
 
 		//subscribe commands
-		context.subscriptions.push(prettifyXmlCommand,
+		context.subscriptions.push(
+			prettifyXmlCommand,
 			minimizeXmlCommand,
 			documentFormatterProvider,
-			selectionFormatter);
+			selectionFormatter
+		);
 	}
 	catch (error) {
 		if (error instanceof Error) {
