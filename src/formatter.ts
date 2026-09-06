@@ -5,10 +5,10 @@ import * as childProcess from "node:child_process";
 import * as path from "node:path";
 import { JsonInputDto } from "./jsonInputDto";
 import { FormattingActionKind } from "./formattingActionKind";
-import { Logger } from "./logger";
+import { Logger } from "./logger/logger";
 import { constants } from "./constants";
 import { appendEolIfMissing, preserveOriginalEol } from "./eolHelper";
-import { PerfTrace } from "./perf";
+import { PerfTrace } from "./perf/perfTrace";
 
 export class Formatter {
     private extensionContext: vscode.ExtensionContext;

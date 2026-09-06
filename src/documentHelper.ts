@@ -2,7 +2,7 @@
 // imports 
 import * as vscode from "vscode";
 import { DocumentFilter } from "./documentFilter";
-import { Logger } from "./logger";
+import { Logger } from "./logger/logger";
 
 
 

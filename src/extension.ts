@@ -4,10 +4,10 @@ import { Formatter } from "./formatter";
 import { PrettyXmlFormattingEditProvider } from "./prettyXmlFormattingEditProvider";
 import { NotificationService } from "./notificationService";
 import { replaceDocumentTextWithProgressForCallback } from "./helper";
-import { Logger } from "./logger";
+import { Logger } from "./logger/logger";
 import { RangeFormatterProvider } from "./rangeFormatterProvider";
 import { constants } from "./constants";
-import { PerfTrace } from "./perf";
+import { PerfTrace } from "./perf/perfTrace";
 
 let formatter: Formatter;
 let notificationService: NotificationService;

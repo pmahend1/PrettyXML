@@ -10,8 +10,8 @@ import {
 import *  as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
 import { Formatter } from "./formatter";
-import { Logger } from "./logger";
-import { PerfTrace } from "./perf";
+import { Logger } from "./logger/logger";
+import { PerfTrace } from "./perf/perfTrace";
 
 export class PrettyXmlFormattingEditProvider implements DocumentFormattingEditProvider {
     private formatter: Formatter;

@@ -1,5 +1,6 @@
 import { performance } from "node:perf_hooks";
-import { Logger } from "./logger";
+import { Logger } from "../logger/logger";
+import { EventLoopLagProbe } from "./eventLoopLagProbe";
 
 /**
  * Timing instrumentation used to diagnose reports of slow formatting.
@@ -14,46 +15,6 @@ import { Logger } from "./logger";
  */
 
 const perfPrefix = "PERF";
-
-/**
- * Samples how late a short timer actually fires. The extension host runs single
- * threaded, so when another extension blocks it these callbacks are delayed and
- * the recorded lag climbs. High lag means the wait was host contention, not the CLI.
- */
-class EventLoopLagProbe {
-    private static readonly sampleIntervalMs = 20;
-
-    private timer?: NodeJS.Timeout;
-    private maxLagMs: number = 0;
-    private totalLagMs: number = 0;
-    private sampleCount: number = 0;
-
-    public start(): void {
-        this.scheduleSample();
-    }
-
-    private scheduleSample(): void {
-        const scheduledAt = performance.now();
-        this.timer = setTimeout(() => {
-            const lagMs = performance.now() - scheduledAt - EventLoopLagProbe.sampleIntervalMs;
-            if (lagMs > 0) {
-                this.maxLagMs = Math.max(this.maxLagMs, lagMs);
-                this.totalLagMs += lagMs;
-            }
-            this.sampleCount++;
-            this.scheduleSample();
-        }, EventLoopLagProbe.sampleIntervalMs);
-    }
-
-    public stop(): { maxLagMs: number, avgLagMs: number } {
-        if (this.timer) {
-            clearTimeout(this.timer);
-            this.timer = undefined;
-        }
-        const avgLagMs = this.sampleCount > 0 ? this.totalLagMs / this.sampleCount : 0;
-        return { maxLagMs: this.maxLagMs, avgLagMs: avgLagMs };
-    }
-}
 
 export class PerfTrace {
     private static nextId: number = 1;
@@ -82,7 +43,7 @@ export class PerfTrace {
      * extension host thread, so it must never run for users who have not asked for logs.
      */
     public static start(label: string): PerfTrace | undefined {
-        if (!Logger.instance.isEnabled) {
+        if (Logger.instance.isEnabled === false) {
             return undefined;
         }
         return new PerfTrace(label);
@@ -94,7 +55,7 @@ export class PerfTrace {
      * which costs a full extra CLI round trip per save.
      */
     public static noteFormatTrigger(documentKey: string, trigger: string): void {
-        if (!Logger.instance.isEnabled) {
+        if (Logger.instance.isEnabled === false) {
             return;
         }
         const now = performance.now();

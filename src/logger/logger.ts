@@ -1,22 +1,7 @@
 import * as vscode from 'vscode';
-import { constants } from './constants';
-
-export interface ILogger {
-    info(message: string): void;
-    error(error: Error): void;
-    warning(message: string): void;
-    debug(message: string): void;
-    outputChannel: vscode.OutputChannel;
-    setIsEnabled(isEnabled: boolean): void;
-    readonly isEnabled: boolean;
-}
-
-enum LogLevel {
-    error = "ERROR",
-    warning = "WARNING",
-    info = "INFO",
-    debug = "DEBUG",
-}
+import { constants } from '../constants';
+import { ILogger } from './iLogger';
+import { LogLevel } from './logLevel';
 
 function isString(value: unknown): value is string {
     return Object.prototype.toString.call(value) === '[object String]';

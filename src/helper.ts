@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { DocumentHelper } from "./documentHelper";
-import { Logger } from "./logger";
-import { PerfTrace } from "./perf";
+import { Logger } from "./logger/logger";
+import { PerfTrace } from "./perf/perfTrace";
 
 export function replaceDocumentTextWithProgressForCallback(progressText: string, task: Thenable<string>): Thenable<void> {
     Logger.instance.info("replaceDocumentTextWithProgressForCallback start");
