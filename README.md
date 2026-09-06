@@ -137,6 +137,7 @@ These will be for **Prettify XML** command.
 | [prettyxml.settings.addEmptyEol](#add-empty-eol)                                                                                                | false           | Add empty EOL to files if it does not exist.                                 |
 | [prettyxml.settings.preserveNewLines](#preserve-new-lines)                                                                                      | false           | Preserve existing new lines between elements.                                |
 | [prettyxml.settings.preserveCommentPlacement](#preserve-comment-placement)                                                                      | false           | Preserve comment line placement.                                             |
+| [prettyxml.settings.escapeInvisibleNonAsciiCharacters](#escape-invisible-non-ascii-characters)                                                  | false           | Escapes invisible non-ASCII characters                                       |
 
 ![Settings Image.](./images/settings.png)
 
@@ -365,6 +366,9 @@ Default is `false` (*Unchecked*).
 - **Checked (`true`)**: Ensures the formatted document ends with a trailing newline (matching CRLF or LF based on the file).
 - **Unchecked (`false`)**: Preserves the original file's trailing line ending without forcing one if it did not exist.
 
+### Escape Invisible Non-ASCII Characters
+
+<!--TODO-->
 ---
 
 ## Requirements

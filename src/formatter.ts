@@ -14,7 +14,7 @@ export class Formatter {
     private dllPath: string = "";
 
     public settings: Settings = defaultSettings;
-    constructor(context: vscode.ExtensionContext) {
+    constructor (context: vscode.ExtensionContext) {
         this.extensionContext = context;
         this.initialize();
         this.loadSettings();
@@ -66,6 +66,7 @@ export class Formatter {
         let addEmptyEol = prettyXmlConfig.get<boolean>(constants.settings.addEmptyEol);
         let preserveNewLines = prettyXmlConfig.get<boolean>(constants.settings.preserveNewLines);
         let preserveCommentPlacement = prettyXmlConfig.get<boolean>(constants.settings.preserveCommentPlacement);
+        let escapeInvisibleNonAsciiCharacters = prettyXmlConfig.get<boolean>(constants.settings.escapeInvisibleNonAsciiCharacters);
         let enableLogs = prettyXmlConfig.get<boolean>(constants.settings.enableLogs);
         Logger.instance.setIsEnabled(enableLogs);
 
@@ -89,6 +90,7 @@ export class Formatter {
             addEmptyEol: addEmptyEol,
             preserveNewLines: preserveNewLines,
             preserveCommentPlacement: preserveCommentPlacement,
+            escapeInvisibleNonAsciiCharacters: escapeInvisibleNonAsciiCharacters,
             enableLogs: enableLogs,
         };
 

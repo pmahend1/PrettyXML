@@ -225,6 +225,11 @@
                         "markdownDescription": "Preserve existing comment line placement. Default is *Unchecked* \n\n **Checked** : Comments remains in their original lines. \n\n **Unchecked** : Comments may be repositioned into other lines according to formatting rules.",
                         "default": false
                     },
+                    "prettyxml.settings.escapeInvisibleNonAsciiCharacters": {
+                        "type": "boolean",
+                        "markdownDescription": "Escape invisible non-ASCII characters. Default is *Unchecked*",
+                        "default": false
+                    },
                     "prettyxml.settings.enableLogs": {
                         "type": "boolean",
                         "markdownDescription": "Enable console local logs.",

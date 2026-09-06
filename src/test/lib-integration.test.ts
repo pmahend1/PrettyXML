@@ -30,6 +30,7 @@ function runDll(
         addEmptyEol: false,
         preserveNewLines: false,
         preserveCommentPlacement: false,
+        escapeInvisibleNonAsciiCharacters: false,
         enableLogs: false,
         ...formattingOptionOverrides,
     });

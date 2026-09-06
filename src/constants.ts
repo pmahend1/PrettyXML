@@ -29,6 +29,7 @@ export const constants = {
         addEmptyEol: "addEmptyEol",
         preserveNewLines: "preserveNewLines",
         preserveCommentPlacement: "preserveCommentPlacement",
+        escapeInvisibleNonAsciiCharacters: "escapeInvisibleNonAsciiCharacters",
         enableLogs: "enableLogs",
     },
 

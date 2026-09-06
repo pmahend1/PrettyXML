@@ -66,7 +66,7 @@ export class Settings {
     addEmptyEol?: boolean;
     preserveNewLines?: boolean;
     preserveCommentPlacement?: boolean;
-    escapeInvisibleNonAsciiCharacters: boolean;
+    escapeInvisibleNonAsciiCharacters?: boolean;
     enableLogs?: boolean;
 
     constructor ({
