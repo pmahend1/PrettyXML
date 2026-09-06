@@ -139,7 +139,11 @@ These will be for **Prettify XML** command.
 | [prettyxml.settings.preserveCommentPlacement](#preserve-comment-placement)                                                                      | false           | Preserve comment line placement.                                             |
 | [prettyxml.settings.escapeInvisibleNonAsciiCharacters](#escape-invisible-non-ascii-characters)                                                  | false           | Escape invisible non-ASCII characters as character references.               |
 
-![Settings Image.](./images/settings.png)
+![The PrettyXML settings pane in the VS Code settings UI.](./images/settings.png)
+
+> The top of the settings pane. Each entry carries its default and, where it helps, a worked
+> example. The table above is the complete list - search `prettyxml` in **Settings** to scroll
+> through them all.
 
 ### Attributes In Newline Threshold
 
@@ -459,5 +463,3 @@ Issues can be reported at [issues section](https://github.com/pmahend1/PrettyXML
 ### For more information
 
 - [Source Code](https://github.com/pmahend1/prettyxml)
-- If you want to support this project,  <!-- markdownlint-disable-next-line MD033 -->
-    [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" width="90" height="30" alt="buy-me-coffee"/>](https://www.buymeacoffee.com/pmahend1)
