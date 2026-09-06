@@ -2,6 +2,16 @@ import { Settings } from "./settings";
 
 export class TextXmlFormatter {
 
+    /*
+     * The engine's TryReadInvisibleNonAscii as a single pattern: "invisible" is the Unicode
+     * category - the separators (Zs, Zl, Zp), the format characters (Cf) and the controls (Cc) -
+     * rather than a hand-kept list of the characters someone has complained about. A combining
+     * mark is deliberately absent: it draws the accent its letter is wrong without. The u flag
+     * reads a surrogate pair as the one code point it encodes, so U+E0020 is written &#xE0020;
+     * and never as two halves no parser puts back together.
+     */
+    private static readonly invisibleCharacterRegex = /[\p{Zs}\p{Zl}\p{Zp}\p{Cf}\p{Cc}]/gu;
+
     private settings: Settings;
     constructor(settings: Settings) {
         this.settings = settings;
@@ -28,8 +38,15 @@ export class TextXmlFormatter {
             const [tag] = match;
             const index = match.index ?? 0;
 
-            // Handle text/whitespace between tags
-            const rawText = xml.slice(lastIndex, index);
+            /*
+             * Handle text/whitespace between tags. Escaping runs before the trim, and that
+             * ordering is the whole point of the option: trim() counts NBSP and the rest of Zs as
+             * whitespace, so an invisible character at the edge of a text node would be deleted
+             * rather than escaped - the #208 data loss. A character reference is not whitespace
+             * and survives. The consequence to expect is that a node made only of invisible
+             * characters stops being empty while the option is on; the engine does the same.
+             */
+            const rawText = this.escapeInvisibleNonAscii(xml.slice(lastIndex, index));
             const text = rawText.trim();
             if (text) {
                 let n = i === 0 && indentLevel > 0 ? indentLevel - 1 : indentLevel;
@@ -80,7 +97,7 @@ export class TextXmlFormatter {
         }
 
         // Remaining text after last tag
-        const trailing = xml.slice(lastIndex).trim();
+        const trailing = this.escapeInvisibleNonAscii(xml.slice(lastIndex)).trim();
         if (trailing) {
             formatted.push(' '.repeat(indentLevel * indentSize) + trailing);
         }
@@ -119,22 +136,29 @@ export class TextXmlFormatter {
             if (attrVal === undefined) {
                 return attrName;
             }
+            // Values only - an attribute name is not a place a character reference means anything.
+            const escapedVal = this.escapeInvisibleNonAscii(attrVal);
             if (this.settings.useSingleQuotes) {
-                if (attrVal.startsWith('"') && attrVal.endsWith('"')) {
-                    const innerVal = attrVal.slice(1, -1);
+                if (escapedVal.startsWith('"') && escapedVal.endsWith('"')) {
+                    const innerVal = escapedVal.slice(1, -1);
                     if (!innerVal.includes("'")) {
                         return `${attrName}='${innerVal}'`;
                     }
                 }
             } else if (this.settings.useSingleQuotes === false) {
-                if (attrVal.startsWith("'") && attrVal.endsWith("'")) {
-                    const innerVal = attrVal.slice(1, -1);
+                if (escapedVal.startsWith("'") && escapedVal.endsWith("'")) {
+                    const innerVal = escapedVal.slice(1, -1);
                     if (!innerVal.includes('"')) {
                         return `${attrName}="${innerVal}"`;
                     }
                 }
             }
-            return m[0].trim();
+            const rawAttribute = m[0].trim();
+            if (escapedVal === attrVal) {
+                return rawAttribute;
+            }
+            // The value ends the match, so swapping only the tail keeps the spacing around the '='.
+            return rawAttribute.slice(0, rawAttribute.length - attrVal.length) + escapedVal;
         });
 
         if (this.settings.positionAllAttributesOnFirstLine || formattedAttrs.length <= (this.settings.attributesInNewlineThreshold ?? 1)) {
@@ -151,5 +175,27 @@ export class TextXmlFormatter {
         }
 
         return `<${tagName} ${alignedAttrs.join('\n')}${selfCloseSuffix}`;
+    }
+
+    /*
+     * Rewrites what escapeInvisibleNonAsciiCharacters covers, and only that: code points at or
+     * above U+0080 that draw nothing. Tab, LF and CR are invisible too and are left alone - they
+     * belong to allowWhiteSpaceUnicodesInAttributeValues, and escaping them here would rewrite the
+     * line breaks of every selection. Text and attribute values are the only callers; CDATA and
+     * comments resolve no character references, so a reference written into either would replace
+     * the character with the six characters that spell its name.
+     */
+    private escapeInvisibleNonAscii(value: string): string {
+        if (this.settings.escapeInvisibleNonAsciiCharacters !== true) {
+            return value;
+        }
+
+        return value.replace(TextXmlFormatter.invisibleCharacterRegex, character => {
+            const codePoint = character.codePointAt(0) ?? 0;
+            if (codePoint < 0x80) {
+                return character;
+            }
+            return `&#x${codePoint.toString(16).toUpperCase()};`;
+        });
     }
 }
