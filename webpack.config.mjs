@@ -1,8 +1,6 @@
 //@ts-check
 
-'use strict';
-
-const path = require('path');
+import { resolve } from 'node:path';
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -13,7 +11,7 @@ const config = {
     },// the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
     output: {
         // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
-        path: path.resolve(__dirname, 'out'),
+        path: resolve(import.meta.dirname, 'out'),
         filename: '[name].js',
         libraryTarget: 'commonjs2',
         devtoolModuleFilenameTemplate: '../[resource-path]'
@@ -36,4 +34,4 @@ const config = {
         }]
     }
 };
-module.exports = config;
+export default config;

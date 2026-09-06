@@ -10,7 +10,8 @@ const dllPath = path.resolve(process.cwd(), 'lib/XmlFormatter.CommandLine.dll');
 function runDll(
     xmlString: string,
     actionKind: FormattingActionKind,
-    formattingOptionOverrides: Partial<ISettings> = {}): Promise<string> {
+    formattingOptionOverrides: Partial<ISettings> = {}
+): Promise<string> {
     const settings = new Settings({
         indentLength: 4,
         useSingleQuotes: false,
@@ -118,7 +119,8 @@ describe('DLL integration — non-ASCII characters are not escaped (#216)', () =
             expect(result).toContain('select="\'ü\'"');
             expect(result).not.toContain('&#x');
         },
-        15000);
+        15000
+    );
 
     it('Minimize keeps umlauts literal', async () => {
         const result = await runDll(xslWithUmlauts, FormattingActionKind.minimize);
@@ -163,9 +165,11 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
      * line endings. The #216 fix must not reopen that.
      */
     it('#211 keeps &#xD;&#xA; escaped in attribute values', async () => {
-        const result = await runDll('<Root sep="&#xD;&#xA;" b="x" />',
+        const result = await runDll(
+            '<Root sep="&#xD;&#xA;" b="x" />',
             FormattingActionKind.format,
-            { allowWhiteSpaceUnicodesInAttributeValues: true });
+            { allowWhiteSpaceUnicodesInAttributeValues: true }
+        );
         // The guard is the attribute *value*, not the whole document. On Windows the engine
         // separates the wrapped attributes with CRLF, so asserting the output holds no CR at
         // all failed there while the entities were perfectly intact.
@@ -226,24 +230,30 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     const zwsp = '\u200B';
 
     it('Off leaves invisible non-ASCII characters literal', async () => {
-        const result = await runDll(`<Root a="x${nbsp}y">a${zwsp}b</Root>`,
+        const result = await runDll(
+            `<Root a="x${nbsp}y">a${zwsp}b</Root>`,
             FormattingActionKind.format,
-            { escapeInvisibleNonAsciiCharacters: false });
+            { escapeInvisibleNonAsciiCharacters: false }
+        );
         expect(result).toBe(`<Root a="x${nbsp}y">a${zwsp}b</Root>`);
         expect(result).not.toContain('&#x');
     }, 15000);
 
     it('On escapes invisible non-ASCII characters in text and attribute values', async () => {
-        const result = await runDll(`<Root a="x${nbsp}y">a${zwsp}b</Root>`,
+        const result = await runDll(
+            `<Root a="x${nbsp}y">a${zwsp}b</Root>`,
             FormattingActionKind.format,
-            { escapeInvisibleNonAsciiCharacters: true });
+            { escapeInvisibleNonAsciiCharacters: true }
+        );
         expect(result).toBe('<Root a="x&#xA0;y">a&#x200B;b</Root>');
     }, 15000);
 
     it('On resolves an input character reference and writes it back as one', async () => {
-        const result = await runDll('<Root>a&#xA0;b</Root>',
+        const result = await runDll(
+            '<Root>a&#xA0;b</Root>',
             FormattingActionKind.format,
-            { escapeInvisibleNonAsciiCharacters: true });
+            { escapeInvisibleNonAsciiCharacters: true }
+        );
         expect(result).toBe('<Root>a&#xA0;b</Root>');
     }, 15000);
 
@@ -254,15 +264,18 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     it.each([true, false])(
         'Visible non-ASCII characters stay literal with escapeInvisibleNonAsciiCharacters=%s',
         async (escapeInvisibleNonAsciiCharacters) => {
-            const result = await runDll('<Root a="Straße" b="日本">ü 日 \u{1F600} €</Root>',
+            const result = await runDll(
+                '<Root a="Straße" b="日本">ü 日 \u{1F600} €</Root>',
                 FormattingActionKind.format,
-                { escapeInvisibleNonAsciiCharacters });
+                { escapeInvisibleNonAsciiCharacters }
+            );
             expect(result).toContain('a="Straße"');
             expect(result).toContain('b="日本"');
             expect(result).toContain('ü 日 \u{1F600} €');
             expect(result).not.toContain('&#x');
         },
-        15000);
+        15000
+    );
 
     /*
      * The set is decided by Unicode general category - Zs/Zl/Zp separators, Cf
@@ -281,9 +294,11 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
         ['U+FEFF zero width no-break space (Cf)', '\uFEFF', '&#xFEFF;'],
         ['U+0085 next line (Cc)', '\u0085', '&#x85;'],
     ])('On escapes %s', async (_name, character, expected) => {
-        const result = await runDll(`<Root>a${character}b</Root>`,
+        const result = await runDll(
+            `<Root>a${character}b</Root>`,
             FormattingActionKind.format,
-            { escapeInvisibleNonAsciiCharacters: true });
+            { escapeInvisibleNonAsciiCharacters: true }
+        );
         expect(result).toBe(`<Root>a${expected}b</Root>`);
     }, 15000);
 
@@ -292,9 +307,11 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
      * under it is wrong without it.
      */
     it('On leaves a combining mark literal', async () => {
-        const result = await runDll('<Root>e\u0301</Root>',
+        const result = await runDll(
+            '<Root>e\u0301</Root>',
             FormattingActionKind.format,
-            { escapeInvisibleNonAsciiCharacters: true });
+            { escapeInvisibleNonAsciiCharacters: true }
+        );
         expect(result).toBe('<Root>e\u0301</Root>');
     }, 15000);
 
@@ -303,9 +320,11 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
      * &#xDB40;&#xDC20;, which no parser reads back. The pair is read whole.
      */
     it('On writes an invisible character outside the basic plane as one reference', async () => {
-        const result = await runDll('<Root>a\u{E0020}b</Root>',
+        const result = await runDll(
+            '<Root>a\u{E0020}b</Root>',
             FormattingActionKind.format,
-            { escapeInvisibleNonAsciiCharacters: true });
+            { escapeInvisibleNonAsciiCharacters: true }
+        );
         expect(result).toBe('<Root>a&#xE0020;b</Root>');
         expect(result).not.toContain('&#xDB40;');
     }, 15000);
@@ -322,14 +341,18 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
         [false, true, 'a="tab\tgap&#xA0;end"'],
         [true, false, `a="tab&#x9;gap${nbsp}end"`],
         [true, true, 'a="tab&#x9;gap&#xA0;end"'],
-    ])('The two escaping options decide different characters (allowWhiteSpaceUnicodes=%s, escapeInvisibleNonAscii=%s)',
+    ])(
+        'The two escaping options decide different characters (allowWhiteSpaceUnicodes=%s, escapeInvisibleNonAscii=%s)',
         async (allowWhiteSpaceUnicodesInAttributeValues, escapeInvisibleNonAsciiCharacters, expected) => {
-            const result = await runDll('<r a="tab&#x9;gap&#xA0;end" />',
+            const result = await runDll(
+                '<r a="tab&#x9;gap&#xA0;end" />',
                 FormattingActionKind.format,
-                { allowWhiteSpaceUnicodesInAttributeValues, escapeInvisibleNonAsciiCharacters });
+                { allowWhiteSpaceUnicodesInAttributeValues, escapeInvisibleNonAsciiCharacters }
+            );
             expect(result).toContain(expected);
         },
-        15000);
+        15000
+    );
 
     /*
      * CDATA and comments resolve no character references, so writing one into
@@ -339,24 +362,30 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     it.each([true, false])(
         'CDATA content is untouched with escapeInvisibleNonAsciiCharacters=%s',
         async (escapeInvisibleNonAsciiCharacters) => {
-            const result = await runDll(`<Root><![CDATA[a${nbsp}b]]></Root>`,
+            const result = await runDll(
+                `<Root><![CDATA[a${nbsp}b]]></Root>`,
                 FormattingActionKind.format,
-                { escapeInvisibleNonAsciiCharacters });
+                { escapeInvisibleNonAsciiCharacters }
+            );
             expect(result).toContain(`<![CDATA[a${nbsp}b]]>`);
             expect(result).not.toContain('&#xA0;');
         },
-        15000);
+        15000
+    );
 
     it.each([true, false])(
         'Comment content is untouched with escapeInvisibleNonAsciiCharacters=%s',
         async (escapeInvisibleNonAsciiCharacters) => {
-            const result = await runDll(`<Root><!--a${nbsp}b--></Root>`,
+            const result = await runDll(
+                `<Root><!--a${nbsp}b--></Root>`,
                 FormattingActionKind.format,
-                { escapeInvisibleNonAsciiCharacters });
+                { escapeInvisibleNonAsciiCharacters }
+            );
             expect(result).toContain(`<!-- a${nbsp}b -->`);
             expect(result).not.toContain('&#xA0;');
         },
-        15000);
+        15000
+    );
 
     /*
      * The case the option earns its place on, and a stronger form of #208 than
@@ -365,16 +394,20 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
      * edge of a reflowed line is not merely invisible - it is deleted.
      */
     it('Off a NBSP at the edge of a reflowed line is lost', async () => {
-        const result = await runDll(`<r>\n  ${nbsp}first\nsecond${nbsp}\n</r>`,
+        const result = await runDll(
+            `<r>\n  ${nbsp}first\nsecond${nbsp}\n</r>`,
             FormattingActionKind.format,
-            { escapeInvisibleNonAsciiCharacters: false });
+            { escapeInvisibleNonAsciiCharacters: false }
+        );
         expect(result).not.toContain(nbsp);
     }, 15000);
 
     it('On a NBSP at the edge of a reflowed line survives', async () => {
-        const result = await runDll(`<r>\n  ${nbsp}first\nsecond${nbsp}\n</r>`,
+        const result = await runDll(
+            `<r>\n  ${nbsp}first\nsecond${nbsp}\n</r>`,
             FormattingActionKind.format,
-            { escapeInvisibleNonAsciiCharacters: true });
+            { escapeInvisibleNonAsciiCharacters: true }
+        );
         expect(result).toContain('&#xA0;first');
         expect(result).toContain('second&#xA0;');
     }, 15000);
@@ -394,12 +427,15 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     it.each([true, false])(
         'Minimize is unaffected by escapeInvisibleNonAsciiCharacters=%s',
         async (escapeInvisibleNonAsciiCharacters) => {
-            const result = await runDll(`<Root a="x${nbsp}y">a${zwsp}b</Root>`,
+            const result = await runDll(
+                `<Root a="x${nbsp}y">a${zwsp}b</Root>`,
                 FormattingActionKind.minimize,
-                { escapeInvisibleNonAsciiCharacters });
+                { escapeInvisibleNonAsciiCharacters }
+            );
             expect(result).toContain(`a="x${nbsp}y"`);
             expect(result).toContain(`>a${zwsp}b<`);
             expect(result).not.toContain('&#x');
         },
-        15000);
+        15000
+    );
 });

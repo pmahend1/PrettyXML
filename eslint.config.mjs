@@ -9,7 +9,7 @@ export default defineConfig([
         "out/**",
         "dist/**",
         "lib/**",
-        "webpack.config.js"
+        "webpack.config.mjs"
     ]),
     {
         files: ["src/**/*.ts"],
@@ -20,6 +20,9 @@ export default defineConfig([
         rules: {
             "@typescript-eslint/naming-convention": "warn",
             "@stylistic/semi": "warn",
+            "@stylistic/function-call-argument-newline": ["error", "consistent"],
+            "@stylistic/function-paren-newline": ["error", "multiline"],
+            "@stylistic/indent": ["error", 4],
             "curly": "error",
             "eqeqeq": "error",
             "no-throw-literal": "error"

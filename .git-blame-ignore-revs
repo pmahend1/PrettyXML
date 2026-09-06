@@ -1,0 +1,6 @@
+# Revisions listed here are formatting-only and are skipped by `git blame`.
+# Run once per clone to make it the default:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Reindented extension.ts to spaces and added @stylistic/indent
+03768b25384fd22daf0991d827ef8ad01a52312a

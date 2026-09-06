@@ -49,4 +49,3 @@ export function replaceDocumentTextWithProgressForCallback(progressText: string,
     Logger.instance.info("replaceDocumentTextWithProgressForCallback end");
     return progressPromise;
 }
-
