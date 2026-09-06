@@ -18,6 +18,7 @@ export interface ISettings {
     addEmptyEol: boolean;
     preserveNewLines: boolean;
     preserveCommentPlacement: boolean;
+    escapeInvisibleNonAsciiCharacters: boolean;
     enableLogs: boolean;
 }
 
@@ -41,6 +42,7 @@ export const defaultSettings: ISettings = {
     addEmptyEol: false,
     preserveNewLines: false,
     preserveCommentPlacement: false,
+    escapeInvisibleNonAsciiCharacters: false,
     enableLogs: false
 };
 
@@ -64,6 +66,7 @@ export class Settings {
     addEmptyEol?: boolean;
     preserveNewLines?: boolean;
     preserveCommentPlacement?: boolean;
+    escapeInvisibleNonAsciiCharacters?: boolean;
     enableLogs?: boolean;
 
     constructor({
@@ -86,6 +89,7 @@ export class Settings {
         addEmptyEol,
         preserveNewLines,
         preserveCommentPlacement,
+        escapeInvisibleNonAsciiCharacters,
         enableLogs
     }: Partial<ISettings> = {}) {
         this.indentLength = indentLength ?? defaultSettings.indentLength;
@@ -107,6 +111,7 @@ export class Settings {
         this.addEmptyEol = addEmptyEol ?? defaultSettings.addEmptyEol;
         this.preserveNewLines = preserveNewLines ?? defaultSettings.preserveNewLines;
         this.preserveCommentPlacement = preserveCommentPlacement ?? defaultSettings.preserveCommentPlacement;
+        this.escapeInvisibleNonAsciiCharacters = escapeInvisibleNonAsciiCharacters ?? defaultSettings.escapeInvisibleNonAsciiCharacters;
         this.enableLogs = enableLogs ?? defaultSettings.enableLogs;
     }
 }
