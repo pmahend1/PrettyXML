@@ -102,8 +102,7 @@ export class PerfTrace {
         const previous = PerfTrace.lastFormatByDocument.get(documentKey);
 
         if (previous && (now - previous.at) < PerfTrace.duplicateWindowMs) {
-            Logger.instance.warning(
-                `${perfPrefix} DUPLICATE FORMAT - '${trigger}' fired ${Math.round(now - previous.at)}ms after '${previous.trigger}' ` +
+            Logger.instance.warning(`${perfPrefix} DUPLICATE FORMAT - '${trigger}' fired ${Math.round(now - previous.at)}ms after '${previous.trigger}' ` +
                 `for the same document. Check whether both 'prettyxml.settings.formatOnSave' and 'editor.formatOnSave' are enabled.`);
         }
 
