@@ -166,8 +166,11 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
         const result = await runDll('<Root sep="&#xD;&#xA;" b="x" />',
             FormattingActionKind.format,
             { allowWhiteSpaceUnicodesInAttributeValues: true });
-        expect(result).toContain('sep="&#xD;&#xA;"');
-        expect(result).not.toContain('\r');
+        // The guard is the attribute *value*, not the whole document. On Windows the engine
+        // separates the wrapped attributes with CRLF, so asserting the output holds no CR at
+        // all failed there while the entities were perfectly intact.
+        const separator = /sep="([^"]*)"/.exec(result)?.[1];
+        expect(separator).toBe('&#xD;&#xA;');
     }, 15000);
 
     it('#209 retains a lone space inside xsl:text when preserveNewLines is on', async () => {
