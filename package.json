@@ -227,7 +227,7 @@
                     },
                     "prettyxml.settings.escapeInvisibleNonAsciiCharacters": {
                         "type": "boolean",
-                        "markdownDescription": "Escape invisible non-ASCII characters. Default is *Unchecked*",
+                        "markdownDescription": "Escape non-ASCII characters that draw nothing - non-breaking and zero-width spaces, joiners, bidi marks, the soft hyphen and the BOM - as numeric character references, so they can be seen in the file. Applies to element text and attribute values. Default is *Unchecked* \n\n **Checked** : Invisible non-ASCII characters are written as `&#x...;` references. \n\n **Unchecked** : Invisible non-ASCII characters are written as literal characters. \n\n Characters that draw something, such as `ü`, `日` and `😀`, are left literal either way. Tab, newline and carriage return are ASCII and are decided by `allowWhiteSpaceUnicodesInAttributeValues` instead.",
                         "default": false
                     },
                     "prettyxml.settings.enableLogs": {

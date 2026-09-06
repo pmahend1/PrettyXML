@@ -14,7 +14,7 @@ export class Formatter {
     private dllPath: string = "";
 
     public settings: Settings = defaultSettings;
-    constructor (context: vscode.ExtensionContext) {
+    constructor(context: vscode.ExtensionContext) {
         this.extensionContext = context;
         this.initialize();
         this.loadSettings();

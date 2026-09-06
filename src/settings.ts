@@ -69,7 +69,7 @@ export class Settings {
     escapeInvisibleNonAsciiCharacters?: boolean;
     enableLogs?: boolean;
 
-    constructor ({
+    constructor({
         indentLength,
         useSingleQuotes,
         useSelfClosingTags,

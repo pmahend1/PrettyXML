@@ -137,7 +137,7 @@ These will be for **Prettify XML** command.
 | [prettyxml.settings.addEmptyEol](#add-empty-eol)                                                                                                | false           | Add empty EOL to files if it does not exist.                                 |
 | [prettyxml.settings.preserveNewLines](#preserve-new-lines)                                                                                      | false           | Preserve existing new lines between elements.                                |
 | [prettyxml.settings.preserveCommentPlacement](#preserve-comment-placement)                                                                      | false           | Preserve comment line placement.                                             |
-| [prettyxml.settings.escapeInvisibleNonAsciiCharacters](#escape-invisible-non-ascii-characters)                                                  | false           | Escapes invisible non-ASCII characters                                       |
+| [prettyxml.settings.escapeInvisibleNonAsciiCharacters](#escape-invisible-non-ascii-characters)                                                  | false           | Escape invisible non-ASCII characters as character references.               |
 
 ![Settings Image.](./images/settings.png)
 
@@ -368,7 +368,67 @@ Default is `false` (*Unchecked*).
 
 ### Escape Invisible Non-ASCII Characters
 
-<!--TODO-->
+Escapes the non-ASCII characters that draw nothing - non-breaking and zero-width spaces, joiners, bidi marks, the soft hyphen and the BOM - as numeric character references, so you can see what is actually in the file.
+
+Default is `false` (*Unchecked*).
+
+- **Checked (`true`)**: Invisible non-ASCII characters are written as `&#x...;` references.
+- **Unchecked (`false`)**: Invisible non-ASCII characters are written as literal characters.
+
+Characters that draw something are left literal at either setting - `ü`, `日` and `😀` are never escaped.
+
+Applies to element text and attribute values. CDATA sections and comments resolve no character references, so their contents are left untouched either way.
+
+> Tab, newline and carriage return are ASCII, and are decided by
+> `prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues` instead. The two settings cover
+> different characters and neither overrides the other.
+
+The examples below write the invisible characters as references on the input side so they can be read - `&#xA0;` is a non-breaking space and `&#x200B;` is a zero-width space.
+
+Example: Value = **false**
+
+#### Input 9
+
+```xml
+<Invoice>
+    <Line note="10&#xA0;km">Total&#xA0;price&#x200B;: 12 €</Line>
+    <Customer>Müller</Customer>
+</Invoice>
+```
+
+#### Output 9
+
+```xml
+<Invoice>
+    <Line note="10 km">Total price​: 12 €</Line>
+    <Customer>Müller</Customer>
+</Invoice>
+```
+
+The non-breaking and zero-width spaces are still there - they are just indistinguishable from an ordinary space and from nothing at all.
+
+Example: Value = **true**
+
+#### Input 10
+
+```xml
+<Invoice>
+    <Line note="10&#xA0;km">Total&#xA0;price&#x200B;: 12 €</Line>
+    <Customer>Müller</Customer>
+</Invoice>
+```
+
+#### Output 10
+
+```xml
+<Invoice>
+    <Line note="10&#xA0;km">Total&#xA0;price&#x200B;: 12 €</Line>
+    <Customer>Müller</Customer>
+</Invoice>
+```
+
+The `€` and the `ü` are visible characters, so they stay literal in both.
+
 ---
 
 ## Requirements
