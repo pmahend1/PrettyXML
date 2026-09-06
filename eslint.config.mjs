@@ -22,6 +22,7 @@ export default defineConfig([
             "@stylistic/semi": "warn",
             "@stylistic/function-call-argument-newline": ["error", "consistent"],
             "@stylistic/function-paren-newline": ["error", "multiline"],
+            "@stylistic/indent": ["error", 4],
             "curly": "error",
             "eqeqeq": "error",
             "no-throw-literal": "error"
