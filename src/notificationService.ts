@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as compareVersions from "compare-versions";
-import { Logger } from "./logger";
+import { Logger } from "./logger/logger";
 import { constants } from "./constants";
 
 export class NotificationService {

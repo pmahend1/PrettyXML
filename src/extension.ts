@@ -4,9 +4,10 @@ import { Formatter } from "./formatter";
 import { PrettyXmlFormattingEditProvider } from "./prettyXmlFormattingEditProvider";
 import { NotificationService } from "./notificationService";
 import { replaceDocumentTextWithProgressForCallback } from "./helper";
-import { Logger } from "./logger";
+import { Logger } from "./logger/logger";
 import { RangeFormatterProvider } from "./rangeFormatterProvider";
 import { constants } from "./constants";
+import { PerfTrace } from "./perf/perfTrace";
 
 let formatter: Formatter;
 let notificationService: NotificationService;
@@ -42,6 +43,7 @@ export function activate(context: vscode.ExtensionContext): void {
                 if (languageId) {
                     let shouldFormatOnSave = isDefaultFormatter(languageId);
                     if (shouldFormatOnSave) {
+                        PerfTrace.noteFormatTrigger(willSaveEvent.document.uri.toString(), "onWillSave");
                         willSaveEvent.waitUntil(replaceDocumentTextWithProgressForCallback("Formatting...", formatter.formatXml()));
                     }
                 }
