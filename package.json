@@ -37,7 +37,7 @@
         "formatter"
     ],
     "engines": {
-        "node": ">=22.0.0",
+        "node": "^24.0.0",
         "vscode": "^1.125.0"
     },
     "categories": [

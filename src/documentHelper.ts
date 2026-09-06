@@ -7,9 +7,7 @@ import { Logger } from "./logger";
 
 
 export class DocumentHelper {
-    constructor() {
-
-    }
+    constructor() { }
 
 
     public static get Editor() {
@@ -34,7 +32,6 @@ export class DocumentHelper {
             Logger.instance.info("getEditorRange end");
             return new vscode.Range(0, 0, 0, 0);
         }
-        
     }
 
     //get Range of a document

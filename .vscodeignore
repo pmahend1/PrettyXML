@@ -9,7 +9,7 @@ eslint.config.mjs
 **/*.ts
 node_modules
 .claude/**
-webpack.config.js
+webpack.config.mjs
 *.yml
 .github/**
 images/old_logo.png

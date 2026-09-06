@@ -9,7 +9,7 @@ export default defineConfig([
         "out/**",
         "dist/**",
         "lib/**",
-        "webpack.config.js"
+        "webpack.config.mjs"
     ]),
     {
         files: ["src/**/*.ts"],

@@ -22,7 +22,6 @@ export class Formatter {
 
     private initialize() {
         try {
-
             let extPath: string = this.extensionContext.extensionPath;
             //extension path was not found
             if (extPath === "") {
