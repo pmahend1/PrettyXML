@@ -1,37 +1,40 @@
 import { describe, it, expect } from 'vitest';
 import * as childProcess from 'node:child_process';
 import * as path from 'node:path';
+import { FormattingActionKind } from '../formattingActionKind';
+import { JsonInputDto } from '../jsonInputDto';
+import { ISettings, Settings } from '../settings';
 
 const dllPath = path.resolve(process.cwd(), 'lib/XmlFormatter.CommandLine.dll');
-function runDll(xmlString: string,
-                actionKind: 'Format' | 'Minimize',
-                formattingOptionOverrides: Record<string, unknown> = {}): Promise<string> {
-    const input = JSON.stringify({
-        xmlString,
-        formattingOptions: {
-            indentLength: 4,
-            useSingleQuotes: false,
-            useSelfClosingTags: true,
-            formatOnSave: false,
-            allowSingleQuoteInAttributeValue: true,
-            addSpaceBeforeSelfClosingTag: true,
-            wrapCommentTextWithSpaces: true,
-            allowWhiteSpaceUnicodesInAttributeValues: true,
-            positionFirstAttributeOnSameLine: true,
-            positionAllAttributesOnFirstLine: false,
-            preserveWhiteSpacesInComment: false,
-            addSpaceBeforeEndOfXmlDeclaration: false,
-            addXmlDeclarationIfMissing: false,
-            attributesInNewlineThreshold: 1,
-            addEmptyLineBetweenElements: false,
-            addEmptyEol: false,
-            preserveNewLines: false,
-            preserveCommentPlacement: false,
-            enableLogs: false,
-            ...formattingOptionOverrides,
-        },
-        actionKind,
+
+function runDll(
+    xmlString: string,
+    actionKind: FormattingActionKind,
+    formattingOptionOverrides: Partial<ISettings> = {}): Promise<string> {
+    const settings = new Settings({
+        indentLength: 4,
+        useSingleQuotes: false,
+        useSelfClosingTags: true,
+        formatOnSave: false,
+        allowSingleQuoteInAttributeValue: true,
+        addSpaceBeforeSelfClosingTag: true,
+        wrapCommentTextWithSpaces: true,
+        allowWhiteSpaceUnicodesInAttributeValues: true,
+        positionFirstAttributeOnSameLine: true,
+        positionAllAttributesOnFirstLine: false,
+        preserveWhiteSpacesInComment: false,
+        addSpaceBeforeEndOfXmlDeclaration: false,
+        addXmlDeclarationIfMissing: false,
+        attributesInNewlineThreshold: 1,
+        addEmptyLineBetweenElements: false,
+        addEmptyEol: false,
+        preserveNewLines: false,
+        preserveCommentPlacement: false,
+        enableLogs: false,
+        ...formattingOptionOverrides,
     });
+
+    const input = JSON.stringify(new JsonInputDto(xmlString, actionKind, settings));
 
     const cli = childProcess.spawn('dotnet', [dllPath], { stdio: ['pipe', 'pipe', 'pipe'] });
 
@@ -58,24 +61,24 @@ function runDll(xmlString: string,
 
 describe('DLL integration — EOL behavior', () => {
     it('Format output does not end with a trailing newline', async () => {
-        const result = await runDll('<Root><Child/></Root>', 'Format');
+        const result = await runDll('<Root><Child/></Root>', FormattingActionKind.format);
         expect(result).toContain('<Root>');
         expect(result).toContain('</Root>');
         expect(result).not.toMatch(/[\r\n]$/);
     }, 15000);
 
     it('Format output strips input trailing LF', async () => {
-        const result = await runDll('<Root><Child/></Root>\n', 'Format');
+        const result = await runDll('<Root><Child/></Root>\n', FormattingActionKind.format);
         expect(result).not.toMatch(/[\r\n]$/);
     }, 15000);
 
     it('Format output strips input trailing CRLF', async () => {
-        const result = await runDll('<Root><Child/></Root>\r\n', 'Format');
+        const result = await runDll('<Root><Child/></Root>\r\n', FormattingActionKind.format);
         expect(result).not.toMatch(/[\r\n]$/);
     }, 15000);
 
     it('Minimize output does not end with a trailing newline', async () => {
-        const result = await runDll('<Root>\n    <Child />\n</Root>', 'Minimize');
+        const result = await runDll('<Root>\n    <Child />\n</Root>', FormattingActionKind.minimize);
         expect(result).not.toMatch(/[\r\n]$/);
         // Minimized should be a single line
         expect(result).not.toContain('\n');
@@ -83,7 +86,7 @@ describe('DLL integration — EOL behavior', () => {
 
     it('Format preserves internal CRLF in CDATA and comments without trailing newline', async () => {
         const input = '<Root><!-- comment\r\nline2 --><![CDATA[cdata\r\nline2]]></Root>\r\n';
-        const result = await runDll(input, 'Format');
+        const result = await runDll(input, FormattingActionKind.format);
         expect(result).not.toMatch(/[\r\n]$/);
         expect(result).toContain('comment');
         expect(result).toContain('cdata');
@@ -91,7 +94,7 @@ describe('DLL integration — EOL behavior', () => {
 
     it('Format handles unicode characters with trailing CRLF cleanly', async () => {
         const input = '<Root greeting="こんにちは">✨ XML 🚀</Root>\r\n';
-        const result = await runDll(input, 'Format');
+        const result = await runDll(input, FormattingActionKind.format);
         expect(result).not.toMatch(/[\r\n]$/);
         expect(result).toContain('greeting="こんにちは"');
         expect(result).toContain('✨ XML 🚀');
@@ -109,7 +112,7 @@ describe('DLL integration — non-ASCII characters are not escaped (#216)', () =
     it.each([true, false])(
         'Format keeps umlauts literal with allowWhiteSpaceUnicodesInAttributeValues=%s',
         async (allowWhiteSpaceUnicodesInAttributeValues) => {
-            const result = await runDll(xslWithUmlauts, 'Format', { allowWhiteSpaceUnicodesInAttributeValues });
+            const result = await runDll(xslWithUmlauts, FormattingActionKind.format, { allowWhiteSpaceUnicodesInAttributeValues });
             expect(result).toContain('<xsl:text>ü</xsl:text>');
             expect(result).toContain('select="\'ü\'"');
             expect(result).not.toContain('&#x');
@@ -117,13 +120,13 @@ describe('DLL integration — non-ASCII characters are not escaped (#216)', () =
         15000);
 
     it('Minimize keeps umlauts literal', async () => {
-        const result = await runDll(xslWithUmlauts, 'Minimize');
+        const result = await runDll(xslWithUmlauts, FormattingActionKind.minimize);
         expect(result).toContain('<xsl:text>ü</xsl:text>');
         expect(result).not.toContain('&#x');
     }, 15000);
 
     it('Format keeps accented, CJK and astral characters literal in text and attributes', async () => {
-        const result = await runDll('<Root a="Straße" b="こんにちは" c="😀">äöüß ✨ 🚀</Root>', 'Format');
+        const result = await runDll('<Root a="Straße" b="こんにちは" c="😀">äöüß ✨ 🚀</Root>', FormattingActionKind.format);
         expect(result).toContain('a="Straße"');
         expect(result).toContain('b="こんにちは"');
         expect(result).toContain('c="😀"');
@@ -132,7 +135,7 @@ describe('DLL integration — non-ASCII characters are not escaped (#216)', () =
     }, 15000);
 
     it('Format resolves numeric character references in the input to literal characters', async () => {
-        const result = await runDll('<Root>&#xFC;</Root>', 'Format');
+        const result = await runDll('<Root>&#xFC;</Root>', FormattingActionKind.format);
         expect(result).toContain('<Root>ü</Root>');
     }, 15000);
 
@@ -144,10 +147,10 @@ describe('DLL integration — non-ASCII characters are not escaped (#216)', () =
     it('Format still escapes whitespace unicodes in attribute values when enabled', async () => {
         const input = '<Root a="line1&#10;line2&#9;tab" />';
 
-        const enabled = await runDll(input, 'Format', { allowWhiteSpaceUnicodesInAttributeValues: true });
+        const enabled = await runDll(input, FormattingActionKind.format, { allowWhiteSpaceUnicodesInAttributeValues: true });
         expect(enabled).toContain('a="line1&#xA;line2&#x9;tab"');
 
-        const disabled = await runDll(input, 'Format', { allowWhiteSpaceUnicodesInAttributeValues: false });
+        const disabled = await runDll(input, FormattingActionKind.format, { allowWhiteSpaceUnicodesInAttributeValues: false });
         expect(disabled).toContain('a="line1\nline2\ttab"');
     }, 15000);
 });
@@ -160,8 +163,8 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
      */
     it('#211 keeps &#xD;&#xA; escaped in attribute values', async () => {
         const result = await runDll('<Root sep="&#xD;&#xA;" b="x" />',
-                                    'Format',
-                                    { allowWhiteSpaceUnicodesInAttributeValues: true });
+            FormattingActionKind.format,
+            { allowWhiteSpaceUnicodesInAttributeValues: true });
         expect(result).toContain('sep="&#xD;&#xA;"');
         expect(result).not.toContain('\r');
     }, 15000);
@@ -172,7 +175,7 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
             '<xsl:template match="/"><xsl:value-of select="a" /><xsl:text> </xsl:text><xsl:value-of select="b" /></xsl:template>',
             '</xsl:stylesheet>',
         ].join('\n');
-        const result = await runDll(input, 'Format', { preserveNewLines: true });
+        const result = await runDll(input, FormattingActionKind.format, { preserveNewLines: true });
         expect(result).toContain('<xsl:text> </xsl:text>');
         expect(result).not.toContain('<xsl:text />');
     }, 15000);
@@ -184,7 +187,7 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
      * a replacement character, a lone surrogate, or a plain space.
      */
     it('#208 emits a real non-breaking space, not a corrupted character', async () => {
-        const result = await runDll('<Root><xsl:text xmlns:xsl="u"> |&#160;Something</xsl:text></Root>', 'Format');
+        const result = await runDll('<Root><xsl:text xmlns:xsl="u"> |&#160;Something</xsl:text></Root>', FormattingActionKind.format);
         const textNode = result.match(/>([^<]*)<\/xsl:text>/)?.[1] ?? '';
         expect(textNode).toContain('\u00A0');
         expect(textNode).not.toContain('\uFFFD');
@@ -192,7 +195,7 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
     }, 15000);
 
     it('#208 astral characters survive without lone surrogates', async () => {
-        const result = await runDll('<Root a="\u{1F600}">\u{1F600} \u{1D11E} \u{10437}</Root>', 'Format');
+        const result = await runDll('<Root a="\u{1F600}">\u{1F600} \u{1D11E} \u{10437}</Root>', FormattingActionKind.format);
         const textNode = result.match(/>([^<]*)<\/Root>/)?.[1] ?? '';
         expect(textNode).toBe('\u{1F600} \u{1D11E} \u{10437}');
         expect([...textNode].some(c => c.codePointAt(0)! >= 0xD800 && c.codePointAt(0)! <= 0xDFFF)).toBe(false);
@@ -200,8 +203,8 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
 
     it('Formatting is idempotent for non-ASCII content', async () => {
         const input = '<Root a="Straße"><xsl:text xmlns:xsl="u"> |&#160;ü 😀</xsl:text></Root>';
-        const first = await runDll(input, 'Format');
-        const second = await runDll(first, 'Format');
+        const first = await runDll(input, FormattingActionKind.format);
+        const second = await runDll(first, FormattingActionKind.format);
         expect(second).toBe(first);
     }, 15000);
 });
