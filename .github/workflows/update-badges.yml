@@ -24,9 +24,6 @@ jobs:
       - name: Ensure badges directory exists
         run: New-Item -ItemType Directory -Force -Path .github/badges | Out-Null
 
-      # ------------------------------------------------------------------
-      # 1) Fetch stats from the VS Code Marketplace public API
-      # ------------------------------------------------------------------
       - name: Fetch VS Marketplace stats
         shell: pwsh
         run: |
@@ -93,9 +90,6 @@ jobs:
           "VSMP_RATING=$ratingText"   >> $env:GITHUB_OUTPUT
         id: fetch-vsmp
 
-      # ------------------------------------------------------------------
-      # 2) Fetch stats from the Eclipse Open VSX public API
-      # ------------------------------------------------------------------
       - name: Fetch Open VSX stats
         shell: pwsh
         run: |
@@ -122,9 +116,6 @@ jobs:
           "OVSX_VERSION=$version"     >> $env:GITHUB_OUTPUT
         id: fetch-ovsx
 
-      # ------------------------------------------------------------------
-      # 3) Write JSON files consumed by Shields.io Endpoint badges
-      # ------------------------------------------------------------------
       - name: Write Shields endpoint JSON files
         shell: pwsh
         env:
@@ -134,8 +125,7 @@ jobs:
           VSMP_RATING: ${{ steps.fetch-vsmp.outputs.VSMP_RATING }}
           OVSX_DOWNLOADS: ${{ steps.fetch-ovsx.outputs.OVSX_DOWNLOADS }}
         run: |
-          # Port of the Shields.io `metric` text formatter, so counts read the
-          # same way the retired visual-studio-marketplace badges did (2.2M, 409k).
+          # Two-decimal metric formatter
           function Format-Metric([long]$n) {
               $prefixes = @("k", "M", "G", "T", "P", "E", "Z", "Y")
               $invariant = [System.Globalization.CultureInfo]::InvariantCulture
@@ -145,22 +135,16 @@ jobs:
                   $absN  = [Math]::Abs($n)
                   if ($absN -lt $limit) { continue }
 
-                  $scaled = $absN / $limit
-                  if ($scaled -lt 10) {
-                      # For "small" numbers, keep one decimal unless it is 0.
-                      $oneDecimal = [Math]::Round($scaled, 1).ToString("0.0", $invariant)
-                      if (-not $oneDecimal.EndsWith("0")) {
-                          $res = "$oneDecimal$($prefixes[$i])"
-                          return $(if ($n -lt 0) { "-$res" } else { $res })
-                      }
+                  # Keep up to two decimals, trimming trailing zeros
+                  $scaled = [Math]::Round($absN / $limit, 2, [MidpointRounding]::AwayFromZero)
+
+                  # Rounding can carry into the next unit (999,999 -> 1000k -> 1M).
+                  if ($scaled -ge 1000 -and $i + 1 -lt $prefixes.Length) {
+                      $scaled = 1
+                      $i++
                   }
 
-                  $rounded = [Math]::Round($scaled, [MidpointRounding]::AwayFromZero)
-                  if ($rounded -lt 1000) {
-                      $res = "$rounded$($prefixes[$i])"
-                  } else {
-                      $res = "1$($prefixes[$i + 1])"
-                  }
+                  $res = $scaled.ToString("0.##", $invariant) + $prefixes[$i]
                   return $(if ($n -lt 0) { "-$res" } else { $res })
               }
 
@@ -217,10 +201,6 @@ jobs:
           Set-Content -Path ".github/badges/ovsx-downloads.json" -Value $ovsxDownloadsJson -Encoding UTF8
           Write-Host "Wrote .github/badges/ovsx-downloads.json"
 
-      # ------------------------------------------------------------------
-      # 4) Publish JSON files to a dedicated 'badges' branch
-      #    (keeps 'main' branch history clean of automated noise)
-      # ------------------------------------------------------------------
       - name: Publish badge JSON files to 'badges' branch
         shell: pwsh
         run: |
