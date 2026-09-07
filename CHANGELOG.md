@@ -2,6 +2,15 @@
 
 ## Stable
 
+## 7.0.0: 6-Sep-2026
+
+- Formatting time now grows in line with document size instead of ballooning on large files - a 9 MB document formats around 10 times faster than before.
+- Added [Escape Invisible Non-ASCII Characters](README.md#escape-invisible-non-ascii-characters) setting, which writes characters that draw nothing, such as non-breaking and zero-width spaces, as `&#x...;` references.
+- Fixed formatting an already formatted document changing it again.
+- Fixed `allowSingleQuoteInAttributeValue` leaving an apostrophe unescaped inside a double quoted attribute value.
+- Fixed [Preserve Comment Placement](README.md#preserve-comment-placement) having no effect unless [Preserve New Lines](README.md#preserve-new-lines) was also enabled.
+- Updated XmlFormatter engine to v3.0.0.
+
 ## 6.9.1: 28-Aug-2026
 
 - Fixed non-ASCII characters (umlauts, accents, CJK, emoji) being escaped to numeric character references such as `&#xFC;` while formatting ([#216](https://github.com/pmahend1/PrettyXML/issues/216)).
