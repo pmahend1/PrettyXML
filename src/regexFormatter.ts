@@ -1,4 +1,7 @@
 import { Settings } from "./settings";
+import { XmlFragmentToken } from "./xmlFragmentToken";
+import { XmlFragmentTokenizer } from "./xmlFragmentTokenizer";
+import { XmlFragmentTokenKind } from "./xmlFragmentTokenKind";
 
 export class TextXmlFormatter {
 
@@ -16,103 +19,139 @@ export class TextXmlFormatter {
     constructor(settings: Settings) {
         this.settings = settings;
     }
+
     public formatXmlPretty(xml: string): string {
-        const tagRegex = /(<\?.*?\?>|<!DOCTYPE(?:[^>\[]|\[[^\]]*\])*>|<!\[CDATA\[.*?\]\]>|<!--.*?-->|<\/?[^>]+?>)/gsu;
-
-        let startIndent = 0;
-        let formatted: string[] = [];
-
-        if (xml.startsWith(" ")) {
-            const firstTagIndex = xml.indexOf("<");
-            if (firstTagIndex > 0) {
-                startIndent = firstTagIndex;
-            }
-        }
         const indentSize = this.settings.indentLength ?? 4;
-        let indentLevel = Math.floor(startIndent / indentSize);
+        const tokens = XmlFragmentTokenizer.tokenize(xml);
+        const formatted: string[] = [];
 
-        let lastIndex = 0;
-        const matches = [...xml.matchAll(tagRegex)];
-        var i = 0;
-        for (const match of matches) {
-            const [tag] = match;
-            const index = match.index ?? 0;
+        let indentLevel = Math.floor(TextXmlFormatter.readStartIndent(xml) / indentSize);
+        let markupCount = 0;
 
-            /*
-             * Handle text/whitespace between tags. Escaping runs before the trim, and that
-             * ordering is the whole point of the option: trim() counts NBSP and the rest of Zs as
-             * whitespace, so an invisible character at the edge of a text node would be deleted
-             * rather than escaped - the #208 data loss. A character reference is not whitespace
-             * and survives. The consequence to expect is that a node made only of invisible
-             * characters stops being empty while the option is on; the engine does the same.
-             */
-            const rawText = this.escapeInvisibleNonAscii(xml.slice(lastIndex, index));
-            const text = rawText.trim();
-            if (text) {
-                let n = i === 0 && indentLevel > 0 ? indentLevel - 1 : indentLevel;
-                formatted.push(' '.repeat(n * indentSize) + text);
-            } else if (rawText.length > 0) {
-                // Pure whitespace between tags
-                if (!rawText.includes('\n') && !rawText.includes('\r')) {
-                    // Inline whitespace content (e.g. <xsl:text> </xsl:text>)
-                    if (this.settings.preserveNewLines) {
-                        let n = i === 0 && indentLevel > 0 ? indentLevel - 1 : indentLevel;
-                        formatted.push(' '.repeat(n * indentSize) + rawText);
+        for (let index = 0; index < tokens.length; index++) {
+            const token = tokens[index];
+
+            switch (token.kind) {
+                /*
+                 * An unterminated run is the front half of a tag the selection cut through. It is
+                 * emitted as the text it currently is; giving it a shape of its own is rule 5,
+                 * which belongs to the tree formatter.
+                 */
+                case XmlFragmentTokenKind.text:
+                case XmlFragmentTokenKind.unterminated:
+                    this.appendTextRun(
+                        formatted,
+                        token.text,
+                        TextXmlFormatter.textIndentColumn(indentLevel, indentSize, markupCount),
+                        index === tokens.length - 1
+                    );
+                    break;
+
+                case XmlFragmentTokenKind.comment:
+                    formatted.push(" ".repeat(indentLevel * indentSize) + this.formatComment(token.text));
+                    markupCount++;
+                    break;
+
+                case XmlFragmentTokenKind.endTag:
+                    indentLevel = Math.max(indentLevel - 1, 0);
+                    formatted.push(" ".repeat(indentLevel * indentSize) + token.text);
+                    markupCount++;
+                    break;
+
+                case XmlFragmentTokenKind.startTag:
+                case XmlFragmentTokenKind.selfClosingTag: {
+                    const column = indentLevel * indentSize;
+                    formatted.push(" ".repeat(column) + this.formatTagWithAttributes(token, column));
+                    if (token.kind === XmlFragmentTokenKind.startTag) {
+                        indentLevel++;
                     }
-                } else if (this.settings.preserveNewLines) {
-                    // Multiple newlines indicate an empty line that should be preserved
-                    const newlineCount = (rawText.match(/\n/g) || []).length;
-                    if (newlineCount >= 2) {
-                        formatted.push('');
-                    }
+                    markupCount++;
+                    break;
                 }
+
+                case XmlFragmentTokenKind.processingInstruction:
+                case XmlFragmentTokenKind.cdata:
+                case XmlFragmentTokenKind.markupDeclaration:
+                    formatted.push(" ".repeat(indentLevel * indentSize) + token.text);
+                    markupCount++;
+                    break;
             }
-            i++;
-            if (tag.startsWith('<?') || tag.startsWith('<!DOCTYPE') || tag.startsWith('<![CDATA[')) {
-                formatted.push(' '.repeat(indentLevel * indentSize) + tag);
-            } else if (tag.startsWith('<!--')) {
-                let formattedComment = tag;
-                if (this.settings.wrapCommentTextWithSpaces && !this.settings.preserveWhiteSpacesInComment) {
-                    const commentMatch = tag.match(/^<!--\s*(.*?)\s*-->$/su);
-                    if (commentMatch) {
-                        formattedComment = `<!-- ${commentMatch[1]} -->`;
-                    }
-                }
-                formatted.push(' '.repeat(indentLevel * indentSize) + formattedComment);
-            } else if (tag.startsWith('</')) {
-                indentLevel = Math.max(indentLevel - 1, 0);
-                formatted.push(' '.repeat(indentLevel * indentSize) + tag);
-            } else {
-                const isSelfClosing = tag.endsWith('/>') || tag.endsWith('/ >');
-
-                const formattedTag = this.formatTagWithAttributes(tag, indentLevel * indentSize);
-                formatted.push(' '.repeat(indentLevel * indentSize) + formattedTag);
-
-                if (!isSelfClosing) {
-                    indentLevel++;
-                }
-            }
-
-            lastIndex = match.index! + tag.length;
         }
 
-        // Remaining text after last tag
-        const trailing = this.escapeInvisibleNonAscii(xml.slice(lastIndex)).trim();
-        if (trailing) {
-            formatted.push(' '.repeat(indentLevel * indentSize) + trailing);
-        }
-
-        return formatted.join('\n');
+        return formatted.join("\n");
     }
 
-    public formatTagWithAttributes(tag: string, baseIndent: number): string {
+    /*
+     * Today's starting depth is guessed from the leading whitespace of the input, which only works
+     * when the selection happens to begin with a space. Rule 4 replaces the guess with a base
+     * column the provider passes in; that is an observable change and belongs to 8e.
+     */
+    private static readStartIndent(xml: string): number {
+        if (xml.startsWith(" ") === false) {
+            return 0;
+        }
+        const firstTagIndex = xml.indexOf("<");
+        return firstTagIndex > 0 ? firstTagIndex : 0;
+    }
+
+    /*
+     * A text run ahead of the first piece of markup sits one level out: it is content of whatever
+     * element encloses the selection, not of anything the selection opened.
+     */
+    private static textIndentColumn(indentLevel: number, indentSize: number, markupCount: number): number {
+        const level = markupCount === 0 && indentLevel > 0 ? indentLevel - 1 : indentLevel;
+        return level * indentSize;
+    }
+
+    /*
+     * Escaping runs before the trim, and that ordering is the whole point of the option: trim()
+     * counts NBSP and the rest of Zs as whitespace, so an invisible character at the edge of a text
+     * node would be deleted rather than escaped - the #208 data loss. A character reference is not
+     * whitespace and survives. The consequence to expect is that a node made only of invisible
+     * characters stops being empty while the option is on; the engine does the same.
+     */
+    private appendTextRun(formatted: string[], rawText: string, indentColumn: number, isTrailing: boolean): void {
+        const escaped = this.escapeInvisibleNonAscii(rawText);
+        const text = escaped.trim();
+        if (text !== "") {
+            formatted.push(" ".repeat(indentColumn) + text);
+            return;
+        }
+
+        // Trailing whitespace is dropped outright - the formatter never ends a selection with EOL.
+        if (isTrailing || this.settings.preserveNewLines !== true) {
+            return;
+        }
+
+        if (escaped.includes("\n") === false && escaped.includes("\r") === false) {
+            // Inline whitespace content, e.g. <xsl:text> </xsl:text>.
+            formatted.push(" ".repeat(indentColumn) + escaped);
+            return;
+        }
+
+        // Two newlines are a blank line the author put there on purpose.
+        if ((escaped.match(/\n/gu) || []).length >= 2) {
+            formatted.push("");
+        }
+    }
+
+    private formatComment(comment: string): string {
+        if (this.settings.wrapCommentTextWithSpaces !== true || this.settings.preserveWhiteSpacesInComment === true) {
+            return comment;
+        }
+        const commentMatch = comment.match(/^<!--\s*(.*?)\s*-->$/su);
+        return commentMatch === null ? comment : `<!-- ${commentMatch[1]} -->`;
+    }
+
+    private formatTagWithAttributes(token: XmlFragmentToken, baseIndent: number): string {
+        const tag = token.text;
         const tagNameMatch = tag.match(/^<([^\s/>]+)/u);
-        if (!tagNameMatch) {
+        if (tagNameMatch === null) {
             return tag;
         }
         const tagName = tagNameMatch[1];
 
-        const isSelfClosing = /\/\s*>$/su.test(tag);
+        const isSelfClosing = token.kind === XmlFragmentTokenKind.selfClosingTag;
         const spaceBeforeSelfClosing = this.settings.addSpaceBeforeSelfClosingTag !== false ? ' ' : '';
         const selfCloseSuffix = isSelfClosing ? `${spaceBeforeSelfClosing}/>` : '>';
 
