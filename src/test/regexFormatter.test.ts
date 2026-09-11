@@ -152,3 +152,44 @@ describe('TextXmlFormatter \u2014 escapeInvisibleNonAsciiCharacters', () => {
         expect(result).toContain('a = "x&#xA0;y"');
     });
 });
+
+/*
+ * The two bugs the tokenizer exists to fix. Both destroyed real documents and neither needed a
+ * tree - they are here rather than in the tokenizer's own suite because what the user sees is the
+ * formatted selection, not the token stream.
+ */
+describe('TextXmlFormatter — the tokenizer bugs', () => {
+    it('keeps a tag whose attribute value contains a greater-than sign in one piece', () => {
+        expect(format('<a b="x>y"><c/></a>')).toBe('<a b="x>y">\n    <c />\n</a>');
+    });
+
+    it('keeps a single-quoted value containing a greater-than sign in one piece', () => {
+        expect(format('<a b=\'x>y\'/>', { useSingleQuotes: true })).toBe("<a b='x>y' />");
+    });
+
+    /*
+     * `<a /  >` rendered self-closed while the depth counter was still incremented, so every line
+     * after it in the selection came out one level too deep - and formatting twice never settled.
+     */
+    it('does not open a depth for a self-closing tag with spaces before its bracket', () => {
+        expect(format('<r><a /  ><b/></r>')).toBe('<r>\n    <a />\n    <b />\n</r>');
+    });
+
+    it('formats a selection carrying both bugs idempotently', () => {
+        const once = format('<r><a /  ><b c="x>y"/></r>');
+        expect(format(once)).toBe(once);
+    });
+
+    /*
+     * A third one the tokenizer settles on the way past: only `<!DOCTYPE` used to be recognized as
+     * a declaration, so every other `<!...>` fell through to the start-tag branch and opened a
+     * depth that nothing ever closed.
+     */
+    it('does not open a depth for a markup declaration that is not a DOCTYPE', () => {
+        expect(format('<r><!ENTITY e "x"><a/></r>')).toBe('<r>\n    <!ENTITY e "x">\n    <a />\n</r>');
+    });
+
+    it('keeps a DOCTYPE whose internal subset contains a greater-than sign in one piece', () => {
+        expect(format('<!DOCTYPE a [<!ENTITY e "x">]><a/>')).toBe('<!DOCTYPE a [<!ENTITY e "x">]>\n<a />');
+    });
+});

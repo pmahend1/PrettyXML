@@ -20,6 +20,21 @@ const indentLength = settings.indentLength ?? 4;
  * of cases the tree formatter has to serve on its own.
  */
 
+/*
+ * The engine joins lines with Environment.NewLine, so on windows-latest every multi-line result
+ * comes back CRLF-joined while the range formatter always joins with "\n". Compared raw, every
+ * case but the single-line ones would read as "differs" on CI and nowhere else. Line endings are
+ * not what this suite measures - shape is - so both sides are read in LF.
+ */
+function withUnixNewlines(value: string): string {
+    return value.replace(/\r\n/gu, "\n");
+}
+
+/** Every read of the engine goes through here, so nothing downstream ever meets a CRLF. */
+async function engineOutput(document: string): Promise<string> {
+    return withUnixNewlines(await EngineFormatter.format(document));
+}
+
 async function formatThroughEngine(fragment: string): Promise<string> {
     const repaired = FragmentRepairer.repair(fragment);
     if (repaired.rejection !== "") {
@@ -31,7 +46,7 @@ async function formatThroughEngine(fragment: string): Promise<string> {
         return `[engine rejects] ${EngineFormatter.describeFailure(result)}`;
     }
 
-    return FragmentRepairer.stripSyntheticRoot(result.stdout, indentLength);
+    return FragmentRepairer.stripSyntheticRoot(withUnixNewlines(result.stdout), indentLength);
 }
 
 function block(label: string, body: string): string {
@@ -110,8 +125,8 @@ describe("Delegating a selection to the engine - what the synthetic root can and
     it.each(wholeDocuments)(
         "a synthetic root added and stripped reproduces the engine's own document formatting: %s",
         async document => {
-            const direct = await EngineFormatter.format(document);
-            const enclosed = await EngineFormatter.format(FragmentRepairer.repair(document).document);
+            const direct = await engineOutput(document);
+            const enclosed = await engineOutput(FragmentRepairer.repair(document).document);
             expect(FragmentRepairer.stripSyntheticRoot(enclosed, indentLength)).toBe(direct);
         },
         30000
@@ -121,7 +136,7 @@ describe("Delegating a selection to the engine - what the synthetic root can and
         const repaired = FragmentRepairer.repair("<xsl:template match=\"/\"><xsl:text>x</xsl:text></xsl:template>");
         expect(repaired.syntheticPrefixes).toContain("xsl");
 
-        const formatted = FragmentRepairer.stripSyntheticRoot(await EngineFormatter.format(repaired.document), indentLength);
+        const formatted = FragmentRepairer.stripSyntheticRoot(await engineOutput(repaired.document), indentLength);
         expect(formatted).toBe("<xsl:template match=\"/\">\n    <xsl:text>x</xsl:text>\n</xsl:template>");
     }, 30000);
 
@@ -134,14 +149,14 @@ describe("Delegating a selection to the engine - what the synthetic root can and
         const repaired = FragmentRepairer.repair("<d:Grid x:Name=\"root\" m:Ignorable=\"d\"><d:Text/></d:Grid>");
         expect(repaired.syntheticPrefixes).toEqual(["d", "m", "x"]);
 
-        const formatted = FragmentRepairer.stripSyntheticRoot(await EngineFormatter.format(repaired.document), indentLength);
+        const formatted = FragmentRepairer.stripSyntheticRoot(await engineOutput(repaired.document), indentLength);
         expect(formatted).not.toContain("prettyxml-synthetic");
         expect(formatted.split("\n")[0]).toBe("<d:Grid x:Name=\"root\"");
     }, 30000);
 
     it("keeps a prefix the fragment declares itself bound to the real namespace", async () => {
         const repaired = FragmentRepairer.repair("<a xmlns:p=\"urn:x\"><p:b/></a>");
-        const formatted = FragmentRepairer.stripSyntheticRoot(await EngineFormatter.format(repaired.document), indentLength);
+        const formatted = FragmentRepairer.stripSyntheticRoot(await engineOutput(repaired.document), indentLength);
         expect(formatted).toContain("xmlns:p=\"urn:x\"");
     }, 30000);
 
@@ -170,7 +185,7 @@ describe("Delegating a selection to the engine - what the synthetic root can and
      */
     it("rewrites attribute value bytes that the range formatter leaves alone", async () => {
         const repaired = FragmentRepairer.repair("<a b=\"x>y\" c='say \"hi\"'/>");
-        const formatted = FragmentRepairer.stripSyntheticRoot(await EngineFormatter.format(repaired.document), indentLength);
+        const formatted = FragmentRepairer.stripSyntheticRoot(await engineOutput(repaired.document), indentLength);
         expect(formatted).toContain("&gt;");
         expect(formatted).toContain("&quot;");
     }, 30000);
