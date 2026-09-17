@@ -193,3 +193,22 @@ describe('TextXmlFormatter — the tokenizer bugs', () => {
         expect(format('<!DOCTYPE a [<!ENTITY e "x">]><a/>')).toBe('<!DOCTYPE a [<!ENTITY e "x">]>\n<a />');
     });
 });
+
+/*
+ * The tree renderer first walked the tree by recursion and overflowed the call stack somewhere
+ * between 3,700 and 8,000 levels of nesting, where the flat scanner before it had no limit at all.
+ * An indent of zero keeps the output linear in the depth, so these measure the walk and not memory.
+ */
+describe('TextXmlFormatter — deep nesting', () => {
+    const depth = 100000;
+    const flat = { indentLength: 0 };
+
+    it('formats a closed selection nested deeper than the call stack reaches', () => {
+        const xml = '<a>'.repeat(depth) + 'x' + '</a>'.repeat(depth);
+        expect(format(xml, flat)).toBe('<a>\n'.repeat(depth) + 'x' + '\n</a>'.repeat(depth));
+    });
+
+    it('formats an unclosed selection nested deeper than the call stack reaches', () => {
+        expect(format('<a>'.repeat(depth) + 'x', flat)).toBe('<a>\n'.repeat(depth) + 'x');
+    });
+});

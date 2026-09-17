@@ -37,20 +37,25 @@ export class XmlFragmentParser {
         return roots;
     }
 
-    /** The tokens the forest was built from, in their original order. */
+    /*
+     * The tokens the forest was built from, in their original order. An explicit stack rather than
+     * recursion, so depth is bounded by memory and not by the call stack; an end tag goes on as a
+     * leaf beneath its element's children, so it comes off after them.
+     */
     public static flatten(nodes: readonly XmlFragmentNode[]): XmlFragmentToken[] {
         const tokens: XmlFragmentToken[] = [];
-        XmlFragmentParser.appendTokens(nodes, tokens);
-        return tokens;
-    }
+        const pending = [...nodes].reverse();
 
-    private static appendTokens(nodes: readonly XmlFragmentNode[], tokens: XmlFragmentToken[]): void {
-        for (const node of nodes) {
+        for (let node = pending.pop(); node !== undefined; node = pending.pop()) {
             tokens.push(node.token);
-            XmlFragmentParser.appendTokens(node.children, tokens);
             if (node.endTag !== null) {
-                tokens.push(node.endTag);
+                pending.push({ token: node.endTag, children: [], endTag: null });
+            }
+            for (let index = node.children.length - 1; index >= 0; index--) {
+                pending.push(node.children[index]);
             }
         }
+
+        return tokens;
     }
 }

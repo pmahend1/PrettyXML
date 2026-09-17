@@ -76,6 +76,14 @@ describe("XmlFragmentParser - the tree holds every token in order (rule 1)", () 
         "<a><b attr=\"v",
     ];
 
+    it("flattens a tree nested far deeper than the call stack reaches", () => {
+        const depth = 100000;
+        const tokens = XmlFragmentTokenizer.tokenize("<a>".repeat(depth) + "x" + "</a>".repeat(depth));
+        const flattened = XmlFragmentParser.flatten(XmlFragmentParser.parse(tokens));
+        expect(flattened).toHaveLength(tokens.length);
+        expect(flattened.at(-1)).toBe(tokens.at(-1));
+    });
+
     it.each(inputs)("flattens %j back into its token stream", input => {
         const tokens = XmlFragmentTokenizer.tokenize(input);
         const flattened = XmlFragmentParser.flatten(XmlFragmentParser.parse(tokens));

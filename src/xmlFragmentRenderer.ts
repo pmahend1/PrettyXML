@@ -45,7 +45,7 @@ export class XmlFragmentRenderer {
                 level = Math.max(level - 1, 0);
                 lines.push(this.indentation(level * this.indentSize) + node.token.text);
             } else {
-                this.renderNode(lines, node, level, isLeading, trailingToken);
+                this.renderTree(lines, node, level, isLeading, trailingToken);
             }
 
             if (XmlFragmentRenderer.isTextRun(node.token) === false) {
@@ -57,59 +57,73 @@ export class XmlFragmentRenderer {
     }
 
     /*
-     * `isLeading` marks a text run ahead of the selection's first piece of markup. It sits one level
-     * out: it is content of whatever element encloses the selection, not of anything the selection
-     * opened.
+     * Walks the tree depth-first with an explicit stack rather than by recursion: a selection nested
+     * a few thousand levels deep overflowed the call stack, where the flat scanner this replaced
+     * formatted it. An element's end tag is pushed as a leaf beneath its children, so everything
+     * comes off the stack in document order.
+     *
+     * `isLeading` marks a root that is a text run ahead of the selection's first piece of markup. It
+     * sits one level out: it is content of whatever element encloses the selection, not of anything
+     * the selection opened.
      */
-    private renderNode(
+    private renderTree(
         lines: string[],
-        node: XmlFragmentNode,
-        level: number,
+        root: XmlFragmentNode,
+        rootLevel: number,
         isLeading: boolean,
         trailingToken: XmlFragmentToken | undefined
     ): void {
-        const token = node.token;
-        const column = level * this.indentSize;
+        const pending: [XmlFragmentNode, number][] = [[root, rootLevel]];
 
-        switch (token.kind) {
-            /*
-             * An unterminated run is the front half of a tag the selection cut through. It is
-             * emitted as the text it currently is; giving it a shape of its own is rule 5, which
-             * belongs to 8e.
-             */
-            case XmlFragmentTokenKind.text:
-            case XmlFragmentTokenKind.unterminated: {
-                const textLevel = isLeading && level > 0 ? level - 1 : level;
-                this.appendTextRun(lines, token.text, textLevel * this.indentSize, token === trailingToken);
-                break;
+        for (let step = pending.pop(); step !== undefined; step = pending.pop()) {
+            const [node, level] = step;
+            const token = node.token;
+            const column = level * this.indentSize;
+
+            switch (token.kind) {
+                /*
+                 * An unterminated run is the front half of a tag the selection cut through. It is
+                 * emitted as the text it currently is; giving it a shape of its own is rule 5, which
+                 * belongs to 8e.
+                 */
+                case XmlFragmentTokenKind.text:
+                case XmlFragmentTokenKind.unterminated: {
+                    const textLevel = node === root && isLeading && level > 0 ? level - 1 : level;
+                    this.appendTextRun(lines, token.text, textLevel * this.indentSize, token === trailingToken);
+                    break;
+                }
+
+                case XmlFragmentTokenKind.comment:
+                    lines.push(this.indentation(column) + this.formatComment(token.text));
+                    break;
+
+                case XmlFragmentTokenKind.startTag:
+                    lines.push(this.indentation(column) + this.formatTag(token, column));
+                    if (node.endTag !== null) {
+                        pending.push([XmlFragmentRenderer.leaf(node.endTag), level]);
+                    }
+                    for (let index = node.children.length - 1; index >= 0; index--) {
+                        pending.push([node.children[index], level + 1]);
+                    }
+                    break;
+
+                case XmlFragmentTokenKind.selfClosingTag:
+                    lines.push(this.indentation(column) + this.formatTag(token, column));
+                    break;
+
+                // An element's own end tag, or one render() found closing nothing at the top level.
+                case XmlFragmentTokenKind.endTag:
+                case XmlFragmentTokenKind.processingInstruction:
+                case XmlFragmentTokenKind.cdata:
+                case XmlFragmentTokenKind.markupDeclaration:
+                    lines.push(this.indentation(column) + token.text);
+                    break;
             }
-
-            case XmlFragmentTokenKind.comment:
-                lines.push(this.indentation(column) + this.formatComment(token.text));
-                break;
-
-            case XmlFragmentTokenKind.startTag:
-                lines.push(this.indentation(column) + this.formatTag(token, column));
-                for (const child of node.children) {
-                    this.renderNode(lines, child, level + 1, false, trailingToken);
-                }
-                if (node.endTag !== null) {
-                    lines.push(this.indentation(column) + node.endTag.text);
-                }
-                break;
-
-            case XmlFragmentTokenKind.selfClosingTag:
-                lines.push(this.indentation(column) + this.formatTag(token, column));
-                break;
-
-            // The parser only leaves an end tag unmatched at the top level, where render() handles it.
-            case XmlFragmentTokenKind.endTag:
-            case XmlFragmentTokenKind.processingInstruction:
-            case XmlFragmentTokenKind.cdata:
-            case XmlFragmentTokenKind.markupDeclaration:
-                lines.push(this.indentation(column) + token.text);
-                break;
         }
+    }
+
+    private static leaf(token: XmlFragmentToken): XmlFragmentNode {
+        return { token: token, children: [], endTag: null };
     }
 
     private static isTextRun(token: XmlFragmentToken): boolean {
@@ -118,14 +132,11 @@ export class XmlFragmentRenderer {
 
     /** The last token of the selection in document order - the one whose whitespace is never kept. */
     private static findLastToken(nodes: readonly XmlFragmentNode[]): XmlFragmentToken | undefined {
-        const last = nodes.at(-1);
-        if (last === undefined) {
-            return undefined;
+        let last = nodes.at(-1);
+        while (last !== undefined && last.endTag === null && last.children.length > 0) {
+            last = last.children.at(-1);
         }
-        if (last.endTag !== null) {
-            return last.endTag;
-        }
-        return XmlFragmentRenderer.findLastToken(last.children) ?? last.token;
+        return last === undefined ? undefined : last.endTag ?? last.token;
     }
 
     private indentation(column: number): string {
