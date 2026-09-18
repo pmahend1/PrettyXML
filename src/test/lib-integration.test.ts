@@ -1,86 +1,27 @@
 import { describe, it, expect } from 'vitest';
-import * as childProcess from 'node:child_process';
-import * as path from 'node:path';
+import { EngineFormatter } from './support/engineFormatter';
 import { FormattingActionKind } from '../formattingActionKind';
-import { JsonInputDto } from '../jsonInputDto';
-import { ISettings, Settings } from '../settings';
-
-const dllPath = path.resolve(process.cwd(), 'lib/XmlFormatter.CommandLine.dll');
-
-function runDll(
-    xmlString: string,
-    actionKind: FormattingActionKind,
-    formattingOptionOverrides: Partial<ISettings> = {}
-): Promise<string> {
-    const settings = new Settings({
-        indentLength: 4,
-        useSingleQuotes: false,
-        useSelfClosingTags: true,
-        formatOnSave: false,
-        allowSingleQuoteInAttributeValue: true,
-        addSpaceBeforeSelfClosingTag: true,
-        wrapCommentTextWithSpaces: true,
-        allowWhiteSpaceUnicodesInAttributeValues: true,
-        positionFirstAttributeOnSameLine: true,
-        positionAllAttributesOnFirstLine: false,
-        preserveWhiteSpacesInComment: false,
-        addSpaceBeforeEndOfXmlDeclaration: false,
-        addXmlDeclarationIfMissing: false,
-        attributesInNewlineThreshold: 1,
-        addEmptyLineBetweenElements: false,
-        addEmptyEol: false,
-        preserveNewLines: false,
-        preserveCommentPlacement: false,
-        escapeInvisibleNonAsciiCharacters: false,
-        enableLogs: false,
-        ...formattingOptionOverrides,
-    });
-
-    const input = JSON.stringify(new JsonInputDto(xmlString, actionKind, settings));
-
-    const cli = childProcess.spawn('dotnet', [dllPath], { stdio: ['pipe', 'pipe', 'pipe'] });
-
-    let stdout = '';
-    let stderr = '';
-
-    cli.stdout.setEncoding('utf8');
-    cli.stdout.on('data', (data) => { stdout += data; });
-
-    cli.stderr.setEncoding('utf8');
-    cli.stderr.on('data', (data) => { stderr += data; });
-
-    return new Promise<string>((resolve, reject) => {
-        cli.on('close', (exitCode) => {
-            if (exitCode !== 0) {
-                reject(new Error(`DLL exited with code ${exitCode}: ${stderr}`));
-            } else {
-                resolve(stdout);
-            }
-        });
-        cli.stdin.end(input, 'utf-8');
-    });
-}
 
 describe('DLL integration — EOL behavior', () => {
     it('Format output does not end with a trailing newline', async () => {
-        const result = await runDll('<Root><Child/></Root>', FormattingActionKind.format);
+        const result = await EngineFormatter.format('<Root><Child/></Root>', FormattingActionKind.format);
         expect(result).toContain('<Root>');
         expect(result).toContain('</Root>');
         expect(result).not.toMatch(/[\r\n]$/);
     }, 15000);
 
     it('Format output strips input trailing LF', async () => {
-        const result = await runDll('<Root><Child/></Root>\n', FormattingActionKind.format);
+        const result = await EngineFormatter.format('<Root><Child/></Root>\n', FormattingActionKind.format);
         expect(result).not.toMatch(/[\r\n]$/);
     }, 15000);
 
     it('Format output strips input trailing CRLF', async () => {
-        const result = await runDll('<Root><Child/></Root>\r\n', FormattingActionKind.format);
+        const result = await EngineFormatter.format('<Root><Child/></Root>\r\n', FormattingActionKind.format);
         expect(result).not.toMatch(/[\r\n]$/);
     }, 15000);
 
     it('Minimize output does not end with a trailing newline', async () => {
-        const result = await runDll('<Root>\n    <Child />\n</Root>', FormattingActionKind.minimize);
+        const result = await EngineFormatter.format('<Root>\n    <Child />\n</Root>', FormattingActionKind.minimize);
         expect(result).not.toMatch(/[\r\n]$/);
         // Minimized should be a single line
         expect(result).not.toContain('\n');
@@ -88,7 +29,7 @@ describe('DLL integration — EOL behavior', () => {
 
     it('Format preserves internal CRLF in CDATA and comments without trailing newline', async () => {
         const input = '<Root><!-- comment\r\nline2 --><![CDATA[cdata\r\nline2]]></Root>\r\n';
-        const result = await runDll(input, FormattingActionKind.format);
+        const result = await EngineFormatter.format(input, FormattingActionKind.format);
         expect(result).not.toMatch(/[\r\n]$/);
         expect(result).toContain('comment');
         expect(result).toContain('cdata');
@@ -96,7 +37,7 @@ describe('DLL integration — EOL behavior', () => {
 
     it('Format handles unicode characters with trailing CRLF cleanly', async () => {
         const input = '<Root greeting="こんにちは">✨ XML 🚀</Root>\r\n';
-        const result = await runDll(input, FormattingActionKind.format);
+        const result = await EngineFormatter.format(input, FormattingActionKind.format);
         expect(result).not.toMatch(/[\r\n]$/);
         expect(result).toContain('greeting="こんにちは"');
         expect(result).toContain('✨ XML 🚀');
@@ -114,7 +55,7 @@ describe('DLL integration — non-ASCII characters are not escaped (#216)', () =
     it.each([true, false])(
         'Format keeps umlauts literal with allowWhiteSpaceUnicodesInAttributeValues=%s',
         async (allowWhiteSpaceUnicodesInAttributeValues) => {
-            const result = await runDll(xslWithUmlauts, FormattingActionKind.format, { allowWhiteSpaceUnicodesInAttributeValues });
+            const result = await EngineFormatter.format(xslWithUmlauts, FormattingActionKind.format, { allowWhiteSpaceUnicodesInAttributeValues });
             expect(result).toContain('<xsl:text>ü</xsl:text>');
             expect(result).toContain('select="\'ü\'"');
             expect(result).not.toContain('&#x');
@@ -123,13 +64,13 @@ describe('DLL integration — non-ASCII characters are not escaped (#216)', () =
     );
 
     it('Minimize keeps umlauts literal', async () => {
-        const result = await runDll(xslWithUmlauts, FormattingActionKind.minimize);
+        const result = await EngineFormatter.format(xslWithUmlauts, FormattingActionKind.minimize);
         expect(result).toContain('<xsl:text>ü</xsl:text>');
         expect(result).not.toContain('&#x');
     }, 15000);
 
     it('Format keeps accented, CJK and astral characters literal in text and attributes', async () => {
-        const result = await runDll('<Root a="Straße" b="こんにちは" c="😀">äöüß ✨ 🚀</Root>', FormattingActionKind.format);
+        const result = await EngineFormatter.format('<Root a="Straße" b="こんにちは" c="😀">äöüß ✨ 🚀</Root>', FormattingActionKind.format);
         expect(result).toContain('a="Straße"');
         expect(result).toContain('b="こんにちは"');
         expect(result).toContain('c="😀"');
@@ -138,7 +79,7 @@ describe('DLL integration — non-ASCII characters are not escaped (#216)', () =
     }, 15000);
 
     it('Format resolves numeric character references in the input to literal characters', async () => {
-        const result = await runDll('<Root>&#xFC;</Root>', FormattingActionKind.format);
+        const result = await EngineFormatter.format('<Root>&#xFC;</Root>', FormattingActionKind.format);
         expect(result).toContain('<Root>ü</Root>');
     }, 15000);
 
@@ -150,10 +91,10 @@ describe('DLL integration — non-ASCII characters are not escaped (#216)', () =
     it('Format still escapes whitespace unicodes in attribute values when enabled', async () => {
         const input = '<Root a="line1&#10;line2&#9;tab" />';
 
-        const enabled = await runDll(input, FormattingActionKind.format, { allowWhiteSpaceUnicodesInAttributeValues: true });
+        const enabled = await EngineFormatter.format(input, FormattingActionKind.format, { allowWhiteSpaceUnicodesInAttributeValues: true });
         expect(enabled).toContain('a="line1&#xA;line2&#x9;tab"');
 
-        const disabled = await runDll(input, FormattingActionKind.format, { allowWhiteSpaceUnicodesInAttributeValues: false });
+        const disabled = await EngineFormatter.format(input, FormattingActionKind.format, { allowWhiteSpaceUnicodesInAttributeValues: false });
         expect(disabled).toContain('a="line1\nline2\ttab"');
     }, 15000);
 });
@@ -165,7 +106,7 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
      * line endings. The #216 fix must not reopen that.
      */
     it('#211 keeps &#xD;&#xA; escaped in attribute values', async () => {
-        const result = await runDll(
+        const result = await EngineFormatter.format(
             '<Root sep="&#xD;&#xA;" b="x" />',
             FormattingActionKind.format,
             { allowWhiteSpaceUnicodesInAttributeValues: true }
@@ -183,7 +124,7 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
             '<xsl:template match="/"><xsl:value-of select="a" /><xsl:text> </xsl:text><xsl:value-of select="b" /></xsl:template>',
             '</xsl:stylesheet>',
         ].join('\n');
-        const result = await runDll(input, FormattingActionKind.format, { preserveNewLines: true });
+        const result = await EngineFormatter.format(input, FormattingActionKind.format, { preserveNewLines: true });
         expect(result).toContain('<xsl:text> </xsl:text>');
         expect(result).not.toContain('<xsl:text />');
     }, 15000);
@@ -195,7 +136,7 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
      * a replacement character, a lone surrogate, or a plain space.
      */
     it('#208 emits a real non-breaking space, not a corrupted character', async () => {
-        const result = await runDll('<Root><xsl:text xmlns:xsl="u"> |&#160;Something</xsl:text></Root>', FormattingActionKind.format);
+        const result = await EngineFormatter.format('<Root><xsl:text xmlns:xsl="u"> |&#160;Something</xsl:text></Root>', FormattingActionKind.format);
         const textNode = result.match(/>([^<]*)<\/xsl:text>/)?.[1] ?? '';
         expect(textNode).toContain('\u00A0');
         expect(textNode).not.toContain('\uFFFD');
@@ -203,7 +144,7 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
     }, 15000);
 
     it('#208 astral characters survive without lone surrogates', async () => {
-        const result = await runDll('<Root a="\u{1F600}">\u{1F600} \u{1D11E} \u{10437}</Root>', FormattingActionKind.format);
+        const result = await EngineFormatter.format('<Root a="\u{1F600}">\u{1F600} \u{1D11E} \u{10437}</Root>', FormattingActionKind.format);
         const textNode = result.match(/>([^<]*)<\/Root>/)?.[1] ?? '';
         expect(textNode).toBe('\u{1F600} \u{1D11E} \u{10437}');
         expect([...textNode].some(c => c.codePointAt(0)! >= 0xD800 && c.codePointAt(0)! <= 0xDFFF)).toBe(false);
@@ -211,8 +152,8 @@ describe('DLL integration — earlier unicode fixes stay fixed (#208, #209, #211
 
     it('Formatting is idempotent for non-ASCII content', async () => {
         const input = '<Root a="Straße"><xsl:text xmlns:xsl="u"> |&#160;ü 😀</xsl:text></Root>';
-        const first = await runDll(input, FormattingActionKind.format);
-        const second = await runDll(first, FormattingActionKind.format);
+        const first = await EngineFormatter.format(input, FormattingActionKind.format);
+        const second = await EngineFormatter.format(first, FormattingActionKind.format);
         expect(second).toBe(first);
     }, 15000);
 });
@@ -230,7 +171,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     const zwsp = '\u200B';
 
     it('Off leaves invisible non-ASCII characters literal', async () => {
-        const result = await runDll(
+        const result = await EngineFormatter.format(
             `<Root a="x${nbsp}y">a${zwsp}b</Root>`,
             FormattingActionKind.format,
             { escapeInvisibleNonAsciiCharacters: false }
@@ -240,7 +181,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     }, 15000);
 
     it('On escapes invisible non-ASCII characters in text and attribute values', async () => {
-        const result = await runDll(
+        const result = await EngineFormatter.format(
             `<Root a="x${nbsp}y">a${zwsp}b</Root>`,
             FormattingActionKind.format,
             { escapeInvisibleNonAsciiCharacters: true }
@@ -249,7 +190,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     }, 15000);
 
     it('On resolves an input character reference and writes it back as one', async () => {
-        const result = await runDll(
+        const result = await EngineFormatter.format(
             '<Root>a&#xA0;b</Root>',
             FormattingActionKind.format,
             { escapeInvisibleNonAsciiCharacters: true }
@@ -264,7 +205,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     it.each([true, false])(
         'Visible non-ASCII characters stay literal with escapeInvisibleNonAsciiCharacters=%s',
         async (escapeInvisibleNonAsciiCharacters) => {
-            const result = await runDll(
+            const result = await EngineFormatter.format(
                 '<Root a="Straße" b="日本">ü 日 \u{1F600} €</Root>',
                 FormattingActionKind.format,
                 { escapeInvisibleNonAsciiCharacters }
@@ -294,7 +235,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
         ['U+FEFF zero width no-break space (Cf)', '\uFEFF', '&#xFEFF;'],
         ['U+0085 next line (Cc)', '\u0085', '&#x85;'],
     ])('On escapes %s', async (_name, character, expected) => {
-        const result = await runDll(
+        const result = await EngineFormatter.format(
             `<Root>a${character}b</Root>`,
             FormattingActionKind.format,
             { escapeInvisibleNonAsciiCharacters: true }
@@ -307,7 +248,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
      * under it is wrong without it.
      */
     it('On leaves a combining mark literal', async () => {
-        const result = await runDll(
+        const result = await EngineFormatter.format(
             '<Root>e\u0301</Root>',
             FormattingActionKind.format,
             { escapeInvisibleNonAsciiCharacters: true }
@@ -320,7 +261,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
      * &#xDB40;&#xDC20;, which no parser reads back. The pair is read whole.
      */
     it('On writes an invisible character outside the basic plane as one reference', async () => {
-        const result = await runDll(
+        const result = await EngineFormatter.format(
             '<Root>a\u{E0020}b</Root>',
             FormattingActionKind.format,
             { escapeInvisibleNonAsciiCharacters: true }
@@ -344,7 +285,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     ])(
         'The two escaping options decide different characters (allowWhiteSpaceUnicodes=%s, escapeInvisibleNonAscii=%s)',
         async (allowWhiteSpaceUnicodesInAttributeValues, escapeInvisibleNonAsciiCharacters, expected) => {
-            const result = await runDll(
+            const result = await EngineFormatter.format(
                 '<r a="tab&#x9;gap&#xA0;end" />',
                 FormattingActionKind.format,
                 { allowWhiteSpaceUnicodesInAttributeValues, escapeInvisibleNonAsciiCharacters }
@@ -362,7 +303,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     it.each([true, false])(
         'CDATA content is untouched with escapeInvisibleNonAsciiCharacters=%s',
         async (escapeInvisibleNonAsciiCharacters) => {
-            const result = await runDll(
+            const result = await EngineFormatter.format(
                 `<Root><![CDATA[a${nbsp}b]]></Root>`,
                 FormattingActionKind.format,
                 { escapeInvisibleNonAsciiCharacters }
@@ -376,7 +317,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     it.each([true, false])(
         'Comment content is untouched with escapeInvisibleNonAsciiCharacters=%s',
         async (escapeInvisibleNonAsciiCharacters) => {
-            const result = await runDll(
+            const result = await EngineFormatter.format(
                 `<Root><!--a${nbsp}b--></Root>`,
                 FormattingActionKind.format,
                 { escapeInvisibleNonAsciiCharacters }
@@ -394,7 +335,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
      * edge of a reflowed line is not merely invisible - it is deleted.
      */
     it('Off a NBSP at the edge of a reflowed line is lost', async () => {
-        const result = await runDll(
+        const result = await EngineFormatter.format(
             `<r>\n  ${nbsp}first\nsecond${nbsp}\n</r>`,
             FormattingActionKind.format,
             { escapeInvisibleNonAsciiCharacters: false }
@@ -403,7 +344,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     }, 15000);
 
     it('On a NBSP at the edge of a reflowed line survives', async () => {
-        const result = await runDll(
+        const result = await EngineFormatter.format(
             `<r>\n  ${nbsp}first\nsecond${nbsp}\n</r>`,
             FormattingActionKind.format,
             { escapeInvisibleNonAsciiCharacters: true }
@@ -414,8 +355,8 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
 
     it('On formatting is idempotent', async () => {
         const input = `<Root a="x${nbsp}y">a${zwsp} b${nbsp}ü \u{1F600}</Root>`;
-        const first = await runDll(input, FormattingActionKind.format, { escapeInvisibleNonAsciiCharacters: true });
-        const second = await runDll(first, FormattingActionKind.format, { escapeInvisibleNonAsciiCharacters: true });
+        const first = await EngineFormatter.format(input, FormattingActionKind.format, { escapeInvisibleNonAsciiCharacters: true });
+        const second = await EngineFormatter.format(first, FormattingActionKind.format, { escapeInvisibleNonAsciiCharacters: true });
         expect(second).toBe(first);
     }, 15000);
 
@@ -427,7 +368,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     it.each([true, false])(
         'Minimize is unaffected by escapeInvisibleNonAsciiCharacters=%s',
         async (escapeInvisibleNonAsciiCharacters) => {
-            const result = await runDll(
+            const result = await EngineFormatter.format(
                 `<Root a="x${nbsp}y">a${zwsp}b</Root>`,
                 FormattingActionKind.minimize,
                 { escapeInvisibleNonAsciiCharacters }
