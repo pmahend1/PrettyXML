@@ -131,7 +131,7 @@
                     },
                     "prettyxml.settings.useSelfClosingTag": {
                         "type": "boolean",
-                        "markdownDescription": "If no child nodes then use self closing tag `/>`. *Default* is *Checked* \n\n **Checked** : `<Foo></Foo>` → `<Foo/>` \n\n  **Unchecked** : `<Foo></Foo>` → `<Foo></Foo>` ",
+                        "markdownDescription": "If no child nodes then use self closing tag `/>`. *Default* is *Checked* \n\n **Checked** : `<Foo></Foo>` → `<Foo/>` \n\n  **Unchecked** : `<Foo></Foo>` → `<Foo></Foo>` \n\n *Format Selection* does not apply this setting: an empty element in a selection is left as written.",
                         "default": true
                     },
                     "prettyxml.settings.formatOnSave": {
@@ -156,7 +156,7 @@
                     },
                     "prettyxml.settings.allowWhiteSpaceUnicodesInAttributeValues": {
                         "type": "boolean",
-                        "markdownDescription": "Allow unicode whitespace characters in attribute values. *Default* is *Checked* \n\n **Checked** : \n\n `&#10;` → `&#xA;` \n\n `&#9;` or `&#x9;` → `&#x9;` \n\n `>` → `>` \n\n **Unchecked** :\n\n `&#10;` → new line  \n\n `&#9;` or `&#x9;` → tab \n\n &gt; → `&gt;`",
+                        "markdownDescription": "Allow unicode whitespace characters in attribute values. *Default* is *Checked* \n\n **Checked** : \n\n `&#10;` → `&#xA;` \n\n `&#9;` or `&#x9;` → `&#x9;` \n\n `>` → `>` \n\n **Unchecked** :\n\n `&#10;` → new line  \n\n `&#9;` or `&#x9;` → tab \n\n &gt; → `&gt;` \n\n *Format Selection* does not apply this setting: attribute values in a selection are kept as written.",
                         "default": true
                     },
                     "prettyxml.settings.positionFirstAttributeOnSameLine": {
@@ -186,7 +186,7 @@
                     },
                     "prettyxml.settings.addXmlDeclarationIfMissing": {
                         "type": "boolean",
-                        "markdownDescription": "Adds XML declaration if missing. Default is *Checked* \n\n **Checked** : \n\n `<?xml version=\"1.0\" encoding=\"utf-8\"?>`\n\n`<Root>`\n\n&ensp;&ensp;&ensp;&ensp;`<Element />`\n\n`</Root>` \n\n **Unchecked** : \n\n `<Root>`\n\n&ensp;&ensp;&ensp;&ensp;`<Element />`\n\n`</Root>`",
+                        "markdownDescription": "Adds XML declaration if missing. Default is *Checked* \n\n **Checked** : \n\n `<?xml version=\"1.0\" encoding=\"utf-8\"?>`\n\n`<Root>`\n\n&ensp;&ensp;&ensp;&ensp;`<Element />`\n\n`</Root>` \n\n **Unchecked** : \n\n `<Root>`\n\n&ensp;&ensp;&ensp;&ensp;`<Element />`\n\n`</Root>` \n\n *Format Selection* does not apply this setting: a declaration belongs at the top of a document, not in the middle of a selection.",
                         "default": true
                     },
                     "prettyxml.settings.attributesInNewlineThreshold": {

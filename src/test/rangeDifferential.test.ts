@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { EngineFormatter } from "./support/engineFormatter";
 import { FragmentRepairer } from "./support/fragmentRepairer";
 import { rangeCorpus } from "./support/rangeCorpus";
-import { Settings } from "../settings";
+import { FormattingActionKind } from "../formattingActionKind";
+import { ISettings, Settings } from "../settings";
 import { TextXmlFormatter } from "../regexFormatter";
 
 const settings = new Settings(EngineFormatter.baselineSettings);
@@ -31,8 +32,8 @@ function withUnixNewlines(value: string): string {
 }
 
 /** Every read of the engine goes through here, so nothing downstream ever meets a CRLF. */
-async function engineOutput(document: string): Promise<string> {
-    return withUnixNewlines(await EngineFormatter.format(document));
+async function engineOutput(document: string, formattingOptionOverrides: Partial<ISettings> = {}): Promise<string> {
+    return withUnixNewlines(await EngineFormatter.format(document, FormattingActionKind.format, formattingOptionOverrides));
 }
 
 async function formatThroughEngine(fragment: string): Promise<string> {
@@ -109,6 +110,61 @@ describe("Range formatter vs the engine - recorded divergence baseline (task 8a)
 
         await expect(report.replace(/\r\n/gu, "\n")).toMatchFileSnapshot("./baselines/rangeFormatterDivergence.md");
     }, 120000);
+});
+
+// Three options the engine reads as one decision, so they are checked together.
+describe("Attribute placement matches the engine (task 8d)", () => {
+    const document = "<Root a=\"1\" b=\"2\"><Child x=\"1\"/><Child x=\"1\" y=\"2\" z=\"3\"><Leaf/></Child></Root>";
+    const combinations: Partial<ISettings>[] = [];
+    for (const positionFirstAttributeOnSameLine of [true, false]) {
+        for (const positionAllAttributesOnFirstLine of [false, true]) {
+            for (const attributesInNewlineThreshold of [1, 2]) {
+                for (const indentLength of [4, 2]) {
+                    combinations.push({
+                        positionFirstAttributeOnSameLine,
+                        positionAllAttributesOnFirstLine,
+                        attributesInNewlineThreshold,
+                        indentLength,
+                    });
+                }
+            }
+        }
+    }
+
+    it.each(combinations)("%o", async overrides => {
+        const expected = await engineOutput(document, overrides);
+        const rangeSettings = new Settings({ ...EngineFormatter.baselineSettings, ...overrides });
+        expect(new TextXmlFormatter(rangeSettings).formatXmlPretty(document)).toBe(expected);
+    }, 30000);
+});
+
+// No mixed content here - that is a known divergence of its own.
+describe("Options the tree unlocks match the engine (task 8d)", () => {
+    const indented = "<Root>\n    <A/>\n\n    <B>\n        <C/>\n        <D/>\n    </B>\n    <E><F/><G/><H/></E>\n    <!-- c -->\n    <I>t</I>\n</Root>";
+    const commented = "<Root><A/><!-- trailing -->\n    <!-- own line -->\n    <B><!-- first --></B>\n    <C/> <!-- spaced -->\n    <D>t</D><!-- after text element --></Root>";
+    const attributes = "<Root a=\"1\" b=\"2\"><Item x=\"1\" y=\"2\"/><Other x=\"1\" y=\"2\"/></Root>";
+
+    const cases: [string, string, Partial<ISettings>][] = [
+        ["blank lines between elements", indented, { addEmptyLineBetweenElements: true }],
+        ["blank lines only among more than two siblings", "<Root><A><B/><C/></A><D/></Root>", { addEmptyLineBetweenElements: true }],
+        ["comment placement", commented, { preserveCommentPlacement: true }],
+        ["comment placement, preserving new lines", commented, { preserveCommentPlacement: true, preserveNewLines: true }],
+        ["comment placement off", commented, { preserveCommentPlacement: false }],
+        ["an exception matching the whole name", attributes, { positionAllAttributesOnFirstLine: true, wildCardedExceptionsForPositionAllAttributesOnFirstLine: ["^Item$"] }],
+        ["an exception matching part of the name", attributes, { positionAllAttributesOnFirstLine: true, wildCardedExceptionsForPositionAllAttributesOnFirstLine: ["tem"] }],
+        ["an exception matching nothing", attributes, { positionAllAttributesOnFirstLine: true, wildCardedExceptionsForPositionAllAttributesOnFirstLine: ["Nope"] }],
+        ["apostrophes escaped", "<Root a=\"it's\" b='x'/>", { allowSingleQuoteInAttributeValue: false }],
+        ["apostrophes allowed", "<Root a=\"it's\" b='x'/>", { allowSingleQuoteInAttributeValue: true }],
+        ["declaration with a space added", "<?xml version=\"1.0\" encoding=\"utf-8\"?><Root/>", { addSpaceBeforeEndOfXmlDeclaration: true }],
+        ["declaration with its space removed", "<?xml version=\"1.0\" encoding=\"utf-8\" ?><Root/>", { addSpaceBeforeEndOfXmlDeclaration: false }],
+        ["text and empty elements inline", "<Root><A>t</A><B></B><C><![CDATA[x]]></C></Root>", { useSelfClosingTags: false }],
+    ];
+
+    it.each(cases)("%s", async (_name, document, overrides) => {
+        const expected = await engineOutput(document, overrides);
+        const rangeSettings = new Settings({ ...EngineFormatter.baselineSettings, ...overrides });
+        expect(new TextXmlFormatter(rangeSettings).formatXmlPretty(document)).toBe(expected);
+    }, 30000);
 });
 
 /*
