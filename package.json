@@ -252,7 +252,7 @@
         "@stylistic/eslint-plugin": "^5.10.0",
         "@types/node": "^24.13.5",
         "@types/vscode": "^1.125.0",
-        "@vscode/vsce": "^3.9.2",
+        "@vscode/vsce": "^4.0.0",
         "esbuild": "^0.28.2",
         "eslint": "^10.10.0",
         "ovsx": "^1.2.0",
@@ -260,7 +260,7 @@
         "typescript": "^6.0.3",
         "typescript-eslint": "^8.70.0",
         "vitest": "^4.1.11",
-        "webpack": "^5.111.0",
+        "webpack": "^5.111.1",
         "webpack-cli": "^7.2.3"
     },
     "dependencies": {
