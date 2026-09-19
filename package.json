@@ -122,7 +122,7 @@
                             4,
                             8
                         ],
-                        "markdownDescription": "No. of spaces for indentation. *Default* is *4*"
+                        "markdownDescription": "No. of spaces for indentation. *Default* is *4*. Format Selection indents by one tab per level instead when the editor is set to insert tabs."
                     },
                     "prettyxml.settings.useSingleQuotes": {
                         "type": "boolean",
