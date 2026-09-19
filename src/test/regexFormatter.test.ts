@@ -364,6 +364,11 @@ describe('TextXmlFormatter — a selection cut mid-token keeps its bytes (rule 5
     it('still indents leading text that is not a cut tag', () => {
         expect(format('  just text  <a/>', {}, 4)).toBe('    just text\n    <a />');
     });
+
+    // NBSP is content, not indentation: trimEnd() would delete it (#216).
+    it('keeps a non-breaking space at the end of the cut tag', () => {
+        expect(format('attr="x"> ')).toBe('attr="x"> ');
+    });
 });
 
 describe('TextXmlFormatter — xml:space="preserve" (rule 6)', () => {

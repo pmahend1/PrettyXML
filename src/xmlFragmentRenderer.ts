@@ -30,6 +30,8 @@ export class XmlFragmentRenderer {
 
     private static readonly xmlWhitespaceEdgeRegex = /^[ \t\r\n]+|[ \t\r\n]+$/gu;
 
+    private static readonly xmlWhitespaceTrailingRegex = /[ \t\r\n]+$/u;
+
     private static readonly xmlDeclarationRegex = /^<\?xml(\s[\s\S]*?)?\?>$/u;
 
     private readonly settings: Settings;
@@ -52,7 +54,7 @@ export class XmlFragmentRenderer {
         for (let index = 0; index < nodes.length; index++) {
             const node = nodes[index];
             if (index === 0 && XmlFragmentRenderer.isCutLeadingRun(node.token)) {
-                lines.push(node.token.text.trimEnd());
+                lines.push(node.token.text.replace(XmlFragmentRenderer.xmlWhitespaceTrailingRegex, ""));
             } else {
                 this.renderTree(lines, node, baseColumn, nodes[index - 1], trailingToken);
             }
