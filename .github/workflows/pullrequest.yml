@@ -2,8 +2,11 @@ name: Pull Request Checks
 
 on:
   pull_request:
+    # feature/** is here so a sub-task PR into a long-lived feature branch is checked before the
+    # branch reaches main. Without it the whole of task 8 would land as one unverified PR.
     branches:
       - main
+      - feature/**
   workflow_dispatch:
 
 permissions:

@@ -1,5 +1,21 @@
 # Change Log
 
+## Unreleased
+
+- Format Selection now indents the way the editor does - one tab per level in a tab-indented document, spaces otherwise - instead of always writing spaces. The width of a space indent is still [Indent Space Length](README.md#settings), so a selection matches what Format Document would have produced; continuation lines of a wrapped attribute list are aligned with spaces after the indent, because a column inside a tag cannot be written in tabs.
+- Format Selection now indents the whole selection from the indentation of its first line, so a selection taken from deep inside a document keeps the depth it sits at. Previously the starting depth was guessed from the selected text and a selection that began at a tag was formatted flush against the left margin.
+- Format Selection now applies settings it used to ignore: [Attributes In Newline Threshold](README.md#attributes-in-newline-threshold), Position First Attribute On Same Line, Position All Attributes On First Line together with its [exception list](README.md#wild-carded-exceptions-for-position-all-attributes-on-first-line), [Add Empty Line Between Elements](README.md#add-empty-line-between-elements), [Preserve Comment Line Placement](README.md#preserve-comment-placement), Allow Single Quote In Attribute Value, and Add Space Before End Of XML Declaration.
+- Adding an XML declaration, rewriting an empty element as self-closing, and escaping whitespace unicodes in attribute values are deliberately not applied to a selection - each of those settings now says so in its own description.
+- Format Selection now keeps an element with no content, or with a single line of text or CDATA in it, on one line with its tags, and leaves that text as written.
+- Format Selection now keeps the content of an element carrying `xml:space="preserve"` exactly as written, when that element is inside the selection.
+- Fixed Format Selection reading a `>` character inside an attribute value as the end of the tag, which mis-parsed everything after it. `<a b="x>y"/>` now formats correctly.
+- Fixed Format Selection indenting every line after a self-closing tag written with spaces before its closing bracket, such as `<a /  >`, one level too deep.
+- Fixed Format Selection closing the innermost element on any end tag, so `</b>` in a selection now closes the `b` it names, and an end tag naming nothing the selection opened is left where it is instead of shifting the lines after it.
+- Fixed Format Selection deleting a non-breaking space, or any other non-XML whitespace character, that stood alone between two elements or ended a selection that began in the middle of a tag.
+- Fixed Format Selection trimming and escaping inside a tag the selection cut through; those characters are now left exactly as they are.
+- Fixed Format Selection breaking an element that mixes text and markup onto one line per token. `<p>some <b>bold</b> text</p>` now stays on one line, and elsewhere the markup that a run of text joins together stays together, so re-formatting an already formatted selection no longer reflows it.
+- Fixed Format Selection emitting text that spans several lines as a single long line still carrying its original indentation. Each line is now re-indented to the depth its element sits at.
+
 ## Stable
 
 ## 7.0.0: 6-Sep-2026
