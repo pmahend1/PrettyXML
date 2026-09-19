@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { TextXmlFormatter } from '../regexFormatter';
 import { defaultSettings, Settings } from '../settings';
 
-function format(xml: string, overrides: Partial<Settings> = {}): string {
-    return new TextXmlFormatter({ ...defaultSettings, ...overrides }).formatXmlPretty(xml);
+function format(xml: string, overrides: Partial<Settings> = {}, baseColumn: number = 0): string {
+    return new TextXmlFormatter({ ...defaultSettings, ...overrides }).formatXmlPretty(xml, baseColumn);
 }
 
 /*
@@ -123,18 +123,16 @@ describe('TextXmlFormatter \u2014 escapeInvisibleNonAsciiCharacters', () => {
         expect(result).toContain('stra\u200B\u00DFe="1&#x200B;"');
     });
 
-    /*
-     * The #208 data loss and the reason escaping has to run before the trim: JS trim() counts NBSP
-     * as whitespace, so on a text run that is trimmed the edge character is deleted with the option
-     * off and survives with it on. A run that stays on its element's line is not trimmed at all.
-     */
+    // The #208 data loss: the trim takes XML whitespace only, so the edge character survives either
+    // way - escaped with the option on, literal with it off.
     it('keeps an invisible character at the edge of a text node', () => {
-        const dropped = format('<Root>\u00A0first\nsecond</Root>');
-        expect(dropped).toContain('first');
-        expect(dropped).not.toContain('\u00A0');
+        expect(format('<Root>\u00A0first\nsecond</Root>')).toContain('\u00A0first');
         expect(format('<Root>\u00A0first</Root>')).toBe('<Root>\u00A0first</Root>');
-
         expect(format('<Root>\u00A0first</Root>', escaping)).toContain('&#xA0;first');
+    });
+
+    it('keeps a text run made only of invisible characters between two elements', () => {
+        expect(format('<Root><A/>\u00A0<B/></Root>')).toBe('<Root>\n    <A />\n    \u00A0\n    <B />\n</Root>');
     });
 
     it('emits a text node made only of invisible characters, as the engine does', () => {
@@ -302,5 +300,105 @@ describe('TextXmlFormatter — options the tree unlocks', () => {
     ])('is idempotent under %o', settings => {
         const once = format('<?xml version="1.0"?><r><a b="it\'s"/><!-- x -->\n<c>t</c>\n\n<d/></r>', settings);
         expect(format(once, settings)).toBe(once);
+    });
+});
+
+describe('TextXmlFormatter — an end tag closes what it names (rule 2)', () => {
+    it('closes the element it names and leaves what was open inside it open', () => {
+        expect(format('<a><b></a><c/>')).toBe('<a>\n    <b>\n</a>\n<c />');
+    });
+
+    it('leaves an end tag naming nothing open at the depth it stands', () => {
+        expect(format('<a>x</z></a>')).toBe('<a>\n    x\n    </z>\n</a>');
+    });
+
+    it('does not step the depth back for an end tag that closes nothing', () => {
+        expect(format('</b></a><c/>', {}, 4)).toBe('    </b>\n    </a>\n    <c />');
+    });
+
+    it('opens a depth for a start tag the selection never closes (rule 3)', () => {
+        expect(format('<a><b>text')).toBe('<a>\n    <b>\n        text');
+    });
+});
+
+describe('TextXmlFormatter — the base column is passed in (rule 4)', () => {
+    it('writes every line from the base column', () => {
+        expect(format('<a><b/></a>', {}, 8)).toBe('        <a>\n            <b />\n        </a>');
+    });
+
+    it('no longer reads a starting depth out of the selected text', () => {
+        expect(format('        <a><b/></a>')).toBe('<a>\n    <b />\n</a>');
+    });
+
+    it('aligns wrapped attributes from the base column', () => {
+        expect(format('<a b="1" c="2"/>', {}, 4)).toBe('    <a b="1"\n       c="2" />');
+    });
+
+    it('is idempotent at a base column, indentation included', () => {
+        const once = format('<a><b>t</b>\n<c/></a>', {}, 4);
+        expect(format(once, {}, 4)).toBe(once);
+    });
+
+    it('drops a blank line the selection begins with', () => {
+        const settings = { preserveNewLines: true };
+        const once = format('\n\n<a/>\n\n<b/>', settings);
+        expect(once).toBe('<a />\n\n<b />');
+        expect(format(once, settings)).toBe(once);
+    });
+});
+
+describe('TextXmlFormatter — a selection cut mid-token keeps its bytes (rule 5)', () => {
+    it('leaves the front half of a tag exactly as it was', () => {
+        expect(format('<a><b attr="v  ')).toBe('<a>\n    <b attr="v  ');
+    });
+
+    it('does not escape inside the front half of a tag', () => {
+        const nbsp = '<a><b attr="\u00a0';
+        expect(format(nbsp, { escapeInvisibleNonAsciiCharacters: true })).toBe('<a>\n    <b attr="\u00a0');
+    });
+
+    it('leaves the tail of a tag the selection starts inside on its own line, unindented', () => {
+        expect(format(' x"><b/></a>', {}, 4)).toBe(' x">\n    <b />\n    </a>');
+    });
+
+    it('still indents leading text that is not a cut tag', () => {
+        expect(format('  just text  <a/>', {}, 4)).toBe('    just text\n    <a />');
+    });
+
+    // NBSP is content, not indentation: trimEnd() would delete it (#216).
+    it('keeps a non-breaking space at the end of the cut tag', () => {
+        expect(format('attr="x"> ')).toBe('attr="x"> ');
+    });
+});
+
+describe('TextXmlFormatter — xml:space="preserve" (rule 6)', () => {
+    it('keeps the content of the element carrying it as written', () => {
+        const xml = '<r><pre xml:space="preserve">  a\n   b  <i>x</i>  </pre><b/></r>';
+        expect(format(xml)).toBe('<r>\n    <pre xml:space="preserve">  a\n   b  <i>x</i>  </pre>\n    <b />\n</r>');
+    });
+
+    it('formats the preserving element\'s own start tag', () => {
+        expect(format('<a xml:space=\'preserve\'>  x  </a>')).toBe('<a xml:space="preserve">  x  </a>');
+    });
+
+    it('keeps the rest of the selection when the preserving element is never closed', () => {
+        expect(format('<r><pre xml:space="preserve">  a\n  b')).toBe('<r>\n    <pre xml:space="preserve">  a\n  b');
+    });
+
+    it('keeps the markup inside it as written too', () => {
+        expect(format('<r><pre xml:space="preserve"><a/>  <b/></pre></r>')).toBe('<r>\n    <pre xml:space="preserve"><a/>  <b/></pre>\n</r>');
+    });
+
+    it('does not read xml:space out of another attribute\'s value', () => {
+        expect(format('<a b="xml:space=\'preserve\'"><c/>  <d/></a>')).toBe('<a b="xml:space=\'preserve\'">\n    <c />\n    <d />\n</a>');
+    });
+
+    it('formats an element whose xml:space is default', () => {
+        expect(format('<r><pre xml:space="default"><a/>  <b/></pre></r>')).toBe('<r>\n    <pre xml:space="default">\n        <a />\n        <b />\n    </pre>\n</r>');
+    });
+
+    it('is idempotent', () => {
+        const once = format('<r><pre xml:space="preserve">  a\n   b  </pre><c/></r>');
+        expect(format(once)).toBe(once);
     });
 });

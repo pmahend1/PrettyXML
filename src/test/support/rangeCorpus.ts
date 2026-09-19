@@ -35,4 +35,8 @@ export const rangeCorpus: RangeCorpusEntry[] = [
     { name: "unclosed start tags", fragment: "<a><b>text" },
     { name: "selection ends mid-tag", fragment: "<a><b attr=\"v" },
     { name: "leading indentation on the first line", fragment: "        <a><b/></a>" },
+    { name: "end tag naming nothing the selection opened", fragment: "<a>x</z></a>" },
+    { name: "end tag closing past an element left open", fragment: "<a><b></a>" },
+    { name: "selection starts mid-tag", fragment: "attr=\"v\"><b/></a>" },
+    { name: "xml:space preserve over several lines", fragment: "<pre xml:space=\"preserve\">  a\n   b  </pre>" },
 ];

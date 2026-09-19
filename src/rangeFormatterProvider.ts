@@ -1,4 +1,4 @@
-import { CancellationToken, DocumentRangeFormattingEditProvider, FormattingOptions, ProviderResult, Range, TextDocument, TextEdit } from "vscode";
+import { CancellationToken, DocumentRangeFormattingEditProvider, FormattingOptions, Position, ProviderResult, Range, TextDocument, TextEdit } from "vscode";
 import { Formatter } from "./formatter";
 import { TextXmlFormatter } from "./regexFormatter";
 import { defaultSettings, Settings } from "./settings";
@@ -27,14 +27,10 @@ export class RangeFormatterProvider implements DocumentRangeFormattingEditProvid
 
     provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]> {
         if (document) {
-            const text = document.getText(range);
-            if (text) {
-                const settings = this.getSettings();
-                const regexFormatter = new TextXmlFormatter(settings);
-                let formattedText = regexFormatter.formatXmlPretty(text);
-                formattedText = this.appendEolIfNeeded(formattedText, text, document, range, settings);
-                const replacer = TextEdit.replace(range, formattedText);
-                return [replacer];
+            const settings = this.getSettings();
+            const edit = this.formatRange(document, range, new TextXmlFormatter(settings), settings);
+            if (edit !== undefined) {
+                return [edit];
             }
         }
         return [];
@@ -45,19 +41,35 @@ export class RangeFormatterProvider implements DocumentRangeFormattingEditProvid
             const currentSettings = this.getSettings();
             const regexFormatter = new TextXmlFormatter(currentSettings);
             const edits: TextEdit[] = [];
-            for (let i = 0; i < ranges.length; i++) {
-                const range = ranges[i];
-                const text = document.getText(range);
-                if (text) {
-                    let formattedText = regexFormatter.formatXmlPretty(text);
-                    formattedText = this.appendEolIfNeeded(formattedText, text, document, range, currentSettings);
-                    const replacer = TextEdit.replace(range, formattedText);
-                    edits.push(replacer);
+            for (const range of ranges) {
+                const edit = this.formatRange(document, range, regexFormatter, currentSettings);
+                if (edit !== undefined) {
+                    edits.push(edit);
                 }
             }
             return edits;
         }
         return [];
+    }
+
+    /*
+     * The formatter indents from a base column rather than guessing one out of the selected text, so
+     * a selection preceded only by whitespace is widened to cover that indentation - otherwise the
+     * replacement would sit after indentation it cannot see and the first line would keep whatever
+     * width it had. A selection starting mid-line is left where the user drew it and starts at zero.
+     */
+    private formatRange(document: TextDocument, range: Range, formatter: TextXmlFormatter, settings: Settings): TextEdit | undefined {
+        const indentationWidth = document.lineAt(range.start.line).firstNonWhitespaceCharacterIndex;
+        const startsInIndentation = range.start.character <= indentationWidth;
+        const editedRange = startsInIndentation ? range.with(new Position(range.start.line, 0)) : range;
+
+        const text = document.getText(editedRange);
+        if (text.length === 0) {
+            return undefined;
+        }
+
+        const formattedText = formatter.formatXmlPretty(text, startsInIndentation ? indentationWidth : 0);
+        return TextEdit.replace(editedRange, this.appendEolIfNeeded(formattedText, text, document, editedRange, settings));
     }
 
     private appendEolIfNeeded(formattedText: string, originalText: string, document: TextDocument, range: Range, settings: Settings): string {

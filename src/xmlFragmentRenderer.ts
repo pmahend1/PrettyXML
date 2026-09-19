@@ -1,12 +1,12 @@
 import { Settings } from "./settings";
 import { XmlFragmentNode } from "./xmlFragmentNode";
+import { XmlFragmentParser } from "./xmlFragmentParser";
 import { XmlFragmentToken } from "./xmlFragmentToken";
 import { XmlFragmentTokenKind } from "./xmlFragmentTokenKind";
 
 /*
  * Writes a parsed selection back out, one piece of markup per line. Every element's content sits
- * one level deeper than its tags, and the only depth that is not carried by the tree is the one the
- * selection starts at - which an end tag that closed nothing inside the selection steps back out of.
+ * one level deeper than its tags, and the column the selection starts at is passed in, not guessed.
  */
 export class XmlFragmentRenderer {
 
@@ -25,8 +25,12 @@ export class XmlFragmentRenderer {
 
     private static readonly attributeRegex = /([^\s=]+)(?:\s*=\s*("[^"]*"|'[^']*'|[^\s"'=<>`]+))?/gu;
 
-    // XML whitespace only - NBSP is text to the engine.
+    // XML whitespace only - NBSP is text to the engine, and trim() would delete it.
     private static readonly xmlWhitespaceRegex = /^[ \t\r\n]*$/u;
+
+    private static readonly xmlWhitespaceEdgeRegex = /^[ \t\r\n]+|[ \t\r\n]+$/gu;
+
+    private static readonly xmlWhitespaceTrailingRegex = /[ \t\r\n]+$/u;
 
     private static readonly xmlDeclarationRegex = /^<\?xml(\s[\s\S]*?)?\?>$/u;
 
@@ -41,28 +45,22 @@ export class XmlFragmentRenderer {
         this.allAttributesOnFirstLineExceptions = XmlFragmentRenderer.compilePatterns(settings.wildCardedExceptionsForPositionAllAttributesOnFirstLine ?? []);
     }
 
-    public render(nodes: readonly XmlFragmentNode[], startLevel: number): string {
+    // `baseColumn` is the column the selection's first line starts at; every line is written from it.
+    public render(nodes: readonly XmlFragmentNode[], baseColumn: number): string {
         const lines: string[] = [];
         const trailingToken = XmlFragmentRenderer.findLastToken(nodes);
         const siblingCount = XmlFragmentRenderer.countSiblings(nodes);
-        let level = startLevel;
-        let isLeading = true;
 
         for (let index = 0; index < nodes.length; index++) {
             const node = nodes[index];
-            if (node.token.kind === XmlFragmentTokenKind.endTag) {
-                level = Math.max(level - 1, 0);
-                lines.push(this.indentation(level * this.indentSize) + node.token.text);
+            if (index === 0 && XmlFragmentRenderer.isCutLeadingRun(node.token)) {
+                lines.push(node.token.text.replace(XmlFragmentRenderer.xmlWhitespaceTrailingRegex, ""));
             } else {
-                this.renderTree(lines, node, level, nodes[index - 1], isLeading, trailingToken);
+                this.renderTree(lines, node, baseColumn, nodes[index - 1], trailingToken);
             }
 
             if (this.isBlankLineAfter(nodes, index, siblingCount)) {
                 XmlFragmentRenderer.pushBlankLine(lines);
-            }
-
-            if (XmlFragmentRenderer.isTextRun(node.token) === false) {
-                isLeading = false;
             }
         }
 
@@ -73,48 +71,47 @@ export class XmlFragmentRenderer {
         return lines.join("\n");
     }
 
+    // Rule 5: a leading run carrying a `>` is the tail of a tag the selection cut through, so it
+    // goes out as it came in. The cost is that leading character data with a bare `>` does too.
+    private static isCutLeadingRun(token: XmlFragmentToken): boolean {
+        return token.kind === XmlFragmentTokenKind.text && token.offset === 0 && token.text.includes(">");
+    }
+
     /*
      * Walks the tree depth-first with an explicit stack rather than by recursion: a selection nested
      * a few thousand levels deep overflowed the call stack, where the flat scanner this replaced
      * formatted it. An element's end tag is pushed as a leaf beneath its children, so everything
      * comes off the stack in document order.
      *
-     * `isLeading` marks a root that is a text run ahead of the selection's first piece of markup. It
-     * sits one level out: it is content of whatever element encloses the selection, not of anything
-     * the selection opened. A null node is a blank line.
+     * A null node is a blank line.
      */
     private renderTree(
         lines: string[],
         root: XmlFragmentNode,
-        rootLevel: number,
+        rootColumn: number,
         rootPreviousSibling: XmlFragmentNode | undefined,
-        isLeading: boolean,
         trailingToken: XmlFragmentToken | undefined
     ): void {
-        const pending: [XmlFragmentNode | null, number, XmlFragmentNode | undefined][] = [[root, rootLevel, rootPreviousSibling]];
+        const pending: [XmlFragmentNode | null, number, XmlFragmentNode | undefined][] = [[root, rootColumn, rootPreviousSibling]];
 
         for (let step = pending.pop(); step !== undefined; step = pending.pop()) {
-            const [node, level, previousSibling] = step;
+            const [node, column, previousSibling] = step;
             if (node === null) {
                 XmlFragmentRenderer.pushBlankLine(lines);
                 continue;
             }
 
             const token = node.token;
-            const column = level * this.indentSize;
 
             switch (token.kind) {
-                /*
-                 * An unterminated run is the front half of a tag the selection cut through. It is
-                 * emitted as the text it currently is; giving it a shape of its own is rule 5, which
-                 * belongs to 8e.
-                 */
                 case XmlFragmentTokenKind.text:
-                case XmlFragmentTokenKind.unterminated: {
-                    const textLevel = node === root && isLeading && level > 0 ? level - 1 : level;
-                    this.appendTextRun(lines, token.text, textLevel * this.indentSize, token === trailingToken);
+                    this.appendTextRun(lines, token.text, column, token === trailingToken);
                     break;
-                }
+
+                // Rule 5 at the other end: the front half of a cut tag, indented but never rewritten.
+                case XmlFragmentTokenKind.unterminated:
+                    lines.push(this.indentation(column) + token.text);
+                    break;
 
                 case XmlFragmentTokenKind.comment:
                     if (this.keepsCommentOnPreviousLine(lines, previousSibling)) {
@@ -126,6 +123,11 @@ export class XmlFragmentRenderer {
 
                 case XmlFragmentTokenKind.startTag: {
                     const formattedTag = this.indentation(column) + this.formatTag(token, column);
+                    if (XmlFragmentRenderer.preservesWhiteSpace(token)) {
+                        lines.push(formattedTag + XmlFragmentRenderer.readSourceText(node));
+                        break;
+                    }
+
                     const inlineContent = this.readInlineContent(node);
                     if (node.endTag !== null && inlineContent !== null) {
                         lines.push(formattedTag + inlineContent + node.endTag.text);
@@ -134,14 +136,15 @@ export class XmlFragmentRenderer {
 
                     lines.push(formattedTag);
                     if (node.endTag !== null) {
-                        pending.push([XmlFragmentRenderer.leaf(node.endTag), level, undefined]);
+                        pending.push([XmlFragmentRenderer.leaf(node.endTag), column, undefined]);
                     }
+                    const childColumn = column + this.indentSize;
                     const siblingCount = XmlFragmentRenderer.countSiblings(node.children);
                     for (let index = node.children.length - 1; index >= 0; index--) {
                         if (this.isBlankLineAfter(node.children, index, siblingCount)) {
-                            pending.push([null, level + 1, undefined]);
+                            pending.push([null, childColumn, undefined]);
                         }
-                        pending.push([node.children[index], level + 1, node.children[index - 1]]);
+                        pending.push([node.children[index], childColumn, node.children[index - 1]]);
                     }
                     break;
                 }
@@ -176,12 +179,39 @@ export class XmlFragmentRenderer {
         return node?.token.kind === XmlFragmentTokenKind.text && XmlFragmentRenderer.xmlWhitespaceRegex.test(node.token.text);
     }
 
+    /*
+     * Rule 6. The attributes are read rather than the tag searched, because a selection cut through
+     * a tag can leave xml:space="preserve" sitting inside some other attribute's value - and then
+     * the next format, which requotes that value, would not find it again. An ancestor carrying it
+     * from outside the selection is invisible here - see the README.
+     */
+    private static preservesWhiteSpace(startTag: XmlFragmentToken): boolean {
+        if (startTag.text.includes("xml:space") === false) {
+            return false;
+        }
+
+        const attributeText = startTag.text.match(XmlFragmentRenderer.tagPartsRegex)?.[2] ?? "";
+        for (const [, name, value] of attributeText.matchAll(XmlFragmentRenderer.attributeRegex)) {
+            if (name === "xml:space") {
+                return value === "\"preserve\"" || value === "'preserve'" || value === "preserve";
+            }
+        }
+        return false;
+    }
+
+    // An element's content and end tag as the selection wrote them.
+    private static readSourceText(element: XmlFragmentNode): string {
+        const content = XmlFragmentParser.flatten(element.children).map(token => token.text).join("");
+        return content + (element.endTag?.text ?? "");
+    }
+
     private static isElement(node: XmlFragmentNode): boolean {
         return node.token.kind === XmlFragmentTokenKind.startTag || node.token.kind === XmlFragmentTokenKind.selfClosingTag;
     }
 
+    // A blank first line separates nothing, and a second format would not find it again.
     private static pushBlankLine(lines: string[]): void {
-        if (lines.at(-1) !== "") {
+        if (lines.length > 0 && lines.at(-1) !== "") {
             lines.push("");
         }
     }
@@ -283,15 +313,13 @@ export class XmlFragmentRenderer {
     }
 
     /*
-     * Escaping runs before the trim, and that ordering is the whole point of the option: trim()
-     * counts NBSP and the rest of Zs as whitespace, so an invisible character at the edge of a text
-     * node would be deleted rather than escaped - the #208 data loss. A character reference is not
-     * whitespace and survives. The consequence to expect is that a node made only of invisible
-     * characters stops being empty while the option is on; the engine does the same.
+     * Only XML's own four whitespace characters are trimmed. JavaScript's trim() counts NBSP and the
+     * rest of Zs as whitespace and would delete a text run made of them - rule 1 says nothing is
+     * deleted, and the engine reads them as text too.
      */
     private appendTextRun(lines: string[], rawText: string, column: number, isTrailing: boolean): void {
         const escaped = this.escapeInvisibleNonAscii(rawText);
-        const text = escaped.trim();
+        const text = escaped.replace(XmlFragmentRenderer.xmlWhitespaceEdgeRegex, "");
         if (text !== "") {
             lines.push(this.indentation(column) + text);
             return;
