@@ -125,12 +125,14 @@ describe('TextXmlFormatter \u2014 escapeInvisibleNonAsciiCharacters', () => {
 
     /*
      * The #208 data loss and the reason escaping has to run before the trim: JS trim() counts NBSP
-     * as whitespace, so the edge character is deleted with the option off and survives with it on.
+     * as whitespace, so on a text run that is trimmed the edge character is deleted with the option
+     * off and survives with it on. A run that stays on its element's line is not trimmed at all.
      */
     it('keeps an invisible character at the edge of a text node', () => {
-        const dropped = format('<Root>\u00A0first</Root>');
+        const dropped = format('<Root>\u00A0first\nsecond</Root>');
         expect(dropped).toContain('first');
         expect(dropped).not.toContain('\u00A0');
+        expect(format('<Root>\u00A0first</Root>')).toBe('<Root>\u00A0first</Root>');
 
         expect(format('<Root>\u00A0first</Root>', escaping)).toContain('&#xA0;first');
     });
@@ -205,10 +207,100 @@ describe('TextXmlFormatter — deep nesting', () => {
 
     it('formats a closed selection nested deeper than the call stack reaches', () => {
         const xml = '<a>'.repeat(depth) + 'x' + '</a>'.repeat(depth);
-        expect(format(xml, flat)).toBe('<a>\n'.repeat(depth) + 'x' + '\n</a>'.repeat(depth));
+        expect(format(xml, flat)).toBe('<a>\n'.repeat(depth - 1) + '<a>x</a>' + '\n</a>'.repeat(depth - 1));
     });
 
     it('formats an unclosed selection nested deeper than the call stack reaches', () => {
         expect(format('<a>'.repeat(depth) + 'x', flat)).toBe('<a>\n'.repeat(depth) + 'x');
+    });
+});
+
+describe('TextXmlFormatter — positionFirstAttributeOnSameLine', () => {
+    const own = { positionFirstAttributeOnSameLine: false };
+
+    it('puts every attribute on a line of its own, one indent in', () => {
+        expect(format('<r><a b="1" c="2"/></r>', own)).toBe('<r>\n    <a\n        b="1"\n        c="2" />\n</r>');
+    });
+
+    it('wraps a single attribute too, because the threshold does not apply', () => {
+        expect(format('<a b="1"/>', { ...own, attributesInNewlineThreshold: 5 })).toBe('<a\n    b="1" />');
+    });
+
+    it('closes a start tag with content after its last attribute', () => {
+        expect(format('<a b="1"><c/></a>', { ...own, indentLength: 2 })).toBe('<a\n  b="1">\n  <c />\n</a>');
+    });
+
+    it('leaves an element without attributes on one line', () => {
+        expect(format('<a/>', own)).toBe('<a />');
+    });
+
+    it('is overridden by positionAllAttributesOnFirstLine', () => {
+        expect(format('<a b="1" c="2"/>', { ...own, positionAllAttributesOnFirstLine: true })).toBe('<a b="1" c="2" />');
+    });
+
+    it('keeps the threshold and alignment when on', () => {
+        expect(format('<a b="1" c="2"/>', { attributesInNewlineThreshold: 2 })).toBe('<a b="1" c="2" />');
+        expect(format('<a b="1" c="2"/>', { attributesInNewlineThreshold: 1 })).toBe('<a b="1"\n   c="2" />');
+    });
+
+    it('is idempotent', () => {
+        const once = format('<r><a b="1" c="2"><d e="3"/></a></r>', own);
+        expect(format(once, own)).toBe(once);
+    });
+});
+
+describe('TextXmlFormatter — options the tree unlocks', () => {
+    it('keeps a text-only element on one line and its text as written', () => {
+        expect(format('<r><b> t </b></r>')).toBe('<r>\n    <b> t </b>\n</r>');
+    });
+
+    it('does not self-close an empty element', () => {
+        expect(format('<a></a>', { useSelfClosingTags: true })).toBe('<a></a>');
+    });
+
+    it('treats an invalid exception pattern as matching nothing', () => {
+        const settings = { positionAllAttributesOnFirstLine: true, wildCardedExceptionsForPositionAllAttributesOnFirstLine: ['('] };
+        expect(format('<a b="1" c="2"/>', settings)).toBe('<a b="1" c="2" />');
+    });
+
+    it('leaves a comment that starts the selection on its own line', () => {
+        expect(format('<!-- c --><a/>', { preserveCommentPlacement: true })).toBe('<!-- c -->\n<a />');
+    });
+
+    it('does not escape apostrophes in a single-quoted value', () => {
+        expect(format('<a c="it\'s"/>', { allowSingleQuoteInAttributeValue: false, useSingleQuotes: true })).toBe('<a c="it\'s" />');
+    });
+
+    it('leaves a processing instruction that is not the declaration alone', () => {
+        expect(format('<?xml-stylesheet href="a.xsl"?>', { addSpaceBeforeEndOfXmlDeclaration: true })).toBe('<?xml-stylesheet href="a.xsl"?>');
+    });
+
+    /*
+     * The engine counts indentation as siblings under preserveNewLines, so it adds a blank line
+     * before a closing tag on the second format. The range formatter ignores that whitespace.
+     */
+    it('adds no blank line before a closing tag when preserving new lines', () => {
+        const settings = { addEmptyLineBetweenElements: true, preserveNewLines: true };
+        expect(format('<r>\n    <a/>\n    <b/>\n    <c/>\n</r>', settings)).toBe('<r>\n    <a />\n\n    <b />\n\n    <c />\n</r>');
+    });
+
+    it('keeps a comment on its element\'s line rather than after a blank line', () => {
+        const settings = { addEmptyLineBetweenElements: true, preserveCommentPlacement: true };
+        expect(format('<r><a/> <!-- x --><b/><c/></r>', settings)).toBe('<r>\n    <a /><!-- x -->\n    <b />\n\n    <c />\n</r>');
+    });
+
+    it('never writes two blank lines in a row', () => {
+        const result = format('<r><a/>\n\n\n<b/>\n\n<c/></r>', { addEmptyLineBetweenElements: true, preserveNewLines: true });
+        expect(result).not.toContain('\n\n\n');
+    });
+
+    it.each([
+        { addEmptyLineBetweenElements: true, preserveNewLines: true },
+        { preserveCommentPlacement: true },
+        { allowSingleQuoteInAttributeValue: false },
+        { addSpaceBeforeEndOfXmlDeclaration: true },
+    ])('is idempotent under %o', settings => {
+        const once = format('<?xml version="1.0"?><r><a b="it\'s"/><!-- x -->\n<c>t</c>\n\n<d/></r>', settings);
+        expect(format(once, settings)).toBe(once);
     });
 });
