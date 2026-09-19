@@ -1,5 +1,13 @@
 # Change Log
 
+## Unreleased
+
+- Format Selection now indents the whole selection from the indentation of its first line, so a selection taken from deep inside a document keeps the depth it sits at. Previously the starting depth was guessed from the selected text and a selection that began at a tag was formatted flush against the left margin.
+- Format Selection now keeps the content of an element carrying `xml:space="preserve"` exactly as written, when that element is inside the selection.
+- Fixed Format Selection closing the innermost element on any end tag, so `</b>` in a selection now closes the `b` it names, and an end tag naming nothing the selection opened is left where it is instead of shifting the lines after it.
+- Fixed Format Selection deleting a non-breaking space, or any other non-XML whitespace character, that stood alone between two elements.
+- Fixed Format Selection trimming and escaping inside a tag the selection cut through; those characters are now left exactly as they are.
+
 ## Stable
 
 ## 7.0.0: 6-Sep-2026

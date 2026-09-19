@@ -77,6 +77,9 @@ Right Click and Select Prettify XML or use [shortcut](#keyboard-shortcuts)
 ### 1.b. Format Selection - Beta
 
 - Lets you format part of an XML document. XML can be partial and invalid. This is in beta, so feel free to submit pull request with improvements.
+- The selection is indented from the indentation of its first line, so it keeps the depth it sits at in the document.
+- Nothing is added or removed. An end tag closes the element it names, an element the selection leaves open keeps its content indented under it, and a selection that starts or ends in the middle of a tag keeps those characters as they are.
+- Content of an element carrying `xml:space="preserve"` is left as written when that element is inside the selection.
 
 ![Format Selection Screenshot](./images/FormatSelection.png)
   
@@ -455,6 +458,8 @@ For VSCodium - [open-vsx.org](https://open-vsx.org/extension/PrateekMahendrakar/
 
 - Limited DTD support.
 - Formats valid XML files only. Syntax errors are displayed.
+- Format Selection can only see what is selected, so `xml:space="preserve"` on an element outside the selection is not honored - select that element too if its content must be left alone.
+- Format Selection indents with spaces even in a tab-indented document.
 
 Issues can be reported at [issues section](https://github.com/pmahend1/PrettyXML/issues)
 

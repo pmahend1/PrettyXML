@@ -8,7 +8,7 @@ function parse(xml: string): XmlFragmentNode[] {
     return XmlFragmentParser.parse(XmlFragmentTokenizer.tokenize(xml));
 }
 
-/** The tree as nested text, so a test reads as the shape it asserts. */
+// The tree as nested text, so a test reads as the shape it asserts.
 function shape(nodes: XmlFragmentNode[]): unknown[] {
     return nodes.map(node => {
         if (node.children.length === 0 && node.endTag === null) {
@@ -38,10 +38,7 @@ describe("XmlFragmentParser - the tree a balanced selection builds", () => {
     });
 });
 
-/*
- * The parser never throws and never drops a token. What it does with a fragment the selection cut
- * through is 8c's, output-identical to the flat scanner; the name-aware closing of rule 2 is 8e's.
- */
+// The parser never throws and never drops a token, and it closes by name - rule 2.
 describe("XmlFragmentParser - an incomplete selection", () => {
     it("leaves an element the selection does not close open", () => {
         expect(shape(parse("<a><b>text"))).toEqual([["<a>", [["<b>", ["text"], null]], null]]);
@@ -51,8 +48,16 @@ describe("XmlFragmentParser - an incomplete selection", () => {
         expect(shape(parse("</b></a><c/>"))).toEqual(["</b>", "</a>", "<c/>"]);
     });
 
-    it("closes the innermost open element whatever the end tag's name", () => {
-        expect(shape(parse("<a><b></z>x"))).toEqual([["<a>", [["<b>", [], "</z>"], "x"], null]]);
+    it("closes the element the end tag names, leaving what was open inside it open", () => {
+        expect(shape(parse("<a><b></a>x"))).toEqual([["<a>", ["<b>"], "</a>"], "x"]);
+    });
+
+    it("closes the innermost element of that name", () => {
+        expect(shape(parse("<a><a></a></a>"))).toEqual([["<a>", [["<a>", [], "</a>"]], "</a>"]]);
+    });
+
+    it("keeps an end tag naming nothing open where it stands", () => {
+        expect(shape(parse("<a><b></z>x"))).toEqual([["<a>", [["<b>", ["</z>", "x"], null]], null]]);
     });
 
     it("keeps a run the selection cut mid-tag inside the element it was in", () => {
