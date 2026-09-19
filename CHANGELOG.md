@@ -2,11 +2,14 @@
 
 ## Unreleased
 
+- Format Selection now indents the way the editor does - one tab per level in a tab-indented document, spaces otherwise - instead of always writing spaces. The width of a space indent is still [Indent Space Length](README.md#settings), so a selection matches what Format Document would have produced; continuation lines of a wrapped attribute list are aligned with spaces after the indent, because a column inside a tag cannot be written in tabs.
 - Format Selection now indents the whole selection from the indentation of its first line, so a selection taken from deep inside a document keeps the depth it sits at. Previously the starting depth was guessed from the selected text and a selection that began at a tag was formatted flush against the left margin.
 - Format Selection now keeps the content of an element carrying `xml:space="preserve"` exactly as written, when that element is inside the selection.
 - Fixed Format Selection closing the innermost element on any end tag, so `</b>` in a selection now closes the `b` it names, and an end tag naming nothing the selection opened is left where it is instead of shifting the lines after it.
-- Fixed Format Selection deleting a non-breaking space, or any other non-XML whitespace character, that stood alone between two elements.
+- Fixed Format Selection deleting a non-breaking space, or any other non-XML whitespace character, that stood alone between two elements or ended a selection that began in the middle of a tag.
 - Fixed Format Selection trimming and escaping inside a tag the selection cut through; those characters are now left exactly as they are.
+- Fixed Format Selection breaking an element that mixes text and markup onto one line per token. `<p>some <b>bold</b> text</p>` now stays on one line, and elsewhere the markup that a run of text joins together stays together, so re-formatting an already formatted selection no longer reflows it.
+- Fixed Format Selection emitting text that spans several lines as a single long line still carrying its original indentation. Each line is now re-indented to the depth its element sits at.
 
 ## Stable
 

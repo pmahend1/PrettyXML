@@ -1,9 +1,17 @@
 import { describe, it, expect } from 'vitest';
+import { IndentationStyle } from '../indentationStyle';
 import { TextXmlFormatter } from '../regexFormatter';
 import { defaultSettings, Settings } from '../settings';
 
 function format(xml: string, overrides: Partial<Settings> = {}, baseColumn: number = 0): string {
-    return new TextXmlFormatter({ ...defaultSettings, ...overrides }).formatXmlPretty(xml, baseColumn);
+    const settings = { ...defaultSettings, ...overrides };
+    return new TextXmlFormatter(settings).formatXmlPretty(xml, IndentationStyle.spaces(settings.indentLength, baseColumn));
+}
+
+// The same formatter with the editor's indentation: a tab per level, from whatever the base is.
+function formatWithTabs(xml: string, baseIndent: string = '', overrides: Partial<Settings> = {}): string {
+    const settings = { ...defaultSettings, ...overrides };
+    return new TextXmlFormatter(settings).formatXmlPretty(xml, new IndentationStyle(baseIndent, '\t'));
 }
 
 /*
@@ -131,8 +139,11 @@ describe('TextXmlFormatter \u2014 escapeInvisibleNonAsciiCharacters', () => {
         expect(format('<Root>\u00A0first</Root>', escaping)).toContain('&#xA0;first');
     });
 
+    // NBSP is character data, not the whitespace between two tags, so the run makes this mixed
+    // content and glues the two elements onto one line. The engine reads it the same way.
     it('keeps a text run made only of invisible characters between two elements', () => {
-        expect(format('<Root><A/>\u00A0<B/></Root>')).toBe('<Root>\n    <A />\n    \u00A0\n    <B />\n</Root>');
+        expect(format('<Root><A/>\u00A0<B/></Root>')).toBe('<Root>\n    <A />\u00A0<B />\n</Root>');
+        expect(format('<Root><A/>\u00A0<B/></Root>', escaping)).toBe('<Root>\n    <A />&#xA0;<B />\n</Root>');
     });
 
     it('emits a text node made only of invisible characters, as the engine does', () => {
@@ -347,6 +358,49 @@ describe('TextXmlFormatter — the base column is passed in (rule 4)', () => {
     });
 });
 
+describe('TextXmlFormatter — the indentation character comes from the caller', () => {
+    it('writes one tab per level when a tab is the unit', () => {
+        expect(formatWithTabs('<a><b/></a>')).toBe('<a>\n\t<b />\n</a>');
+    });
+
+    it('writes every line from a tab base indent', () => {
+        expect(formatWithTabs('<a><b/></a>', '\t\t')).toBe('\t\t<a>\n\t\t\t<b />\n\t\t</a>');
+    });
+
+    it('is idempotent under tabs, base indent included', () => {
+        const once = formatWithTabs('<a><b>t</b>\n<c/></a>', '\t');
+        expect(formatWithTabs(once, '\t')).toBe(once);
+    });
+
+    /*
+     * A wrapped attribute list is the one place a tab cannot say what is meant: the continuation
+     * has to start at a column inside the start tag. It carries the element's own indentation and
+     * then spaces, so the two lines line up however wide the editor draws a tab.
+     */
+    it('aligns a wrapped attribute list with spaces under a tab indent', () => {
+        expect(formatWithTabs('<a b="1" c="2"/>', '\t')).toBe('\t<a b="1"\n\t   c="2" />');
+    });
+
+    it('is idempotent with a wrapped attribute list under tabs', () => {
+        const once = formatWithTabs('<r><a b="1" c="2"><d/></a></r>', '\t');
+        expect(once).toBe('\t<r>\n\t\t<a b="1"\n\t\t   c="2">\n\t\t\t<d />\n\t\t</a>\n\t</r>');
+        expect(formatWithTabs(once, '\t')).toBe(once);
+    });
+
+    it('indents an attribute list of its own onto the next level in tabs', () => {
+        const settings = { positionFirstAttributeOnSameLine: false };
+        expect(formatWithTabs('<a b="1" c="2"/>', '', settings)).toBe('<a\n\tb="1"\n\tc="2" />');
+    });
+
+    // The base is the first line's whitespace as written, so a space-indented line in a
+    // tab-indented document keeps its spaces rather than being re-measured into tabs.
+    it('keeps a base indent that disagrees with the unit exactly as it was', () => {
+        const once = formatWithTabs('<a><b/></a>', '  ');
+        expect(once).toBe('  <a>\n  \t<b />\n  </a>');
+        expect(formatWithTabs(once, '  ')).toBe(once);
+    });
+});
+
 describe('TextXmlFormatter — a selection cut mid-token keeps its bytes (rule 5)', () => {
     it('leaves the front half of a tag exactly as it was', () => {
         expect(format('<a><b attr="v  ')).toBe('<a>\n    <b attr="v  ');
@@ -365,9 +419,10 @@ describe('TextXmlFormatter — a selection cut mid-token keeps its bytes (rule 5
         expect(format('  just text  <a/>', {}, 4)).toBe('    just text\n    <a />');
     });
 
-    // NBSP is content, not indentation: trimEnd() would delete it (#216).
+    // NBSP is content, not indentation: trimEnd() would delete it (#216). XML whitespace still goes.
     it('keeps a non-breaking space at the end of the cut tag', () => {
         expect(format('attr="x"> ')).toBe('attr="x"> ');
+        expect(format('attr="x">  ')).toBe('attr="x">');
     });
 });
 
@@ -400,5 +455,172 @@ describe('TextXmlFormatter — xml:space="preserve" (rule 6)', () => {
     it('is idempotent', () => {
         const once = format('<r><pre xml:space="preserve">  a\n   b  </pre><c/></r>');
         expect(format(once)).toBe(once);
+    });
+});
+
+/*
+ * Mixed content - character data beside markup. The engine keeps such an element on one line and
+ * that much is followed; what is not followed is its layout once the content will not fit, where
+ * its indentation never recovers from the first newline it writes. See the divergences below.
+ */
+describe('TextXmlFormatter — mixed content', () => {
+    it('keeps an element mixing text and markup on one line', () => {
+        expect(format('<p>some <b>bold</b> text</p>')).toBe('<p>some <b>bold</b> text</p>');
+    });
+
+    it('keeps several children and the text between them on one line', () => {
+        expect(format('<p>a <b>x</b> mid <i>y</i> z</p>')).toBe('<p>a <b>x</b> mid <i>y</i> z</p>');
+    });
+
+    it('keeps nested mixed content on one line', () => {
+        expect(format('<p>a <b>bold <i>it</i> tail</b> z</p>')).toBe('<p>a <b>bold <i>it</i> tail</b> z</p>');
+    });
+
+    it('formats the markup it keeps inline rather than copying it', () => {
+        expect(format('<p>a <br/> b</p>')).toBe('<p>a <br /> b</p>');
+        expect(format('<p>a <b id=\'1\'>x</b> c</p>', { useSingleQuotes: false })).toBe('<p>a <b id="1">x</b> c</p>');
+    });
+
+    it('keeps a comment and a CDATA section inline beside text', () => {
+        expect(format('<p>a <!--   c   --> b</p>')).toBe('<p>a <!-- c --> b</p>');
+        expect(format('<p>a <![CDATA[raw]]> b</p>')).toBe('<p>a <![CDATA[raw]]> b</p>');
+    });
+
+    it('indents an inline element normally when it sits in a tree', () => {
+        expect(format('<r><p>a <b>c</b> d</p><q><s/></q></r>'))
+            .toBe('<r>\n    <p>a <b>c</b> d</p>\n    <q>\n        <s />\n    </q>\n</r>');
+    });
+
+    // The whitespace a formatted document puts between its elements is not character data.
+    it('does not read the whitespace between two elements as mixed content', () => {
+        expect(format('<p><a/> <b/></p>')).toBe('<p>\n    <a />\n    <b />\n</p>');
+        expect(format('<p><a/>\n<b/></p>')).toBe('<p>\n    <a />\n    <b />\n</p>');
+    });
+
+    it('lays out an element whose content is all markup as a block', () => {
+        expect(format('<p><b>x</b><i>y</i></p>')).toBe('<p>\n    <b>x</b>\n    <i>y</i>\n</p>');
+    });
+
+    it('breaks out an element whose inline content will not fit on one line', () => {
+        expect(format('<p>a <b>x\ny</b> z</p>')).toBe('<p>\n    a\n    <b>\n        x\n        y\n    </b>\n    z\n</p>');
+    });
+
+    it('leaves a child carrying xml:space="preserve" to rule 6 rather than inlining it', () => {
+        expect(format('<p>a <pre xml:space="preserve">  x  </pre> b</p>'))
+            .toBe('<p>\n    a\n    <pre xml:space="preserve">  x  </pre>\n    b\n</p>');
+    });
+
+    it('does not inline a child whose attributes wrapped over several lines', () => {
+        const wrapped = format('<p>a <b x="1" y="2" z="3">t</b> c</p>', { attributesInNewlineThreshold: 1 });
+        expect(wrapped).toBe('<p>\n    a\n    <b x="1"\n       y="2"\n       z="3">t</b>\n    c\n</p>');
+    });
+
+    // A run of markup glued together by the text between it shares one line, as in the engine.
+    it('starts a line for a child that does not follow text', () => {
+        expect(format('<r><a/>x<b/></r>')).toBe('<r>\n    <a />x<b />\n</r>');
+        expect(format('<r><a/>x<b/><c/></r>')).toBe('<r>\n    <a />x<b />\n    <c />\n</r>');
+        expect(format('<r><a/><b/>x<c/></r>')).toBe('<r>\n    <a />\n    <b />x<c />\n</r>');
+    });
+
+    it('keeps leading character data on the start tag\'s line', () => {
+        expect(format('<p>some <b>bold</b></p>')).toBe('<p>some <b>bold</b>\n</p>');
+        expect(format('<r>x<a/><b/></r>')).toBe('<r>x<a />\n    <b />\n</r>');
+    });
+
+    /*
+     * The one place the grouped layout departs from the engine: it glues its end tag to trailing
+     * text and never recovers from that - `<r><p>a <b>x</b></p></r>` comes back with `</p>` at
+     * column 0. The end tag goes on its own line here instead.
+     */
+    it('writes the end tag on its own line where the engine would glue it to trailing text', () => {
+        expect(format('<r><a/>x</r>')).toBe('<r>\n    <a />x\n</r>');
+        expect(format('<p><b>bold</b> text</p>')).toBe('<p>\n    <b>bold</b> text\n</p>');
+    });
+
+    it('leaves already-formatted mixed content exactly as it found it', () => {
+        const formatted = '<p>\n    some\n    <b>bold</b>\n    text\n</p>';
+        expect(format(formatted)).toBe(formatted);
+    });
+
+    it('is idempotent in the inline, grouped and block forms', () => {
+        const shapes = [
+            '<p>some <b>bold</b> text</p>',
+            '<p>\n    some\n    <b>bold</b>\n    text\n</p>',
+            '<p>a <b>x\ny</b> z</p>',
+            '<r><a/>x<b/></r>',
+            '<r><a/>x</r>',
+            '<r>x<a/><b/></r>',
+            '<r><a/> <b/></r>',
+            '<r><!-- k --><a/>x</r>',
+        ];
+        for (const xml of shapes) {
+            const once = format(xml);
+            expect(format(once)).toBe(once);
+        }
+    });
+});
+
+describe('TextXmlFormatter — a text run spanning several lines', () => {
+    it('writes each line at the content\'s own column', () => {
+        expect(format('<p>line one\nline two\nline three</p>'))
+            .toBe('<p>\n    line one\n    line two\n    line three\n</p>');
+    });
+
+    it('re-indents at the depth the run actually sits at', () => {
+        expect(format('<r><s><p>l1\nl2</p></s></r>'))
+            .toBe('<r>\n    <s>\n        <p>\n            l1\n            l2\n        </p>\n    </s>\n</r>');
+    });
+
+    it('normalizes whatever indentation each line arrived with', () => {
+        expect(format('<r><p>  l1\n      l2  </p></r>')).toBe('<r>\n    <p>\n        l1\n        l2\n    </p>\n</r>');
+        expect(format('<r><p>l1\n\tl2</p></r>')).toBe('<r>\n    <p>\n        l1\n        l2\n    </p>\n</r>');
+        expect(format('<r><p>l1\r\nl2</p></r>')).toBe('<r>\n    <p>\n        l1\n        l2\n    </p>\n</r>');
+    });
+
+    // The engine keeps an interior blank line either way, but writes it as trailing spaces.
+    it('keeps an interior blank line only under preserveNewLines', () => {
+        expect(format('<p>l1\n\nl2</p>')).toBe('<p>\n    l1\n    l2\n</p>');
+        expect(format('<p>l1\n\nl2</p>', { preserveNewLines: true })).toBe('<p>\n    l1\n\n    l2\n</p>');
+    });
+
+    it('does not re-indent a CDATA section that spans several lines', () => {
+        expect(format('<r><p><![CDATA[l1\nl2]]></p></r>')).toBe('<r>\n    <p>\n        <![CDATA[l1\nl2]]>\n    </p>\n</r>');
+    });
+
+    it('is idempotent', () => {
+        const once = format('<r><s><p>  l1\n      l2  </p></s></r>');
+        expect(format(once)).toBe(once);
+    });
+});
+
+// Mixed content and the editor's tabs are independent, but only their combination ships.
+describe('TextXmlFormatter — mixed content under a tab indent', () => {
+    it('keeps an inline element on one line from a tab base', () => {
+        expect(formatWithTabs('<p>some <b>bold</b> text</p>', '\t')).toBe('\t<p>some <b>bold</b> text</p>');
+    });
+
+    it('indents a grouped run with tabs', () => {
+        expect(formatWithTabs('<r><a/>x<b/></r>', '\t')).toBe('\t<r>\n\t\t<a />x<b />\n\t</r>');
+        expect(formatWithTabs('<r>x<a/><b/></r>', '\t')).toBe('\t<r>x<a />\n\t\t<b />\n\t</r>');
+    });
+
+    it('re-indents a multi-line text run with tabs', () => {
+        expect(formatWithTabs('<r><s><p>l1\nl2</p></s></r>', '\t'))
+            .toBe('\t<r>\n\t\t<s>\n\t\t\t<p>\n\t\t\t\tl1\n\t\t\t\tl2\n\t\t\t</p>\n\t\t</s>\n\t</r>');
+    });
+
+    it('is idempotent in every form under tabs', () => {
+        const shapes = [
+            '<p>some <b>bold</b> text</p>',
+            '<r><a/>x<b/></r>',
+            '<r><a/>x</r>',
+            '<p>a <b>x\ny</b> z</p>',
+            '<r><s><p>l1\nl2</p></s></r>',
+            '<r>x<a/><b/></r>',
+        ];
+        for (const xml of shapes) {
+            const once = formatWithTabs(xml, '\t');
+            expect(formatWithTabs(once, '\t')).toBe(once);
+        }
     });
 });
