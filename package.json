@@ -250,11 +250,11 @@
     },
     "devDependencies": {
         "@stylistic/eslint-plugin": "^5.10.0",
-        "@types/node": "^24.13.5",
+        "@types/node": "^24.13.6",
         "@types/vscode": "^1.125.0",
         "@vscode/vsce": "^4.0.0",
         "esbuild": "^0.28.2",
-        "eslint": "^10.10.0",
+        "eslint": "^10.11.0",
         "ovsx": "^1.2.0",
         "ts-loader": "^9.6.2",
         "typescript": "^6.0.3",
