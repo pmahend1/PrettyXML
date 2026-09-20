@@ -1,6 +1,8 @@
 # Change Log
 
-## Unreleased
+## Stable
+
+### 7.1.0: 20-Sep-2026
 
 - Format Selection now indents the way the editor does - one tab per level in a tab-indented document, spaces otherwise - instead of always writing spaces. The width of a space indent is still [Indent Space Length](README.md#settings), so a selection matches what Format Document would have produced; continuation lines of a wrapped attribute list are aligned with spaces after the indent, because a column inside a tag cannot be written in tabs.
 - Format Selection now indents the whole selection from the indentation of its first line, so a selection taken from deep inside a document keeps the depth it sits at. Previously the starting depth was guessed from the selected text and a selection that began at a tag was formatted flush against the left margin.
@@ -16,9 +18,7 @@
 - Fixed Format Selection breaking an element that mixes text and markup onto one line per token. `<p>some <b>bold</b> text</p>` now stays on one line, and elsewhere the markup that a run of text joins together stays together, so re-formatting an already formatted selection no longer reflows it.
 - Fixed Format Selection emitting text that spans several lines as a single long line still carrying its original indentation. Each line is now re-indented to the depth its element sits at.
 
-## Stable
-
-## 7.0.0: 6-Sep-2026
+### 7.0.0: 6-Sep-2026
 
 - Formatting time now grows in line with document size instead of ballooning on large files - a 9 MB document formats around 10 times faster than before.
 - Added [Escape Invisible Non-ASCII Characters](README.md#escape-invisible-non-ascii-characters) setting, which writes characters that draw nothing, such as non-breaking and zero-width spaces, as `&#x...;` references.
@@ -27,119 +27,119 @@
 - Fixed [Preserve Comment Placement](README.md#preserve-comment-placement) having no effect unless [Preserve New Lines](README.md#preserve-new-lines) was also enabled.
 - Updated XmlFormatter engine to v3.0.0.
 
-## 6.9.1: 28-Aug-2026
+### 6.9.1: 28-Aug-2026
 
 - Fixed non-ASCII characters (umlauts, accents, CJK, emoji) being escaped to numeric character references such as `&#xFC;` while formatting ([#216](https://github.com/pmahend1/PrettyXML/issues/216)).
 - Numeric character references in the source now resolve to the characters they denote — `&#160;` becomes a literal non-breaking space. 6.9.0 re-escaped these on output as `&#xA0;`; it also re-escaped every other non-ASCII character, which is the cause of [#216](https://github.com/pmahend1/PrettyXML/issues/216). Whitespace unicodes in attribute values (`&#9;`, `&#10;`, `&#xD;`) still stay escaped under `allowWhiteSpaceUnicodesInAttributeValues`, since XML attribute-value normalization would otherwise destroy them ([#211](https://github.com/pmahend1/PrettyXML/issues/211)).
 - Updated XmlFormatter engine to v2.3.1.
 
-## 6.9.0: 19-Aug-2026
+### 6.9.0: 19-Aug-2026
 
 - Fixed Unicode multi-byte surrogate pair character corruption (#208,#211).
 - Fixed inline element whitespace retention for elements like `<xsl:text> </xsl:text>` (#209).
 - Updated XmlFormatter engine to v2.3.0.
 
-## 6.8.0: 4-Apr-2026
+### 6.8.0: 4-Apr-2026
 
 - Package updates.
 
-## 6.7.0: 24-Jan-2026
+### 6.7.0: 24-Jan-2026
 
 - Added [Preserve Comment Line Placement](README.md#preserve-comment-placement) setting.
 - Package updates.
 
-## 6.6.0: 25-Dec-2025
+### 6.6.0: 25-Dec-2025
 
 - Added [Preserve New Lines](README.md#preserve-new-lines) setting.
 
-## 6.5.0: 25-Dec-2025
+### 6.5.0: 25-Dec-2025
 
 - Changed dotnet dependency from Dotnet 8 to Dotnet 10.
 - Package updates.
 
-## 6.4.1: 06-Oct-2025
+### 6.4.1: 06-Oct-2025
 
 - Fixed a bug where [format on save was triggered even though PrettyXML was not set as default formatter for a language ID.](https://github.com/pmahend1/PrettyXML/issues/196)
 
-## 6.4.0: 03-Oct-2025
+### 6.4.0: 03-Oct-2025
 
 - Added support for `xsl` and `xslt` file types.
 - Package updates.
 
-## 6.3.1: 24-Sep-2025
+### 6.3.1: 24-Sep-2025
 
 - Fixed an issue where XML declaration setting was not being applied.
 - Code cleanup.
 
-## 6.3.0: 22-Sep-2025
+### 6.3.0: 22-Sep-2025
 
 - Added setting to add XML declaration if missing.
 - Package updates.
 
-## 6.2.0: 18-Jul-2025
+### 6.2.0: 18-Jul-2025
 
 - Package updates.
 
-## 6.1.0: 21-May-2025
+### 6.1.0: 21-May-2025
 
 - Fixed processing instruction not formatting correctly.
 - Package updates.
 - Added sponsor link.
 
-## 6.0.0: 10-Apr-2025
+### 6.0.0: 10-Apr-2025
 
 - Added format selection feature - **Beta**.
   ![Format Selection](./images/FormatSelection.png)
 - Package updates.
 
-## 5.3.0: 20-Feb-2025
+### 5.3.0: 20-Feb-2025
 
 - Added feature [Add empty line between elements if elements count is greater than 2](https://github.com/pmahend1/PrettyXML/issues/172)
 - Package updates to latest.
 
-## 5.2.0: 26-Dec-2024
+### 5.2.0: 26-Dec-2024
 
 - Added feature [Allow the user to specify which elements have attributes on separate lines](https://github.com/pmahend1/PrettyXML/issues/162)
 - Package updates to latest.
 
-## 5.1.0: 29-Nov-2024
+### 5.1.0: 29-Nov-2024
 
 - Fixes [Formatting doesn't seem to work when using with .xaml files.](https://github.com/pmahend1/PrettyXML/issues/167)
 - Yarn upgrades to latest.
   
-## 5.0.3: 01-Sep-2024
+### 5.0.3: 01-Sep-2024
 
 - Yarn upgrades.
 - Fixes [Regular Expression Denial of Service (ReDoS) in micromatch](https://nvd.nist.gov/vuln/detail/CVE-2024-4067)
 
-## 5.0.1/5.0.2: 18-Jun-2024
+### 5.0.1/5.0.2: 18-Jun-2024
 
 - Yarn upgrades.
 - Fixes [braces vulnerability](https://github.com/advisories/GHSA-grv7-fg5c-xmjg)
 
-## 5.0.0: 11-May-2024
+### 5.0.0: 11-May-2024
 
 - Updated Dotnet dependency to version 8.
 
-## 4.5.1: 16-Apr-2024
+### 4.5.1: 16-Apr-2024
 
 - Yarn upgrades.
 - Fixed shield.io badges for open-vsx.
 
-## 4.5.0: 5-Apr-2024
+### 4.5.0: 5-Apr-2024
 
 - Yarn upgrades.
 - Added funding info on repository.
 
-## 4.4.1: 25-Feb-2024
+### 4.4.1: 25-Feb-2024
 
 - **Attributes In Newline Threshold** setting information added.
 
-## 4.4.0: 25-Feb-2024
+### 4.4.0: 25-Feb-2024
 
 - **Attributes In Newline Threshold** setting added.
 
-## 4.3.0: 23-Feb-2024
+### 4.3.0: 23-Feb-2024
 
 - Fixed some CDATA and text formatting.
 - Yarn upgrades.
