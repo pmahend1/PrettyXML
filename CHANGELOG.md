@@ -2,7 +2,7 @@
 
 ## Stable
 
-### 7.1.0: 19-Sep-2026
+### 7.1.0: 20-Sep-2026
 
 - Format Selection now indents the way the editor does - one tab per level in a tab-indented document, spaces otherwise - instead of always writing spaces. The width of a space indent is still [Indent Space Length](README.md#settings), so a selection matches what Format Document would have produced; continuation lines of a wrapped attribute list are aligned with spaces after the indent, because a column inside a tag cannot be written in tabs.
 - Format Selection now indents the whole selection from the indentation of its first line, so a selection taken from deep inside a document keeps the depth it sits at. Previously the starting depth was guessed from the selected text and a selection that began at a tag was formatted flush against the left margin.
