@@ -343,7 +343,11 @@ describe('TextXmlFormatter — an end tag closes what it names (rule 2)', () => 
     });
 
     it('leaves an end tag naming nothing open at the depth it stands', () => {
-        expect(format('<a>x</z></a>')).toBe('<a>\n    x\n    </z>\n</a>');
+        expect(format('<a><b/></z></a>')).toBe('<a>\n    <b />\n    </z>\n</a>');
+    });
+
+    it('keeps an end tag naming nothing open on the line of the text before it', () => {
+        expect(format('<a>x</z></a>')).toBe('<a>x</z></a>');
     });
 
     it('does not step the depth back for an end tag that closes nothing', () => {
@@ -524,18 +528,47 @@ describe('TextXmlFormatter — mixed content', () => {
         expect(format('<p><b>x</b><i>y</i></p>')).toBe('<p>\n    <b>x</b>\n    <i>y</i>\n</p>');
     });
 
-    it('breaks out an element whose inline content will not fit on one line', () => {
-        expect(format('<p>a <b>x\ny</b> z</p>')).toBe('<p>\n    a\n    <b>\n        x\n        y\n    </b>\n    z\n</p>');
+    // The child's content is indented by depth, not by the column its start tag was glued at.
+    it('keeps text glued around a child that cannot go on one line', () => {
+        expect(format('<p>a <b>x\ny</b> z</p>')).toBe('<p>a <b>\n        x\n        y\n    </b> z\n</p>');
     });
 
+    it('keeps text glued around a block child, however deep', () => {
+        expect(format('<r><p>y z<e><f/></e> w</p></r>')).toBe('<r>\n    <p>y z<e>\n            <f />\n        </e> w\n    </p>\n</r>');
+    });
+
+    it('starts a line after a text run that spans lines', () => {
+        expect(format('<p>x<b/>l1\nl2<c/></p>')).toBe('<p>x<b />\n    l1\n    l2\n    <c />\n</p>');
+    });
+
+    // Its line breaks are content rather than the formatter's, so the end tag after it stays put.
     it('leaves a child carrying xml:space="preserve" to rule 6 rather than inlining it', () => {
-        expect(format('<p>a <pre xml:space="preserve">  x  </pre> b</p>'))
-            .toBe('<p>\n    a\n    <pre xml:space="preserve">  x  </pre>\n    b\n</p>');
+        expect(format('<p>a <pre xml:space="preserve">  x  </pre> b</p>')).toBe('<p>a <pre xml:space="preserve">  x  </pre> b</p>');
+        expect(format('<p>a <pre xml:space="preserve">x\ny</pre> b</p>')).toBe('<p>a <pre xml:space="preserve">x\ny</pre> b</p>');
     });
 
-    it('does not inline a child whose attributes wrapped over several lines', () => {
+    // Those line breaks are the formatter's, so the end tag after them takes a line of its own.
+    it('glues a child whose attributes wrapped over several lines, and breaks before the end tag', () => {
         const wrapped = format('<p>a <b x="1" y="2" z="3">t</b> c</p>', { attributesInNewlineThreshold: 1 });
-        expect(wrapped).toBe('<p>\n    a\n    <b x="1"\n       y="2"\n       z="3">t</b>\n    c\n</p>');
+        expect(wrapped).toBe('<p>a <b x="1"\n       y="2"\n       z="3">t</b> c\n</p>');
+    });
+
+    it('does not put a blank line before CDATA that stays on the line of the element before it', () => {
+        const settings = { addEmptyLineBetweenElements: true };
+        expect(format('<p><a/><b/><![CDATA[d]]></p>', settings)).toBe('<p>\n    <a />\n\n    <b /><![CDATA[d]]>\n</p>');
+    });
+
+    // Outside a closed element CDATA starts a line of its own, so the blank line before it stays.
+    it('puts a blank line before CDATA that starts a line of its own', () => {
+        const settings = { addEmptyLineBetweenElements: true, preserveNewLines: true };
+        const once = format('<a/><b/>\n<![CDATA[d]]>', settings);
+        expect(once).toBe('<a />\n\n<b />\n\n<![CDATA[d]]>');
+        expect(format(once, settings)).toBe(once);
+    });
+
+    it('puts a blank line between elements in mixed content', () => {
+        const settings = { addEmptyLineBetweenElements: true };
+        expect(format('<p>x<a/><b/> y</p>', settings)).toBe('<p>x<a />\n\n    <b /> y\n</p>');
     });
 
     // A run of markup glued together by the text between it shares one line, as in the engine.
@@ -652,7 +685,7 @@ describe('TextXmlFormatter — a text run spanning several lines', () => {
     });
 
     it('does not re-indent a CDATA section that spans several lines', () => {
-        expect(format('<r><p><![CDATA[l1\nl2]]></p></r>')).toBe('<r>\n    <p>\n        <![CDATA[l1\nl2]]>\n    </p>\n</r>');
+        expect(format('<r><p><![CDATA[l1\nl2]]></p></r>')).toBe('<r>\n    <p><![CDATA[l1\nl2]]></p>\n</r>');
     });
 
     it('is idempotent', () => {

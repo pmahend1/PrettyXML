@@ -227,6 +227,23 @@ describe("Mixed content matches the engine (task 8g)", () => {
         ["a trailing blank line dropped after a child started a line", "<r><p><b/>a\n\nb\n\n</p></r>", {}],
         ["blank lines around a text run between elements", "<r><p><b/>\n\na\n\nb\n\n<c/></p></r>", {}],
         ["a blank line inside a text run, written with CRLF", "<r><p>a\r\n\r\nb\r\n</p></r>", {}],
+
+        // A child that cannot go on one line: text stays glued to it, its content indented by depth.
+        ["text glued around a child whose text spans lines", "<p>a <b>x\ny</b> z</p>", {}],
+        ["text glued around a block child", "<r><p>y z<e><f/></e> w</p></r>", {}],
+        ["a block child glued after text, two levels down", "<w><r><p>a<e><f/><g/></e>b<c/></p></r></w>", {}],
+        ["a block child glued after text at indent 2", "<r><p>a<e><f/></e>b<c/></p></r>", { indentLength: 2 }],
+        ["block children nested in glued content", "<r><p>a<e>b<f><g/></f>c</e>d</p></r>", {}],
+        ["a line started after a text run spanning lines", "<p>x<b/>l1\nl2<c/></p>", {}],
+        ["CDATA glued onto a block element's start tag", "<r><b><![CDATA[d]]><c><f/></c></b></r>", {}],
+        ["CDATA spanning lines keeps the end tag on its line", "<r><p><![CDATA[l1\nl2]]></p></r>", {}],
+        ["preserved content glued, its line breaks its own", "<p>a <pre xml:space=\"preserve\">x\ny</pre> b</p>", {}],
+        ["a child whose attributes wrapped, glued after text", "<p>a <b x=\"1\" y=\"2\" z=\"3\">t</b> c</p>", { attributesInNewlineThreshold: 1 }],
+        ["a comment glued after text beside a block child", "<p>x<b><c/></b>y<!-- c --><d/></p>", {}],
+        ["a processing instruction glued after text", "<p>x<?pi d?><b><c/></b></p>", {}],
+        ["glued content under preserveNewLines", "<p>x\n<b><c/></b>\ny</p>", { preserveNewLines: true }],
+        ["blank lines between elements in mixed content", "<p>x<a/><b/> y</p>", { addEmptyLineBetweenElements: true }],
+        ["blank lines around a block child in mixed content", "<r><p>x<a/><b><c/></b><d/> y</p></r>", { addEmptyLineBetweenElements: true }],
     ];
 
     it.each(cases)("%s", async (_name, document, overrides) => {
@@ -260,6 +277,24 @@ describe("The engine is stable on its own output (task 8g)", () => {
 
         const rangeSettings = new Settings({ ...EngineFormatter.baselineSettings, ...overrides });
         expect(new TextXmlFormatter(rangeSettings).formatXmlPretty(fragment)).toBe(twice);
+    }, 30000);
+
+    /*
+     * Not fixed in 3.1.1: under addEmptyLineBetweenElements, CDATA after an element is written onto
+     * the blank line at the margin, and under preserveNewLines the next format indents it. The range
+     * formatter puts no blank line before a child that stays on the element's line.
+     */
+    it("writes CDATA after an element at the margin under addEmptyLineBetweenElements", async () => {
+        const fragment = "<r><p><a/><b/><![CDATA[d]]></p></r>";
+        const overrides = { addEmptyLineBetweenElements: true, preserveNewLines: true };
+        const once = await engineOutput(fragment, overrides);
+        expect(once).toContain("\n<![CDATA[d]]>");
+        expect(await engineOutput(once, overrides)).not.toBe(once);
+
+        const rangeSettings = new Settings({ ...EngineFormatter.baselineSettings, ...overrides });
+        const range = new TextXmlFormatter(rangeSettings).formatXmlPretty(fragment);
+        expect(range).toBe("<r>\n    <p>\n        <a />\n\n        <b /><![CDATA[d]]>\n    </p>\n</r>");
+        expect(new TextXmlFormatter(rangeSettings).formatXmlPretty(range)).toBe(range);
     }, 30000);
 
     // Engine 3.1.1: the end tag's column used to follow the source's trailing spaces.
