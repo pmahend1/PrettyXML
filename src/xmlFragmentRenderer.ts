@@ -145,10 +145,6 @@ export class XmlFragmentRenderer {
 
                 case XmlFragmentTokenKind.comment:
                     if (continuesLine || (flows === false && this.keepsCommentOnPreviousLine(lines, previousSibling))) {
-                        // A text run's trailing blank line would strand the comment at the margin, as the engine does.
-                        while (lines.at(-1) === "") {
-                            lines.pop();
-                        }
                         lines[lines.length - 1] += this.formatComment(token.text);
                     } else {
                         lines.push(indent + this.formatComment(token.text));
@@ -346,11 +342,7 @@ export class XmlFragmentRenderer {
             return false;
         }
 
-        /*
-         * A child that stays on the element's line - a comment kept in place, or CDATA in content that
-         * flows - would be joined onto the blank line at the margin, where the engine puts it and a
-         * second format moves it.
-         */
+        // The engine's StartsALineAfterElement: none before a comment kept in place, or CDATA in content that flows.
         if (siblingsFlow === false && siblings[next].token.kind !== XmlFragmentTokenKind.comment) {
             return true;
         }
@@ -368,8 +360,17 @@ export class XmlFragmentRenderer {
             return false;
         }
 
-        const beganOwnLine = XmlFragmentRenderer.isWhitespaceText(commentPreviousSibling) && commentPreviousSibling?.token.text.includes("\n") === true;
-        return beganOwnLine === false;
+        return XmlFragmentRenderer.endsInLineBreak(commentPreviousSibling) === false;
+    }
+
+    // The engine's EndsInLineBreak: a line break after the last character that is not whitespace.
+    private static endsInLineBreak(node: XmlFragmentNode | undefined): boolean {
+        if (node?.token.kind !== XmlFragmentTokenKind.text) {
+            return false;
+        }
+
+        const trailingWhitespace = XmlFragmentRenderer.xmlWhitespaceTrailingRegex.exec(node.token.text)?.[0] ?? "";
+        return XmlFragmentRenderer.isMultiLine(trailingWhitespace);
     }
 
     /*

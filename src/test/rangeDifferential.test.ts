@@ -197,6 +197,15 @@ describe("Mixed content matches the engine (task 8g)", () => {
         ["a comment kept in place under preserveNewLines", "<p>x<b/><!-- c -->\n</p>", { preserveCommentPlacement: true, preserveNewLines: true }],
         ["a comment kept in place inside an inline element", "<r><e><e><!-- c -->\n    </e> w </e></r>", { preserveCommentPlacement: true, preserveNewLines: true }],
 
+        // Engine 3.1.2: a line break at the end of a text run puts the comment after it on a line of its own.
+        ["a comment after a text run's trailing blank line", "<r><e>a\nb\n\n<!-- c --><f/></e></r>", { preserveCommentPlacement: true }],
+        ["a comment after a text run ending in a line break", "<r><e><f/>a\n<!-- c --><g/></e></r>", { preserveCommentPlacement: true }],
+        ["a comment after a line break in flowing content", "<r><p>y<b/>x\n<!-- c --> z</p></r>", { preserveCommentPlacement: true }],
+        ["a comment kept on a text run's last line", "<r><e>a\nb <!-- c --><f/></e></r>", { preserveCommentPlacement: true }],
+        ["a comment kept on an element's line among blank lines", "<r><e><f/><g/><!-- c --></e></r>", { addEmptyLineBetweenElements: true, preserveCommentPlacement: true }],
+        ["CDATA kept on an element's line among blank lines", "<r><p><a/><b/><![CDATA[d]]></p></r>", { addEmptyLineBetweenElements: true }],
+        ["CDATA kept on an element's line among blank lines, preserving new lines", "<r><p><a/><b/><![CDATA[d]]></p></r>", { addEmptyLineBetweenElements: true, preserveNewLines: true }],
+
         // Whitespace alone between two children is not text, so it glues nothing together.
         ["whitespace between two elements in mixed content", "<p>x<b>1</b> <b>2</b>z</p>", {}],
         ["whitespace between two elements in mixed content, preserving new lines", "<p>x<b>1</b> <b>2</b>z</p>", { preserveNewLines: true }],
@@ -253,7 +262,7 @@ describe("Mixed content matches the engine (task 8g)", () => {
     }, 30000);
 });
 
-// Matching once does not show the engine settles, and 3.1.0 and 3.1.1 each fixed a case that did not.
+// Matching once does not show the engine settles, and 3.1.0, 3.1.1 and 3.1.2 each fixed a case that did not.
 describe("The engine is stable on its own output (task 8g)", () => {
     it.each([
         "<r><p>a <!-- c --> b</p></r>",
@@ -265,36 +274,14 @@ describe("The engine is stable on its own output (task 8g)", () => {
         expect(await engineOutput(once)).toBe(once);
     }, 30000);
 
-    // Unfixed in 3.1.1: the comment lands at the margin and moves on the next format. The range
-    // formatter writes the second format's answer.
-    it("moves a comment kept after a text run's trailing blank line on its second format", async () => {
-        const fragment = "<r><e>a\nb\n\n<!-- c --><f/></e></r>";
-        const overrides = { preserveCommentPlacement: true };
+    // Engine 3.1.2: each of these used to write a comment or CDATA at the margin, and move it on the next format.
+    it.each<[string, Partial<ISettings>]>([
+        ["<r><e>a\nb\n\n<!-- c --><f/></e></r>", { preserveCommentPlacement: true }],
+        ["<r><e><f/><g/><!-- c --></e></r>", { addEmptyLineBetweenElements: true, preserveCommentPlacement: true }],
+        ["<r><p><a/><b/><![CDATA[d]]></p></r>", { addEmptyLineBetweenElements: true, preserveNewLines: true }],
+    ])("formats its own output of %j unchanged under %j", async (fragment, overrides) => {
         const once = await engineOutput(fragment, overrides);
-        const twice = await engineOutput(once, overrides);
-        expect(once).toContain("\n<!-- c -->");
-        expect(twice).toContain("b<!-- c -->");
-
-        const rangeSettings = new Settings({ ...EngineFormatter.baselineSettings, ...overrides });
-        expect(new TextXmlFormatter(rangeSettings).formatXmlPretty(fragment)).toBe(twice);
-    }, 30000);
-
-    /*
-     * Not fixed in 3.1.1: under addEmptyLineBetweenElements, CDATA after an element is written onto
-     * the blank line at the margin, and under preserveNewLines the next format indents it. The range
-     * formatter puts no blank line before a child that stays on the element's line.
-     */
-    it("writes CDATA after an element at the margin under addEmptyLineBetweenElements", async () => {
-        const fragment = "<r><p><a/><b/><![CDATA[d]]></p></r>";
-        const overrides = { addEmptyLineBetweenElements: true, preserveNewLines: true };
-        const once = await engineOutput(fragment, overrides);
-        expect(once).toContain("\n<![CDATA[d]]>");
-        expect(await engineOutput(once, overrides)).not.toBe(once);
-
-        const rangeSettings = new Settings({ ...EngineFormatter.baselineSettings, ...overrides });
-        const range = new TextXmlFormatter(rangeSettings).formatXmlPretty(fragment);
-        expect(range).toBe("<r>\n    <p>\n        <a />\n\n        <b /><![CDATA[d]]>\n    </p>\n</r>");
-        expect(new TextXmlFormatter(rangeSettings).formatXmlPretty(range)).toBe(range);
+        expect(await engineOutput(once, overrides)).toBe(once);
     }, 30000);
 
     // Engine 3.1.1: the end tag's column used to follow the source's trailing spaces.
