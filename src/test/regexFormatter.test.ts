@@ -673,9 +673,16 @@ describe('TextXmlFormatter — a text run spanning several lines', () => {
         expect(format('<p><b/>\n\nl1\n\n<c/></p>')).toBe('<p>\n    <b />\n\n    l1\n\n    <c />\n</p>');
     });
 
-    it('keeps a comment on the run\'s last line rather than after its trailing blank line', () => {
+    it('starts a comment\'s own line after a run ending in a line break, keeping its blank line', () => {
         const settings = { preserveCommentPlacement: true };
         const once = format('<e>a\nb\n\n<!-- c --><f/></e>', settings);
+        expect(once).toBe('<e>\n    a\n    b\n\n    <!-- c -->\n    <f />\n</e>');
+        expect(format(once, settings)).toBe(once);
+    });
+
+    it('keeps a comment on the run\'s last line when no line break comes between them', () => {
+        const settings = { preserveCommentPlacement: true };
+        const once = format('<e>a\nb <!-- c --><f/></e>', settings);
         expect(once).toBe('<e>\n    a\n    b<!-- c -->\n    <f />\n</e>');
         expect(format(once, settings)).toBe(once);
     });
