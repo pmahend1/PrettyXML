@@ -148,10 +148,6 @@ export class XmlFragmentRenderer {
 
                     const childDepth = depth + 1;
                     const grouped = this.readGroupedContent(node, indentation.forDepth(childDepth));
-                    if (grouped !== null && node.endTag !== null && grouped.lines.length === 0) {
-                        lines.push(formattedTag + grouped.head + node.endTag.text);
-                        break;
-                    }
                     if (grouped !== null && node.endTag !== null) {
                         lines.push(formattedTag + grouped.head);
                         lines.push(...grouped.lines);
@@ -380,102 +376,120 @@ export class XmlFragmentRenderer {
             return "";
         }
 
-        if (children.length === 1) {
-            return this.readSingleChildContent(children[0].token);
-        }
-
-        if (XmlFragmentRenderer.isFullyInlineable(XmlFragmentRenderer.significantChildren(children)) === false) {
-            return null;
-        }
-
-        let content = "";
-        for (const child of children) {
-            const part = this.readInlineChild(child);
-            if (part === null) {
-                return null;
+        // Whitespace alone is content only under preserveNewLines; otherwise the engine never loads it.
+        if (children.length === 1 && XmlFragmentRenderer.isWhitespaceText(children[0])) {
+            if (this.settings.preserveNewLines !== true) {
+                return "";
             }
-            content += part;
-        }
-        return content;
-    }
-
-    private readSingleChildContent(token: XmlFragmentToken): string | null {
-        if (XmlFragmentRenderer.isMultiLine(token.text)) {
-            return null;
+            return XmlFragmentRenderer.isMultiLine(children[0].token.text) ? null : children[0].token.text;
         }
 
-        switch (token.kind) {
-            case XmlFragmentTokenKind.text:
-                return this.escapeInvisibleNonAscii(token.text);
-            case XmlFragmentTokenKind.cdata:
-                return token.text;
-            default:
-                return null;
-        }
+        const groups = this.layoutContent(element);
+        return groups !== null && groups.length === 1 ? groups[0] : null;
     }
 
     /*
-     * Mixed content that does not fit on one line. The engine starts a new line before a child
-     * unless that child is character data or follows a text node, so `<r><a/>x<b/></r>` is one
-     * line of content and `<r><a/><b/>x<c/></r>` is two.
-     *
-     * The end tag gets a line of its own once any child has started one, and otherwise stays on
-     * the start tag's line - no lines back means the caller glues it on.
+     * Mixed content that does not fit on one line, as the engine writes it: `<r><a/>x<b/></r>` is
+     * one line of content and `<r><a/><b/>x<c/></r>` is two. Content with no character data at all
+     * is left to the block layout, which also knows about blank lines.
      */
     private readGroupedContent(element: XmlFragmentNode, childIndent: string): { head: string; lines: string[] } | null {
-        if (element.endTag === null) {
-            return null;
-        }
-
-        const significant = XmlFragmentRenderer.significantChildren(element.children);
-        if (significant.some(child => child.token.kind === XmlFragmentTokenKind.text) === false) {
+        if (element.endTag === null || element.children.some(XmlFragmentRenderer.isCharacterData) === false) {
             return null;
         }
 
         this.resolveInlineForms(element);
 
-        const groups: string[] = [];
-        let attachedToStartTag = false;
-        let group = "";
-        let previousIsText = false;
-
-        for (let index = 0; index < significant.length; index++) {
-            const child = significant[index];
-            const part = this.readInlineChild(child, index === significant.length - 1);
-            if (part === null) {
-                return null;
-            }
-
-            const startsOwnLine = XmlFragmentRenderer.isCharacterDataNode(child) === false && previousIsText === false;
-            if (index === 0) {
-                attachedToStartTag = startsOwnLine === false;
-            } else if (startsOwnLine) {
-                groups.push(group);
-                group = "";
-            }
-
-            group += part;
-            previousIsText = child.token.kind === XmlFragmentTokenKind.text;
+        const groups = this.layoutContent(element);
+        if (groups === null) {
+            return null;
         }
-        groups.push(group);
 
-        // With every child glued to the start tag's line, only the end tag still needs one of its own.
-        const lines = attachedToStartTag ? groups.slice(1) : groups;
         return {
-            head: attachedToStartTag ? groups[0] : "",
-            lines: lines.map(line => childIndent + line),
+            head: groups[0],
+            lines: groups.slice(1).map(line => childIndent + line),
         };
     }
 
     /*
-     * `isContentTail` marks the child a newline will follow. Its trailing whitespace has to go, or
-     * that newline comes back inside the same text token next time and breaks the element apart.
+     * The engine's layout of an element's content, as the lines it writes: the first is the start
+     * tag's own, and each one after it began with a child that started a line. Null when a child
+     * cannot be written on one line. Every element child's inline form must already be resolved.
+     *
+     * Whitespace-only runs are not text to the engine - it drops them, or under preserveNewLines
+     * reads them as structural whitespace - so they never glue two children together.
      */
-    private readInlineChild(child: XmlFragmentNode, isContentTail: boolean = false): string | null {
+    private layoutContent(element: XmlFragmentNode): string[] | null {
+        const children = element.children;
+        let lastIndex = children.length - 1;
+        while (lastIndex >= 0 && XmlFragmentRenderer.isWhitespaceText(children[lastIndex])) {
+            lastIndex--;
+        }
+
+        const groups = [""];
+        let previous: XmlFragmentNode | undefined = undefined;
+        let trailingWhitespace = "";
+
+        for (let index = 0; index <= lastIndex; index++) {
+            const child = children[index];
+            if (XmlFragmentRenderer.isWhitespaceText(child)) {
+                if (this.settings.preserveNewLines === true) {
+                    previous = child;
+                }
+                continue;
+            }
+
+            let text = child.token.text;
+            if (index === lastIndex && child.token.kind === XmlFragmentTokenKind.text) {
+                const trimmed = text.replace(XmlFragmentRenderer.xmlWhitespaceTrailingRegex, "");
+                trailingWhitespace = text.slice(trimmed.length);
+                text = trimmed;
+            }
+
+            const part = this.readInlineChild(child, text);
+            if (part === null) {
+                return null;
+            }
+
+            if (this.startsLine(child, previous, children[index - 1])) {
+                groups.push("");
+            }
+            groups[groups.length - 1] += part;
+            previous = child;
+        }
+
+        // Text followed by the end tag keeps its trailing whitespace; a line break would absorb it.
+        if (groups.length === 1 && trailingWhitespace !== "") {
+            if (XmlFragmentRenderer.isMultiLine(trailingWhitespace)) {
+                return null;
+            }
+            groups[0] += trailingWhitespace;
+        }
+        return groups;
+    }
+
+    /*
+     * The engine's WriteSeparatorBeforeChild and its CDATA rule. `previous` is the last child
+     * written - undefined for the start tag - and `sibling` the one just before, whitespace included.
+     */
+    private startsLine(child: XmlFragmentNode, previous: XmlFragmentNode | undefined, sibling: XmlFragmentNode | undefined): boolean {
+        const previousIsText = previous !== undefined && previous.token.kind === XmlFragmentTokenKind.text && XmlFragmentRenderer.isWhitespaceText(previous) === false;
+
+        switch (child.token.kind) {
+            case XmlFragmentTokenKind.text:
+                return false;
+            case XmlFragmentTokenKind.cdata:
+                return previousIsText === false && previous !== undefined && XmlFragmentRenderer.isElement(previous) === false;
+            case XmlFragmentTokenKind.comment:
+                return previousIsText === false && this.sharesPreviousLine(sibling) === false;
+            default:
+                return previousIsText === false;
+        }
+    }
+
+    // `text` is the token's text less any trailing whitespace layoutContent has taken off.
+    private readInlineChild(child: XmlFragmentNode, text: string): string | null {
         const token = child.token;
-        const text = isContentTail && token.kind === XmlFragmentTokenKind.text
-            ? token.text.replace(XmlFragmentRenderer.xmlWhitespaceTrailingRegex, "")
-            : token.text;
         if (XmlFragmentRenderer.isMultiLine(text)) {
             return null;
         }
@@ -564,29 +578,10 @@ export class XmlFragmentRenderer {
         return text.includes("\n") || text.includes("\r");
     }
 
-    // The whitespace between two elements is not content, so no layout decision runs over it.
-    private static significantChildren(children: readonly XmlFragmentNode[]): XmlFragmentNode[] {
-        return children.filter(child => XmlFragmentRenderer.isWhitespaceText(child) === false);
-    }
-
-    private static isCharacterDataNode(node: XmlFragmentNode): boolean {
-        return node.token.kind === XmlFragmentTokenKind.text || node.token.kind === XmlFragmentTokenKind.cdata;
-    }
-
-    /*
-     * The engine keeps an element on one line exactly when its content begins and ends with
-     * character data - only then does it never write a newline inside. See readGroupedContent.
-     */
-    private static isFullyInlineable(significant: readonly XmlFragmentNode[]): boolean {
-        const first = significant.at(0);
-        const last = significant.at(-1);
-        if (first === undefined || last === undefined) {
-            return false;
-        }
-
-        return XmlFragmentRenderer.isCharacterDataNode(first)
-            && XmlFragmentRenderer.isCharacterDataNode(last)
-            && significant.some(child => child.token.kind === XmlFragmentTokenKind.text);
+    // Text that is not whitespace alone, or CDATA - what the engine writes inline with its neighbours.
+    private static isCharacterData(node: XmlFragmentNode): boolean {
+        return node.token.kind === XmlFragmentTokenKind.cdata
+            || (node.token.kind === XmlFragmentTokenKind.text && XmlFragmentRenderer.isWhitespaceText(node) === false);
     }
 
     // Two newlines are a blank line the author put there on purpose.

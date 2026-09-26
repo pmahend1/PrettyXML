@@ -287,6 +287,13 @@ describe('TextXmlFormatter — options the tree unlocks', () => {
         expect(format('<a>\n</a>', { preserveNewLines: true })).toBe('<a>\n</a>');
     });
 
+    // As the engine does: it never loads whitespace-only content unless preserveNewLines asks for it.
+    it('drops whitespace-only content unless preserving new lines', () => {
+        expect(format('<a> </a>')).toBe('<a></a>');
+        expect(format('<a>\n</a>')).toBe('<a></a>');
+        expect(format('<xsl:text> </xsl:text>', { preserveNewLines: true })).toBe('<xsl:text> </xsl:text>');
+    });
+
     it('does not escape apostrophes in a single-quoted value', () => {
         expect(format('<a c="it\'s"/>', { allowSingleQuoteInAttributeValue: false, useSingleQuotes: true })).toBe('<a c="it\'s" />');
     });
@@ -549,6 +556,24 @@ describe('TextXmlFormatter — mixed content', () => {
         expect(format('<p><b>bold</b> text</p>')).toBe('<p>\n    <b>bold</b> text\n</p>');
     });
 
+    it('keeps a comment in place in mixed content under preserveCommentPlacement', () => {
+        const settings = { preserveCommentPlacement: true };
+        expect(format('<p>x<b>y</b><!-- c --></p>', settings)).toBe('<p>x<b>y</b><!-- c --></p>');
+        expect(format('<p><!-- c -->x<b/></p>', settings)).toBe('<p><!-- c -->x<b /></p>');
+        expect(format('<p>x<b/>\n<!-- c --></p>', settings)).toBe('<p>x<b />\n    <!-- c -->\n</p>');
+    });
+
+    // Whitespace alone is not character data, so it glues nothing - the space becomes a line break.
+    it('starts a line for a child that follows whitespace alone', () => {
+        expect(format('<p>x<b>1</b> <b>2</b>z</p>')).toBe('<p>x<b>1</b>\n    <b>2</b>z\n</p>');
+        expect(format('<p>x <b/> <i/> z</p>')).toBe('<p>x <b />\n    <i /> z\n</p>');
+    });
+
+    it('glues CDATA to an element before it but not to a comment', () => {
+        expect(format('<p><a/><![CDATA[d]]></p>')).toBe('<p>\n    <a /><![CDATA[d]]>\n</p>');
+        expect(format('<p>x<!-- c --><![CDATA[d]]></p>')).toBe('<p>x<!-- c -->\n    <![CDATA[d]]>\n</p>');
+    });
+
     it('leaves already-formatted mixed content exactly as it found it', () => {
         const formatted = '<p>\n    some\n    <b>bold</b>\n    text\n</p>';
         expect(format(formatted)).toBe(formatted);
@@ -565,6 +590,9 @@ describe('TextXmlFormatter — mixed content', () => {
             '<p>some <b>bold</b></p>',
             '<r><a/> <b/></r>',
             '<r><!-- k --><a/>x</r>',
+            '<p>x<b>1</b> <b>2</b>z</p>',
+            '<p>x<b>y</b><!-- c --></p>',
+            '<p><a/><![CDATA[d]]></p>',
         ];
         for (const xml of shapes) {
             const once = format(xml);
