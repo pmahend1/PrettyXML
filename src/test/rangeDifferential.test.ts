@@ -211,6 +211,22 @@ describe("Mixed content matches the engine (task 8g)", () => {
         ["whitespace-only content over two lines dropped", "<r><a>\n</a></r>", { useSelfClosingTags: false }],
         ["whitespace-only content dropped with comment placement on", "<r><a>\n</a></r>", { useSelfClosingTags: false, preserveCommentPlacement: true }],
         ["whitespace-only content kept under preserveNewLines", "<r><a> </a></r>", { useSelfClosingTags: false, preserveNewLines: true }],
+
+        // Engine 3.1.1: whitespace alone spanning lines is layout.
+        ["whitespace-only content over two lines under preserveNewLines", "<r><a>\n</a></r>", { useSelfClosingTags: false, preserveNewLines: true }],
+        ["whitespace-only content with a blank line under preserveNewLines", "<r><a>\n\n</a></r>", { useSelfClosingTags: false, preserveNewLines: true }],
+        ["whitespace-only content with indented blank lines under preserveNewLines", "<r><a>\n\n   \n  </a></r>", { useSelfClosingTags: false, preserveNewLines: true }],
+
+        // Engine 3.1.1: blank lines in text are written empty, not as indent.
+        ["a blank line inside a text run", "<r><p>a\n\nb</p></r>", {}],
+        ["a blank line inside a text run under preserveNewLines", "<r><p>a\n\nb</p></r>", { preserveNewLines: true }],
+        ["two blank lines inside a text run", "<r><p>a\n\n\nb</p></r>", {}],
+        ["a blank line made of spaces inside a text run", "<r><p>a\n  \n  b</p></r>", {}],
+        ["a blank line ending a text run", "<r><p>y z\n\n </p></r>", {}],
+        ["blank lines at both ends of a text run", "<r><p>\n\na\n\nb\n\n</p></r>", {}],
+        ["a trailing blank line dropped after a child started a line", "<r><p><b/>a\n\nb\n\n</p></r>", {}],
+        ["blank lines around a text run between elements", "<r><p><b/>\n\na\n\nb\n\n<c/></p></r>", {}],
+        ["a blank line inside a text run, written with CRLF", "<r><p>a\r\n\r\nb\r\n</p></r>", {}],
     ];
 
     it.each(cases)("%s", async (_name, document, overrides) => {
@@ -220,18 +236,41 @@ describe("Mixed content matches the engine (task 8g)", () => {
     }, 30000);
 });
 
-/*
- * Engine 3.1.0 fixed indent whitespace being injected into character data beside a comment, which
- * grew on every format. Matching once does not show that, so the engine's second format is pinned.
- */
-describe("The engine is stable on mixed content (task 8g)", () => {
+// Matching once does not show the engine settles, and 3.1.0 and 3.1.1 each fixed a case that did not.
+describe("The engine is stable on its own output (task 8g)", () => {
     it.each([
         "<r><p>a <!-- c --> b</p></r>",
         "<r><s><t><p><b>x</b> c</p></t></s></r>",
         "<w><r>x<a/><b/></r></w>",
+        "<r><p>\n\na\n\nb\n\n</p></r>",
     ])("formats its own output of %j unchanged", async fragment => {
         const once = await engineOutput(fragment);
         expect(await engineOutput(once)).toBe(once);
+    }, 30000);
+
+    // Unfixed in 3.1.1: the comment lands at the margin and moves on the next format. The range
+    // formatter writes the second format's answer.
+    it("moves a comment kept after a text run's trailing blank line on its second format", async () => {
+        const fragment = "<r><e>a\nb\n\n<!-- c --><f/></e></r>";
+        const overrides = { preserveCommentPlacement: true };
+        const once = await engineOutput(fragment, overrides);
+        const twice = await engineOutput(once, overrides);
+        expect(once).toContain("\n<!-- c -->");
+        expect(twice).toContain("b<!-- c -->");
+
+        const rangeSettings = new Settings({ ...EngineFormatter.baselineSettings, ...overrides });
+        expect(new TextXmlFormatter(rangeSettings).formatXmlPretty(fragment)).toBe(twice);
+    }, 30000);
+
+    // Engine 3.1.1: the end tag's column used to follow the source's trailing spaces.
+    it.each([
+        "<r><a>\n</a></r>",
+        "<r><a>\n\n</a></r>",
+        "<r><a>\n </a></r>",
+    ])("formats its own output of %j unchanged under preserveNewLines", async fragment => {
+        const overrides = { useSelfClosingTags: false, preserveNewLines: true };
+        const once = await engineOutput(fragment, overrides);
+        expect(await engineOutput(once, overrides)).toBe(once);
     }, 30000);
 });
 
