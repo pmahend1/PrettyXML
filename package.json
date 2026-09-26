@@ -239,7 +239,7 @@
             }
         ]
     },
-    "packageManager": "pnpm@11.25.0",
+    "packageManager": "pnpm@12.6.0",
     "scripts": {
         "compile": "webpack --mode development",
         "watch": "webpack --mode development --watch",
