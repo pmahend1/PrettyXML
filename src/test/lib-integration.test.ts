@@ -361,7 +361,7 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
     }, 15000);
 
     /*
-     * Minimize consults no Options at all - it writes through XmlWriter directly.
+     * Minimize reads addXmlDeclarationIfMissing and nothing else - it writes through XmlWriter.
      * The setting is documented as a Prettify XML setting, and this pins that
      * scope so a later engine change cannot widen it unnoticed.
      */
@@ -379,4 +379,24 @@ describe('DLL integration — escapeInvisibleNonAsciiCharacters (#42)', () => {
         },
         15000
     );
+});
+
+// Engine 3.1.0 passes the options to Minimize, which reads this one setting from them.
+describe('DLL integration — Minimize and addXmlDeclarationIfMissing', () => {
+    const declaration = '<?xml version="1.0" encoding="utf-8"?>';
+
+    it('adds a missing declaration when the setting is on', async () => {
+        const result = await EngineFormatter.format('<Root>\n    <A />\n</Root>', FormattingActionKind.minimize, { addXmlDeclarationIfMissing: true });
+        expect(result).toBe(`${declaration}<Root><A /></Root>`);
+    }, 15000);
+
+    it('adds no declaration when the setting is off', async () => {
+        const result = await EngineFormatter.format('<Root>\n    <A />\n</Root>', FormattingActionKind.minimize, { addXmlDeclarationIfMissing: false });
+        expect(result).toBe('<Root><A /></Root>');
+    }, 15000);
+
+    it.each([true, false])('keeps a declaration the document already has when the setting is %s', async (addXmlDeclarationIfMissing) => {
+        const result = await EngineFormatter.format(`${declaration}\n<Root />`, FormattingActionKind.minimize, { addXmlDeclarationIfMissing });
+        expect(result).toBe(`${declaration}<Root />`);
+    }, 15000);
 });
