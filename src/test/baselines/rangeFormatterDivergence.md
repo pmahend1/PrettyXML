@@ -801,10 +801,7 @@ Selection:
 Range formatter today:
 
 ```xml
-<a>
-    x
-    </z>
-</a>
+<a>x</z></a>
 ```
 
 Engine, through a synthetic root:

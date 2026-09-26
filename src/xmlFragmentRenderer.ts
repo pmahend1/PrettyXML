@@ -1,4 +1,5 @@
 import { IndentationStyle } from "./indentationStyle";
+import { PrecedingContent } from "./precedingContent";
 import { Settings } from "./settings";
 import { StartTagLine } from "./startTagLine";
 import { XmlFragmentNode } from "./xmlFragmentNode";
@@ -69,7 +70,7 @@ export class XmlFragmentRenderer {
                 this.renderTree(lines, node, indentation, nodes[index - 1], trailingToken);
             }
 
-            if (this.isBlankLineAfter(nodes, index, siblingCount)) {
+            if (this.isBlankLineAfter(nodes, index, siblingCount, false)) {
                 XmlFragmentRenderer.pushBlankLine(lines);
             }
         }
@@ -95,6 +96,10 @@ export class XmlFragmentRenderer {
      *
      * A null node is a blank line. An end tag carries where its start tag's line ended, so it can tell
      * whether anything inside started a line of its own; so does a last child.
+     *
+     * A child of a closed element flows as in the engine: it starts a line or continues the current
+     * one by what was written before it, and its later lines indent by depth, not by its column. At
+     * the top level and inside an unclosed element every child starts a line of its own.
      */
     private renderTree(
         lines: string[],
@@ -103,10 +108,13 @@ export class XmlFragmentRenderer {
         rootPreviousSibling: XmlFragmentNode | undefined,
         trailingToken: XmlFragmentToken | undefined
     ): void {
-        const pending: [XmlFragmentNode | null, number, XmlFragmentNode | undefined, StartTagLine?][] = [[root, 0, rootPreviousSibling]];
+        const pending: [XmlFragmentNode | null, number, XmlFragmentNode | undefined, StartTagLine | undefined, boolean][] = [
+            [root, 0, rootPreviousSibling, undefined, false],
+        ];
+        let preceding = PrecedingContent.other;
 
         for (let step = pending.pop(); step !== undefined; step = pending.pop()) {
-            const [node, depth, previousSibling, startTagLine] = step;
+            const [node, depth, previousSibling, startTagLine, flows] = step;
             if (node === null) {
                 XmlFragmentRenderer.pushBlankLine(lines);
                 continue;
@@ -114,21 +122,29 @@ export class XmlFragmentRenderer {
 
             const token = node.token;
             const indent = indentation.forDepth(depth);
+            const continuesLine = flows && this.startsLine(node, preceding, previousSibling) === false;
+            const lead = continuesLine ? "" : indent;
 
             switch (token.kind) {
                 case XmlFragmentTokenKind.text: {
                     const lineBreakFollows = startTagLine !== undefined && startTagLine.index < lines.length - 1;
-                    this.appendTextRun(lines, token.text, indent, token === trailingToken, lineBreakFollows);
+                    if (flows) {
+                        preceding = this.flowTextRun(lines, token.text, indent, lineBreakFollows, preceding);
+                    } else {
+                        this.appendTextRun(lines, token.text, indent, token === trailingToken, lineBreakFollows);
+                        preceding = PrecedingContent.other;
+                    }
                     break;
                 }
 
                 // Rule 5 at the other end: the front half of a cut tag, indented but never rewritten.
                 case XmlFragmentTokenKind.unterminated:
                     lines.push(indent + token.text);
+                    preceding = PrecedingContent.other;
                     break;
 
                 case XmlFragmentTokenKind.comment:
-                    if (this.keepsCommentOnPreviousLine(lines, previousSibling)) {
+                    if (continuesLine || (flows === false && this.keepsCommentOnPreviousLine(lines, previousSibling))) {
                         // A text run's trailing blank line would strand the comment at the margin, as the engine does.
                         while (lines.at(-1) === "") {
                             lines.pop();
@@ -137,71 +153,93 @@ export class XmlFragmentRenderer {
                     } else {
                         lines.push(indent + this.formatComment(token.text));
                     }
+                    preceding = PrecedingContent.other;
                     break;
 
                 case XmlFragmentTokenKind.startTag: {
-                    const formattedTag = indent + this.formatTag(token, depth, indentation);
+                    preceding = PrecedingContent.element;
+                    const formattedTag = lead + this.formatTag(token, depth, indentation);
                     if (XmlFragmentRenderer.preservesWhiteSpace(token)) {
-                        lines.push(formattedTag + XmlFragmentRenderer.readSourceText(node));
+                        XmlFragmentRenderer.writeMarkup(lines, formattedTag, continuesLine);
+                        XmlFragmentRenderer.writeContent(lines, XmlFragmentRenderer.readSourceText(node), true);
                         break;
                     }
 
                     const inlineContent = this.readInlineContent(node);
                     if (node.endTag !== null && inlineContent !== null) {
-                        lines.push(formattedTag + inlineContent + node.endTag.text);
+                        XmlFragmentRenderer.writeMarkup(lines, formattedTag + inlineContent + node.endTag.text, continuesLine);
                         break;
                     }
 
                     const childDepth = depth + 1;
-                    const grouped = this.readGroupedContent(node, indentation.forDepth(childDepth));
-                    if (grouped !== null && node.endTag !== null) {
-                        lines.push(formattedTag + grouped.head);
-                        lines.push(...grouped.lines);
-                        lines.push(indent + node.endTag.text);
-                        break;
-                    }
-
-                    lines.push(formattedTag);
-                    const ownLine: StartTagLine = { index: lines.length - 1, width: formattedTag.length };
+                    XmlFragmentRenderer.writeMarkup(lines, formattedTag, continuesLine);
+                    const ownLine: StartTagLine = { index: lines.length - 1, width: lines[lines.length - 1].length };
                     if (node.endTag !== null) {
-                        pending.push([XmlFragmentRenderer.leaf(node.endTag), depth, undefined, ownLine]);
+                        pending.push([XmlFragmentRenderer.leaf(node.endTag), depth, undefined, ownLine, false]);
                     }
                     if (this.holdsOnlyLayoutWhitespace(node)) {
                         break;
                     }
+                    const childrenFlow = node.endTag !== null;
                     const siblingCount = XmlFragmentRenderer.countSiblings(node.children);
                     for (let index = node.children.length - 1; index >= 0; index--) {
-                        if (this.isBlankLineAfter(node.children, index, siblingCount)) {
-                            pending.push([null, childDepth, undefined]);
+                        if (this.isBlankLineAfter(node.children, index, siblingCount, childrenFlow)) {
+                            pending.push([null, childDepth, undefined, undefined, false]);
                         }
                         const isLastChild = index === node.children.length - 1 && node.endTag !== null;
-                        pending.push([node.children[index], childDepth, node.children[index - 1], isLastChild ? ownLine : undefined]);
+                        pending.push([node.children[index], childDepth, node.children[index - 1], isLastChild ? ownLine : undefined, childrenFlow]);
                     }
                     break;
                 }
 
                 case XmlFragmentTokenKind.selfClosingTag:
-                    lines.push(indent + this.formatTag(token, depth, indentation));
+                    XmlFragmentRenderer.writeMarkup(lines, lead + this.formatTag(token, depth, indentation), continuesLine);
+                    preceding = PrecedingContent.element;
                     break;
 
                 case XmlFragmentTokenKind.processingInstruction:
-                    lines.push(indent + this.formatProcessingInstruction(token.text));
+                    XmlFragmentRenderer.writeContent(lines, lead + this.formatProcessingInstruction(token.text), continuesLine);
+                    preceding = PrecedingContent.other;
                     break;
 
                 // An element's own end tag, or one render() found closing nothing at the top level.
                 case XmlFragmentTokenKind.endTag:
-                    if (XmlFragmentRenderer.contentStayedOnStartTagLine(lines, startTagLine)) {
+                    if (flows ? continuesLine : XmlFragmentRenderer.contentStayedOnStartTagLine(lines, startTagLine)) {
                         lines[lines.length - 1] += token.text;
                     } else {
                         lines.push(indent + token.text);
                     }
+                    preceding = PrecedingContent.element;
                     break;
 
                 case XmlFragmentTokenKind.cdata:
+                    XmlFragmentRenderer.writeContent(lines, lead + token.text, continuesLine);
+                    preceding = PrecedingContent.other;
+                    break;
+
                 case XmlFragmentTokenKind.markupDeclaration:
                     lines.push(indent + token.text);
+                    preceding = PrecedingContent.other;
                     break;
             }
+        }
+    }
+
+    // A tag wrapped over several lines is split, because those breaks are the formatter's own.
+    private static writeMarkup(lines: string[], markup: string, continuesLine: boolean): void {
+        const markupLines = markup.split("\n");
+        if (continuesLine) {
+            lines[lines.length - 1] += markupLines.shift();
+        }
+        lines.push(...markupLines);
+    }
+
+    // Breaks inside CDATA, an instruction or preserved content are the source's and start no line.
+    private static writeContent(lines: string[], content: string, continuesLine: boolean): void {
+        if (continuesLine) {
+            lines[lines.length - 1] += content;
+        } else {
+            lines.push(content);
         }
     }
 
@@ -295,7 +333,7 @@ export class XmlFragmentRenderer {
      * The engine's WriteBlankLineAfterChild, less its whitespace handling under preserveNewLines,
      * which counts indentation as siblings and so changes its answer on a second format.
      */
-    private isBlankLineAfter(siblings: readonly XmlFragmentNode[], index: number, siblingCount: number): boolean {
+    private isBlankLineAfter(siblings: readonly XmlFragmentNode[], index: number, siblingCount: number, siblingsFlow: boolean): boolean {
         if (this.settings.addEmptyLineBetweenElements !== true || siblingCount <= 2 || XmlFragmentRenderer.isElement(siblings[index]) === false) {
             return false;
         }
@@ -308,8 +346,16 @@ export class XmlFragmentRenderer {
             return false;
         }
 
-        // A comment sharing the element's line would otherwise be joined onto the blank line.
-        return siblings[next].token.kind !== XmlFragmentTokenKind.comment || this.sharesPreviousLine(siblings[next - 1]) === false;
+        /*
+         * A child that stays on the element's line - a comment kept in place, or CDATA in content that
+         * flows - would be joined onto the blank line at the margin, where the engine puts it and a
+         * second format moves it.
+         */
+        if (siblingsFlow === false && siblings[next].token.kind !== XmlFragmentTokenKind.comment) {
+            return true;
+        }
+        const preceding = next > index + 1 && this.settings.preserveNewLines === true ? PrecedingContent.other : PrecedingContent.element;
+        return this.startsLine(siblings[next], preceding, siblings[next - 1]);
     }
 
     // Like the engine, a comment that shared its line is joined with no space between.
@@ -403,49 +449,24 @@ export class XmlFragmentRenderer {
             return XmlFragmentRenderer.isMultiLine(children[0].token.text) ? null : children[0].token.text;
         }
 
-        const groups = this.layoutContent(element);
-        return groups !== null && groups.length === 1 ? groups[0] : null;
+        return this.readOneLineContent(element);
     }
 
     /*
-     * Mixed content that does not fit on one line, as the engine writes it: `<r><a/>x<b/></r>` is
-     * one line of content and `<r><a/><b/>x<c/></r>` is two. Content with no character data at all
-     * is left to the block layout, which also knows about blank lines.
-     */
-    private readGroupedContent(element: XmlFragmentNode, childIndent: string): { head: string; lines: string[] } | null {
-        if (element.endTag === null || element.children.some(XmlFragmentRenderer.isCharacterData) === false) {
-            return null;
-        }
-
-        this.resolveInlineForms(element);
-
-        const groups = this.layoutContent(element);
-        if (groups === null) {
-            return null;
-        }
-
-        return {
-            head: groups[0],
-            lines: groups.slice(1).map(line => childIndent + line),
-        };
-    }
-
-    /*
-     * The engine's layout of an element's content, as the lines it writes: the first is the start
-     * tag's own, and each one after it began with a child that started a line. Null when a child
-     * cannot be written on one line. Every element child's inline form must already be resolved.
+     * The content on the start tag's line, or null when a child starts a line or cannot be written
+     * on one. Every element child's inline form must already be resolved.
      *
      * Whitespace-only runs are not text to the engine - it drops them, or under preserveNewLines
      * reads them as structural whitespace - so they never glue two children together.
      */
-    private layoutContent(element: XmlFragmentNode): string[] | null {
+    private readOneLineContent(element: XmlFragmentNode): string | null {
         const children = element.children;
         let lastIndex = children.length - 1;
         while (lastIndex >= 0 && XmlFragmentRenderer.isWhitespaceText(children[lastIndex])) {
             lastIndex--;
         }
 
-        const groups = [""];
+        let content = "";
         let previous: XmlFragmentNode | undefined = undefined;
         let trailingWhitespace = "";
 
@@ -470,43 +491,42 @@ export class XmlFragmentRenderer {
                 return null;
             }
 
-            if (this.startsLine(child, previous, children[index - 1])) {
-                groups.push("");
+            if (this.startsLine(child, XmlFragmentRenderer.readPrecedingContent(previous), children[index - 1])) {
+                return null;
             }
-            groups[groups.length - 1] += part;
+            content += part;
             previous = child;
         }
 
         // Text followed by the end tag keeps its trailing whitespace; a line break would absorb it.
-        if (groups.length === 1 && trailingWhitespace !== "") {
-            if (XmlFragmentRenderer.isMultiLine(trailingWhitespace)) {
-                return null;
-            }
-            groups[0] += trailingWhitespace;
-        }
-        return groups;
+        return XmlFragmentRenderer.isMultiLine(trailingWhitespace) ? null : content + trailingWhitespace;
     }
 
-    /*
-     * The engine's WriteSeparatorBeforeChild and its CDATA rule. `previous` is the last child
-     * written - undefined for the start tag - and `sibling` the one just before, whitespace included.
-     */
-    private startsLine(child: XmlFragmentNode, previous: XmlFragmentNode | undefined, sibling: XmlFragmentNode | undefined): boolean {
-        const previousIsText = previous !== undefined && previous.token.kind === XmlFragmentTokenKind.text && XmlFragmentRenderer.isWhitespaceText(previous) === false;
-
+    // The engine's WriteSeparatorBeforeChild and its CDATA rule. `sibling` is the child just before,
+    // whitespace included.
+    private startsLine(child: XmlFragmentNode, preceding: PrecedingContent, sibling: XmlFragmentNode | undefined): boolean {
         switch (child.token.kind) {
             case XmlFragmentTokenKind.text:
                 return false;
             case XmlFragmentTokenKind.cdata:
-                return previousIsText === false && previous !== undefined && XmlFragmentRenderer.isElement(previous) === false;
+                return preceding === PrecedingContent.other;
             case XmlFragmentTokenKind.comment:
-                return previousIsText === false && this.sharesPreviousLine(sibling) === false;
+                return preceding !== PrecedingContent.text && this.sharesPreviousLine(sibling) === false;
             default:
-                return previousIsText === false;
+                return preceding !== PrecedingContent.text;
         }
     }
 
-    // `text` is the token's text less any trailing whitespace layoutContent has taken off.
+    // `previous` is the last child written on one line, or undefined for the start tag.
+    private static readPrecedingContent(previous: XmlFragmentNode | undefined): PrecedingContent {
+        if (previous === undefined || XmlFragmentRenderer.isElement(previous)) {
+            return PrecedingContent.element;
+        }
+        const isText = previous.token.kind === XmlFragmentTokenKind.text && XmlFragmentRenderer.isWhitespaceText(previous) === false;
+        return isText ? PrecedingContent.text : PrecedingContent.other;
+    }
+
+    // `text` is the token's text less any trailing whitespace readOneLineContent has taken off.
     private readInlineChild(child: XmlFragmentNode, text: string): string | null {
         const token = child.token;
         if (XmlFragmentRenderer.isMultiLine(text)) {
@@ -570,6 +590,24 @@ export class XmlFragmentRenderer {
         }
     }
 
+    // Onto the current line as written, unless it spans lines - then the next child starts a line too.
+    private flowTextRun(lines: string[], rawText: string, indent: string, lineBreakFollows: boolean, preceding: PrecedingContent): PrecedingContent {
+        if (XmlFragmentRenderer.xmlWhitespaceRegex.test(rawText)) {
+            this.appendTextRun(lines, rawText, indent, false, lineBreakFollows);
+            return this.settings.preserveNewLines === true ? PrecedingContent.other : preceding;
+        }
+
+        const escaped = this.escapeInvisibleNonAscii(rawText);
+        const text = lineBreakFollows ? escaped.replace(XmlFragmentRenderer.xmlWhitespaceTrailingRegex, "") : escaped;
+        if (XmlFragmentRenderer.isMultiLine(text)) {
+            this.appendTextLines(lines, text, indent);
+            return PrecedingContent.other;
+        }
+
+        lines[lines.length - 1] += text;
+        return PrecedingContent.text;
+    }
+
     // Blank lines are character data, except a blank first line - the rest of the start tag's - and a
     // blank last one, whose break the next line writes anyway.
     private appendTextLines(lines: string[], text: string, indent: string): void {
@@ -591,12 +629,6 @@ export class XmlFragmentRenderer {
 
     private static isMultiLine(text: string): boolean {
         return text.includes("\n") || text.includes("\r");
-    }
-
-    // Text that is not whitespace alone, or CDATA - what the engine writes inline with its neighbours.
-    private static isCharacterData(node: XmlFragmentNode): boolean {
-        return node.token.kind === XmlFragmentTokenKind.cdata
-            || (node.token.kind === XmlFragmentTokenKind.text && XmlFragmentRenderer.isWhitespaceText(node) === false);
     }
 
     // Two newlines are a blank line the author put there on purpose.
