@@ -1,5 +1,6 @@
 import { IndentationStyle } from "./indentationStyle";
 import { Settings } from "./settings";
+import { StartTagLine } from "./startTagLine";
 import { XmlFragmentNode } from "./xmlFragmentNode";
 import { XmlFragmentParser } from "./xmlFragmentParser";
 import { XmlFragmentToken } from "./xmlFragmentToken";
@@ -92,7 +93,8 @@ export class XmlFragmentRenderer {
      * formatted it. An element's end tag is pushed as a leaf beneath its children, so everything
      * comes off the stack in document order.
      *
-     * A null node is a blank line.
+     * A null node is a blank line. An end tag carries where its start tag's line ended, so it can tell
+     * whether anything inside started a line of its own.
      */
     private renderTree(
         lines: string[],
@@ -101,10 +103,10 @@ export class XmlFragmentRenderer {
         rootPreviousSibling: XmlFragmentNode | undefined,
         trailingToken: XmlFragmentToken | undefined
     ): void {
-        const pending: [XmlFragmentNode | null, number, XmlFragmentNode | undefined][] = [[root, 0, rootPreviousSibling]];
+        const pending: [XmlFragmentNode | null, number, XmlFragmentNode | undefined, StartTagLine?][] = [[root, 0, rootPreviousSibling]];
 
         for (let step = pending.pop(); step !== undefined; step = pending.pop()) {
-            const [node, depth, previousSibling] = step;
+            const [node, depth, previousSibling, startTagLine] = step;
             if (node === null) {
                 XmlFragmentRenderer.pushBlankLine(lines);
                 continue;
@@ -146,6 +148,10 @@ export class XmlFragmentRenderer {
 
                     const childDepth = depth + 1;
                     const grouped = this.readGroupedContent(node, indentation.forDepth(childDepth));
+                    if (grouped !== null && node.endTag !== null && grouped.lines.length === 0) {
+                        lines.push(formattedTag + grouped.head + node.endTag.text);
+                        break;
+                    }
                     if (grouped !== null && node.endTag !== null) {
                         lines.push(formattedTag + grouped.head);
                         lines.push(...grouped.lines);
@@ -155,7 +161,7 @@ export class XmlFragmentRenderer {
 
                     lines.push(formattedTag);
                     if (node.endTag !== null) {
-                        pending.push([XmlFragmentRenderer.leaf(node.endTag), depth, undefined]);
+                        pending.push([XmlFragmentRenderer.leaf(node.endTag), depth, undefined, { index: lines.length - 1, width: formattedTag.length }]);
                     }
                     const siblingCount = XmlFragmentRenderer.countSiblings(node.children);
                     for (let index = node.children.length - 1; index >= 0; index--) {
@@ -177,12 +183,31 @@ export class XmlFragmentRenderer {
 
                 // An element's own end tag, or one render() found closing nothing at the top level.
                 case XmlFragmentTokenKind.endTag:
+                    if (XmlFragmentRenderer.contentStayedOnStartTagLine(lines, startTagLine)) {
+                        lines[lines.length - 1] += token.text;
+                    } else {
+                        lines.push(indent + token.text);
+                    }
+                    break;
+
                 case XmlFragmentTokenKind.cdata:
                 case XmlFragmentTokenKind.markupDeclaration:
                     lines.push(indent + token.text);
                     break;
             }
         }
+    }
+
+    /*
+     * The engine's rule: an end tag gets a line of its own only when something inside the element
+     * started one. Here that is content - comments kept in place - appended to the start tag's line
+     * and nothing pushed after it. An element whose content was dropped entirely keeps its end tag
+     * on a new line, which is what the engine does with `<a>\n</a>` under preserveNewLines.
+     */
+    private static contentStayedOnStartTagLine(lines: readonly string[], startTagLine: StartTagLine | undefined): boolean {
+        return startTagLine !== undefined
+            && startTagLine.index === lines.length - 1
+            && lines[startTagLine.index].length > startTagLine.width;
     }
 
     private static leaf(token: XmlFragmentToken): XmlFragmentNode {
@@ -289,10 +314,6 @@ export class XmlFragmentRenderer {
     /*
      * The element's content on its tags' own line, or null when it has to be broken out. Content
      * that is all markup is laid out as a block, as the engine does.
-     *
-     * The engine is followed only this far: once it writes a newline inside mixed content its
-     * indentation never recovers, so an element that cannot be inlined is laid out as a block here
-     * rather than the way the engine would write it.
      */
     private readInlineContent(element: XmlFragmentNode): string | null {
         if (element.endTag === null) {
@@ -398,9 +419,8 @@ export class XmlFragmentRenderer {
      * unless that child is character data or follows a text node, so `<r><a/>x<b/></r>` is one
      * line of content and `<r><a/><b/>x<c/></r>` is two.
      *
-     * Where the content ends with character data the engine glues its end tag to that text, and
-     * that glue is what its indentation never recovers from. The end tag gets its own line here -
-     * the one place this layout departs from the engine.
+     * The end tag gets a line of its own once any child has started one, and otherwise stays on
+     * the start tag's line - no lines back means the caller glues it on.
      */
     private readGroupedContent(element: XmlFragmentNode, childIndent: string): { head: string; lines: string[] } | null {
         if (element.endTag === null) {

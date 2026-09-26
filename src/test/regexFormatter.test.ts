@@ -276,6 +276,17 @@ describe('TextXmlFormatter — options the tree unlocks', () => {
         expect(format('<!-- c --><a/>', { preserveCommentPlacement: true })).toBe('<!-- c -->\n<a />');
     });
 
+    // Nothing inside started a line, so the end tag does not start one either - the engine's rule.
+    it('keeps the end tag on the line of the comments kept in place before it', () => {
+        expect(format('<r><b><!-- c --></b></r>', { preserveCommentPlacement: true })).toBe('<r>\n    <b><!-- c --></b>\n</r>');
+        expect(format('<b><!-- c --><!-- d --></b>', { preserveCommentPlacement: true })).toBe('<b><!-- c --><!-- d --></b>');
+        expect(format('<b><!-- c --><d/></b>', { preserveCommentPlacement: true })).toBe('<b><!-- c -->\n    <d />\n</b>');
+    });
+
+    it('keeps the end tag on a line of its own when only whitespace was inside', () => {
+        expect(format('<a>\n</a>', { preserveNewLines: true })).toBe('<a>\n</a>');
+    });
+
     it('does not escape apostrophes in a single-quoted value', () => {
         expect(format('<a c="it\'s"/>', { allowSingleQuoteInAttributeValue: false, useSingleQuotes: true })).toBe('<a c="it\'s" />');
     });
@@ -459,9 +470,9 @@ describe('TextXmlFormatter — xml:space="preserve" (rule 6)', () => {
 });
 
 /*
- * Mixed content - character data beside markup. The engine keeps such an element on one line and
- * that much is followed; what is not followed is its layout once the content will not fit, where
- * its indentation never recovers from the first newline it writes. See the divergences below.
+ * Mixed content - character data beside markup. The engine keeps such an element on one line, and
+ * once the content will not fit, starts a line for every child that is not character data and does
+ * not follow text. rangeDifferential.test.ts checks both against it.
  */
 describe('TextXmlFormatter — mixed content', () => {
     it('keeps an element mixing text and markup on one line', () => {
@@ -523,16 +534,17 @@ describe('TextXmlFormatter — mixed content', () => {
     });
 
     it('keeps leading character data on the start tag\'s line', () => {
-        expect(format('<p>some <b>bold</b></p>')).toBe('<p>some <b>bold</b>\n</p>');
         expect(format('<r>x<a/><b/></r>')).toBe('<r>x<a />\n    <b />\n</r>');
     });
 
-    /*
-     * The one place the grouped layout departs from the engine: it glues its end tag to trailing
-     * text and never recovers from that - `<r><p>a <b>x</b></p></r>` comes back with `</p>` at
-     * column 0. The end tag goes on its own line here instead.
-     */
-    it('writes the end tag on its own line where the engine would glue it to trailing text', () => {
+    // An end tag gets a line of its own exactly when something inside started one, as in the engine.
+    it('keeps the end tag on the start tag\'s line when no child started a line', () => {
+        expect(format('<p>some <b>bold</b></p>')).toBe('<p>some <b>bold</b></p>');
+        expect(format('<p>a<br/></p>')).toBe('<p>a<br /></p>');
+        expect(format('<r><p>some <b>bold</b></p><q/></r>')).toBe('<r>\n    <p>some <b>bold</b></p>\n    <q />\n</r>');
+    });
+
+    it('writes the end tag on its own line once a child started one', () => {
         expect(format('<r><a/>x</r>')).toBe('<r>\n    <a />x\n</r>');
         expect(format('<p><b>bold</b> text</p>')).toBe('<p>\n    <b>bold</b> text\n</p>');
     });
@@ -550,6 +562,7 @@ describe('TextXmlFormatter — mixed content', () => {
             '<r><a/>x<b/></r>',
             '<r><a/>x</r>',
             '<r>x<a/><b/></r>',
+            '<p>some <b>bold</b></p>',
             '<r><a/> <b/></r>',
             '<r><!-- k --><a/>x</r>',
         ];

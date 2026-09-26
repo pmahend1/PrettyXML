@@ -139,11 +139,11 @@ describe("Attribute placement matches the engine (task 8d)", () => {
 });
 
 /*
- * Mixed content, and the half of it the engine can be trusted on: what it renders on one line, and
- * a text run it re-indents at the run's own depth. The cases where it writes a newline inside
- * mixed content are deliberately absent - its indentation does not recover from one.
+ * Mixed content. Until engine 3.1.0 only the half written on one line could be compared: once the
+ * engine wrote a newline inside mixed content its indentation never recovered. The rows from
+ * "Content ending with character data" down were pinned as engine bugs before that release.
  */
-describe("Mixed content matches the engine where the engine is sound (task 8g)", () => {
+describe("Mixed content matches the engine (task 8g)", () => {
     const cases: [string, string, Partial<ISettings>][] = [
         ["text on both sides of a child", "<p>some <b>bold</b> text</p>", {}],
         ["several children with text between them", "<p>a <b>x</b> mid <i>y</i> z</p>", {}],
@@ -174,6 +174,18 @@ describe("Mixed content matches the engine where the engine is sound (task 8g)",
         ["leading character data kept on the start tag's line", "<p>some <b>bold</b></p>", {}],
         ["a glued run under a nested element", "<w><r><a/>x<b/></r></w>", {}],
         ["a glued run two levels down", "<w><v><r><a/>x<b/></r></v></w>", {}],
+        ["an end tag glued to an element the text led into", "<p>a<br/></p>", {}],
+
+        // Content ending with character data: the end tag gets a line of its own once a child did.
+        ["content ending with text after a child", "<r><a/>x</r>", {}],
+        ["content ending with text after an element with text", "<p><b>bold</b> text</p>", {}],
+        ["content ending with text after a glued run", "<r><a/>x<b/>y</r>", {}],
+        ["already-formatted mixed content", "<p>\n    some\n    <b>bold</b>\n    text\n</p>", {}],
+        ["content ending with text, one level down", "<w><r><a/>x</r></w>", {}],
+        ["a child starting a line after leading text, one level down", "<w><r>x<a/><b/></r></w>", {}],
+        ["content ending with text, three levels down", "<r><s><t><p><b>x</b> c</p></t></s></r>", {}],
+        ["a sibling after an element with leading text", "<r><p>a <b>x</b></p><q/></r>", {}],
+        ["a comment inline, one level down", "<r><p>a <!-- c --> b</p></r>", {}],
     ];
 
     it.each(cases)("%s", async (_name, document, overrides) => {
@@ -184,54 +196,20 @@ describe("Mixed content matches the engine where the engine is sound (task 8g)",
 });
 
 /*
- * The other half, pinned so a later engine version cannot change it unnoticed. Once the engine
- * writes a newline inside mixed content its indentation never recovers, and a comment beside text
- * has the indent width injected into the character data. Both are engine bugs worth filing.
+ * Engine 3.1.0 fixed indent whitespace being injected into character data beside a comment, which
+ * grew on every format. Matching once does not show that, so the engine's second format is pinned.
  */
-describe("Mixed content the engine gets wrong (task 8g)", () => {
-    it("indents the root's own end tag once text follows a child", async () => {
-        const engine = await engineOutput("<r><s><t><p><b>x</b> c</p></t></s></r>");
-        expect(engine).toBe("<r>\n    <s>\n        <t>\n            <p>\n                <b>x</b> c</p>\n            </t>\n        </s>\n    </r>");
-        expect(engine.split("\n").at(-1)).toBe("    </r>");
-    }, 30000);
-
-    it("writes a following sibling outside its own parent's indentation", async () => {
-        expect(await engineOutput("<r><p>a <b>x</b></p><q/></r>")).toBe("<r>\n    <p>a <b>x</b>\n</p>\n<q />\n</r>");
-    }, 30000);
-
-    // The injected run grows without bound, and the character data is the user's, not the formatter's.
-    it("injects the indent width into character data, and again on every format", async () => {
-        const once = await engineOutput("<r><p>a <!-- c --> b</p></r>");
-        expect(once).toContain("<p>a     <!-- c --> b</p>");
-
-        const twice = await engineOutput(once);
-        expect(twice).toContain("<p>a         <!-- c --> b</p>");
-        expect(twice).not.toBe(once);
-    }, 30000);
-
-    // Content ending with character data is where the engine glues its end tag and loses the column.
+describe("The engine is stable on mixed content (task 8g)", () => {
     it.each([
-        ["<r><a/>x</r>", "<r>\n    <a />x</r>", "<r>\n    <a />x\n</r>"],
-        ["<p><b>bold</b> text</p>", "<p>\n    <b>bold</b> text</p>", "<p>\n    <b>bold</b> text\n</p>"],
-        ["<r><a/>x<b/>y</r>", "<r>\n    <a />x<b />y</r>", "<r>\n    <a />x<b />y\n</r>"],
-        ["<p>\n    some\n    <b>bold</b>\n    text\n</p>", "<p>\n    some\n<b>bold</b>\n    text\n</p>", "<p>\n    some\n    <b>bold</b>\n    text\n</p>"],
-    ])("closes %j on its own line where the engine glues it", async (fragment, engineResult, expected) => {
-        expect(await engineOutput(fragment)).toBe(engineResult);
-
-        const formatted = new TextXmlFormatter(settings).formatXmlPretty(fragment);
-        expect(formatted).toBe(expected);
-        expect(new TextXmlFormatter(settings).formatXmlPretty(formatted)).toBe(formatted);
-    }, 30000);
-
-    it("loses the column for good once it glues an end tag, at depth", async () => {
-        expect(await engineOutput("<w><r><a/>x</r></w>")).toBe("<w>\n    <r>\n        <a />x</r>\n    </w>");
-        // `<b />` belongs at column 8 and `</r>` at 4; the engine writes both at 4 and 0.
-        expect(await engineOutput("<w><r>x<a/><b/></r></w>")).toBe("<w>\n    <r>x<a />\n    <b />\n</r>\n</w>");
-
-        expect(new TextXmlFormatter(settings).formatXmlPretty("<w><r><a/>x</r></w>"))
-            .toBe("<w>\n    <r>\n        <a />x\n    </r>\n</w>");
+        "<r><p>a <!-- c --> b</p></r>",
+        "<r><s><t><p><b>x</b> c</p></t></s></r>",
+        "<w><r>x<a/><b/></r></w>",
+    ])("formats its own output of %j unchanged", async fragment => {
+        const once = await engineOutput(fragment);
+        expect(await engineOutput(once)).toBe(once);
     }, 30000);
 });
+
 describe("Options the tree unlocks match the engine (task 8d)", () => {
     const indented = "<Root>\n    <A/>\n\n    <B>\n        <C/>\n        <D/>\n    </B>\n    <E><F/><G/><H/></E>\n    <!-- c -->\n    <I>t</I>\n</Root>";
     const commented = "<Root><A/><!-- trailing -->\n    <!-- own line -->\n    <B><!-- first --></B>\n    <C/> <!-- spaced -->\n    <D>t</D><!-- after text element --></Root>";
