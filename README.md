@@ -252,6 +252,9 @@ If enabled, and child elements count is greater than 2 then adds empty line betw
 Adds XML declaration `<?xml version="1.0" encoding="utf-8"?>` if missing.
 Default is `true`.
 
+Also applies to **Pretty XML: Minimize**, the one setting that does. A declaration the document
+already has is kept either way.
+
 ### Preserve New Lines
 
 Preserves existing new lines between elements.

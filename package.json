@@ -186,7 +186,7 @@
                     },
                     "prettyxml.settings.addXmlDeclarationIfMissing": {
                         "type": "boolean",
-                        "markdownDescription": "Adds XML declaration if missing. Default is *Checked* \n\n **Checked** : \n\n `<?xml version=\"1.0\" encoding=\"utf-8\"?>`\n\n`<Root>`\n\n&ensp;&ensp;&ensp;&ensp;`<Element />`\n\n`</Root>` \n\n **Unchecked** : \n\n `<Root>`\n\n&ensp;&ensp;&ensp;&ensp;`<Element />`\n\n`</Root>` \n\n *Format Selection* does not apply this setting: a declaration belongs at the top of a document, not in the middle of a selection.",
+                        "markdownDescription": "Adds XML declaration if missing. Default is *Checked* \n\n **Checked** : \n\n `<?xml version=\"1.0\" encoding=\"utf-8\"?>`\n\n`<Root>`\n\n&ensp;&ensp;&ensp;&ensp;`<Element />`\n\n`</Root>` \n\n **Unchecked** : \n\n `<Root>`\n\n&ensp;&ensp;&ensp;&ensp;`<Element />`\n\n`</Root>` \n\n *Minimize* applies it too. *Format Selection* does not: a declaration belongs at the top of a document, not in the middle of a selection.",
                         "default": true
                     },
                     "prettyxml.settings.attributesInNewlineThreshold": {
