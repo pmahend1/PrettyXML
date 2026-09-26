@@ -94,7 +94,7 @@ export class XmlFragmentRenderer {
      * comes off the stack in document order.
      *
      * A null node is a blank line. An end tag carries where its start tag's line ended, so it can tell
-     * whether anything inside started a line of its own.
+     * whether anything inside started a line of its own; so does a last child.
      */
     private renderTree(
         lines: string[],
@@ -116,9 +116,11 @@ export class XmlFragmentRenderer {
             const indent = indentation.forDepth(depth);
 
             switch (token.kind) {
-                case XmlFragmentTokenKind.text:
-                    this.appendTextRun(lines, token.text, indent, token === trailingToken);
+                case XmlFragmentTokenKind.text: {
+                    const lineBreakFollows = startTagLine !== undefined && startTagLine.index < lines.length - 1;
+                    this.appendTextRun(lines, token.text, indent, token === trailingToken, lineBreakFollows);
                     break;
+                }
 
                 // Rule 5 at the other end: the front half of a cut tag, indented but never rewritten.
                 case XmlFragmentTokenKind.unterminated:
@@ -127,6 +129,10 @@ export class XmlFragmentRenderer {
 
                 case XmlFragmentTokenKind.comment:
                     if (this.keepsCommentOnPreviousLine(lines, previousSibling)) {
+                        // A text run's trailing blank line would strand the comment at the margin, as the engine does.
+                        while (lines.at(-1) === "") {
+                            lines.pop();
+                        }
                         lines[lines.length - 1] += this.formatComment(token.text);
                     } else {
                         lines.push(indent + this.formatComment(token.text));
@@ -156,15 +162,20 @@ export class XmlFragmentRenderer {
                     }
 
                     lines.push(formattedTag);
+                    const ownLine: StartTagLine = { index: lines.length - 1, width: formattedTag.length };
                     if (node.endTag !== null) {
-                        pending.push([XmlFragmentRenderer.leaf(node.endTag), depth, undefined, { index: lines.length - 1, width: formattedTag.length }]);
+                        pending.push([XmlFragmentRenderer.leaf(node.endTag), depth, undefined, ownLine]);
+                    }
+                    if (this.holdsOnlyLayoutWhitespace(node)) {
+                        break;
                     }
                     const siblingCount = XmlFragmentRenderer.countSiblings(node.children);
                     for (let index = node.children.length - 1; index >= 0; index--) {
                         if (this.isBlankLineAfter(node.children, index, siblingCount)) {
                             pending.push([null, childDepth, undefined]);
                         }
-                        pending.push([node.children[index], childDepth, node.children[index - 1]]);
+                        const isLastChild = index === node.children.length - 1 && node.endTag !== null;
+                        pending.push([node.children[index], childDepth, node.children[index - 1], isLastChild ? ownLine : undefined]);
                     }
                     break;
                 }
@@ -204,6 +215,14 @@ export class XmlFragmentRenderer {
         return startTagLine !== undefined
             && startTagLine.index === lines.length - 1
             && lines[startTagLine.index].length > startTagLine.width;
+    }
+
+    // The engine's IsLineBreakBeforeEndTag.
+    private holdsOnlyLayoutWhitespace(element: XmlFragmentNode): boolean {
+        return this.settings.preserveNewLines === true
+            && element.children.length === 1
+            && XmlFragmentRenderer.isWhitespaceText(element.children[0])
+            && XmlFragmentRenderer.isMultiLine(element.children[0].token.text);
     }
 
     private static leaf(token: XmlFragmentToken): XmlFragmentNode {
@@ -531,10 +550,11 @@ export class XmlFragmentRenderer {
      * rest of Zs as whitespace and would delete a text run made of them - rule 1 says nothing is
      * deleted, and the engine reads them as text too.
      */
-    private appendTextRun(lines: string[], rawText: string, indent: string, isTrailing: boolean): void {
+    private appendTextRun(lines: string[], rawText: string, indent: string, isTrailing: boolean, lineBreakFollows: boolean): void {
         const escaped = this.escapeInvisibleNonAscii(rawText);
-        const text = escaped.replace(XmlFragmentRenderer.xmlWhitespaceEdgeRegex, "");
-        if (text !== "") {
+        if (XmlFragmentRenderer.xmlWhitespaceRegex.test(escaped) === false) {
+            // A line break after the run would be read back into the text on the next format.
+            const text = isTrailing || lineBreakFollows ? escaped.replace(XmlFragmentRenderer.xmlWhitespaceTrailingRegex, "") : escaped;
             this.appendTextLines(lines, text, indent);
             return;
         }
@@ -550,27 +570,22 @@ export class XmlFragmentRenderer {
         }
     }
 
-    /*
-     * A run spanning several lines is re-indented a line at a time, as the engine does. An interior
-     * blank line survives only under preserveNewLines - the engine keeps it either way, but writes
-     * it as trailing spaces, and nothing else here emits trailing whitespace.
-     */
+    // Blank lines are character data, except a blank first line - the rest of the start tag's - and a
+    // blank last one, whose break the next line writes anyway.
     private appendTextLines(lines: string[], text: string, indent: string): void {
         if (XmlFragmentRenderer.isMultiLine(text) === false) {
-            lines.push(indent + text);
+            lines.push(indent + text.replace(XmlFragmentRenderer.xmlWhitespaceEdgeRegex, ""));
             return;
         }
 
-        for (const sourceLine of text.split(XmlFragmentRenderer.lineBreakRegex)) {
-            const line = sourceLine.replace(XmlFragmentRenderer.xmlWhitespaceEdgeRegex, "");
-            if (line === "") {
-                if (this.settings.preserveNewLines === true) {
-                    XmlFragmentRenderer.pushBlankLine(lines);
-                }
-                continue;
+        const sourceLines = text.split(XmlFragmentRenderer.lineBreakRegex);
+        for (let index = 0; index < sourceLines.length; index++) {
+            const line = sourceLines[index].replace(XmlFragmentRenderer.xmlWhitespaceEdgeRegex, "");
+            if (line !== "") {
+                lines.push(indent + line);
+            } else if (index > 0 && index < sourceLines.length - 1 && lines.length > 0) {
+                lines.push("");
             }
-
-            lines.push(indent + line);
         }
     }
 

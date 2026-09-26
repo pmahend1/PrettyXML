@@ -287,6 +287,11 @@ describe('TextXmlFormatter — options the tree unlocks', () => {
         expect(format('<a>\n</a>', { preserveNewLines: true })).toBe('<a>\n</a>');
     });
 
+    it('drops the blank lines of whitespace-only content spanning lines', () => {
+        expect(format('<a>\n\n</a>', { preserveNewLines: true })).toBe('<a>\n</a>');
+        expect(format('<r><a>\n\n   \n</a></r>', { preserveNewLines: true })).toBe('<r>\n    <a>\n    </a>\n</r>');
+    });
+
     // As the engine does: it never loads whitespace-only content unless preserveNewLines asks for it.
     it('drops whitespace-only content unless preserving new lines', () => {
         expect(format('<a> </a>')).toBe('<a></a>');
@@ -618,10 +623,32 @@ describe('TextXmlFormatter — a text run spanning several lines', () => {
         expect(format('<r><p>l1\r\nl2</p></r>')).toBe('<r>\n    <p>\n        l1\n        l2\n    </p>\n</r>');
     });
 
-    // The engine keeps an interior blank line either way, but writes it as trailing spaces.
-    it('keeps an interior blank line only under preserveNewLines', () => {
-        expect(format('<p>l1\n\nl2</p>')).toBe('<p>\n    l1\n    l2\n</p>');
+    it('keeps every interior blank line, with or without preserveNewLines', () => {
+        expect(format('<p>l1\n\nl2</p>')).toBe('<p>\n    l1\n\n    l2\n</p>');
         expect(format('<p>l1\n\nl2</p>', { preserveNewLines: true })).toBe('<p>\n    l1\n\n    l2\n</p>');
+        expect(format('<p>l1\n\n\nl2</p>')).toBe('<p>\n    l1\n\n\n    l2\n</p>');
+        expect(format('<p>l1\n   \nl2</p>')).toBe('<p>\n    l1\n\n    l2\n</p>');
+    });
+
+    it('keeps a blank line at either end of the run but not the rest of a line it shares', () => {
+        expect(format('<p>\n\nl1\n\n</p>')).toBe('<p>\n\n    l1\n\n</p>');
+        expect(format('<p>  \nl1\n  </p>')).toBe('<p>\n    l1\n</p>');
+    });
+
+    it('drops a trailing blank line once something before the run started a line', () => {
+        expect(format('<p><b/>l1\n\nl2\n\n</p>')).toBe('<p>\n    <b />\n    l1\n\n    l2\n</p>');
+        expect(format('<p><b/>\n\nl1\n\n<c/></p>')).toBe('<p>\n    <b />\n\n    l1\n\n    <c />\n</p>');
+    });
+
+    it('keeps a comment on the run\'s last line rather than after its trailing blank line', () => {
+        const settings = { preserveCommentPlacement: true };
+        const once = format('<e>a\nb\n\n<!-- c --><f/></e>', settings);
+        expect(once).toBe('<e>\n    a\n    b<!-- c -->\n    <f />\n</e>');
+        expect(format(once, settings)).toBe(once);
+    });
+
+    it('does not begin a selection with a blank line', () => {
+        expect(format('\n\nl1\n\nl2')).toBe('l1\n\nl2');
     });
 
     it('does not re-indent a CDATA section that spans several lines', () => {
@@ -629,8 +656,16 @@ describe('TextXmlFormatter — a text run spanning several lines', () => {
     });
 
     it('is idempotent', () => {
-        const once = format('<r><s><p>  l1\n      l2  </p></s></r>');
-        expect(format(once)).toBe(once);
+        const shapes = [
+            '<r><s><p>  l1\n      l2  </p></s></r>',
+            '<r><p>\n\nl1\n\n\nl2\n\n</p></r>',
+            '<r><p><b/>l1\n\nl2\n\n</p></r>',
+            '<r><p><b/>\n\nl1\n\n<c/></p></r>',
+        ];
+        for (const xml of shapes) {
+            const once = format(xml);
+            expect(format(once)).toBe(once);
+        }
     });
 });
 
