@@ -2,6 +2,17 @@
 
 ## Stable
 
+### 7.2.0: 27-Sep-2026
+
+- Fixed [Preserve New Lines](README.md#preserve-new-lines) dropping blank lines between elements since 6.9.0. Several blank lines in a row are kept as one.
+- Fixed `>` in attribute values being written as `&gt;` since 6.9.0, which broke SAPUI5 bindings such as `{i18n>LabelText}` ([#131](https://github.com/pmahend1/PrettyXML/issues/131)).
+- Fixed indentation in elements that mix text and markup, and comments, CDATA and processing instructions sometimes landing at the left margin.
+- Fixed stray indent spaces on blank lines inside text.
+- Fixed `xml:space="preserve"` content being reflowed.
+- Fixed Minimize adding an XML declaration while [Add Xml Declaration If Missing](README.md#add-xml-declaration-if-missing) is off.
+- Format Selection now matches Format Document for mixed text and markup, blank lines and comments.
+- Updated XmlFormatter engine to v3.1.3.
+
 ### 7.1.0: 20-Sep-2026
 
 - Format Selection now indents the way the editor does - one tab per level in a tab-indented document, spaces otherwise - instead of always writing spaces. The width of a space indent is still [Indent Space Length](README.md#settings), so a selection matches what Format Document would have produced; continuation lines of a wrapped attribute list are aligned with spaces after the indent, because a column inside a tag cannot be written in tabs.
