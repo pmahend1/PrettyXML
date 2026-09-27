@@ -179,7 +179,7 @@ Value = 2
 ```xml
 <Element Attribute1="Value1"
          Attribute2="Value2"
-         Attribute3="Value3"/>
+         Attribute3="Value3" />
 ```
 
 ### Wild Carded Exceptions For Position All Attributes On First Line
@@ -205,7 +205,7 @@ Example:
 </View>
 ```
 
-#### Ouput 3
+#### Output 3
 
 ```xml
 <View>
@@ -249,7 +249,7 @@ If enabled, and child elements count is greater than 2 then adds empty line betw
 
 ### Add Xml Declaration If Missing
 
-Adds XML declaration `<?xml version="1.0" encoding="utf-8"?>` if missing.
+Adds XML declaration `<?xml version="1.0" encoding="UTF-8"?>` if missing.
 Default is `true`.
 
 Also applies to **Pretty XML: Minimize**, the one setting that does. A declaration the document
@@ -257,7 +257,8 @@ already has is kept either way.
 
 ### Preserve New Lines
 
-Preserves existing new lines between elements.
+Preserves existing new lines between elements. Any number of blank lines between two elements is
+kept as one, and a blank line right after a start tag or right before an end tag is dropped.
 
 Example: Value = **false**
 
@@ -308,9 +309,8 @@ Example: Value = **true**
 <Root>
     <Element1>Text1</Element1>
 
-    
     <Element2>Text2</Element2>
-        
+
     <Element3>Text3</Element3>
     <Element3>Text4</Element3>
 </Root>
@@ -340,9 +340,9 @@ Example: Value = **false**
 ```xml
 <Root>
     <Element1>Text1</Element1>
-    <!--A comment-->
+    <!-- A comment -->
     <Element2>Text2</Element2>
-    <!--Another comment-->
+    <!-- Another comment -->
     <Element3>Text3</Element3>
 </Root>
 ```
@@ -363,8 +363,8 @@ Example: Value = **true**
 
 ```xml
 <Root>
-    <Element1>Text1</Element1><!--A comment-->
-    <Element2>Text2</Element2><!--Another comment-->
+    <Element1>Text1</Element1><!-- A comment -->
+    <Element2>Text2</Element2><!-- Another comment -->
     <Element3>Text3</Element3>
 </Root>
 ```
