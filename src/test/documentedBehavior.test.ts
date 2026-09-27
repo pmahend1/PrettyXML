@@ -16,7 +16,8 @@ import { ISettings } from '../settings';
  * README examples leave out, plus the setting each example shows.
  */
 
-const readme = readFileSync(path.resolve(process.cwd(), 'README.md'), 'utf8');
+// A Windows checkout gives the README CRLF line endings.
+const readme = readFileSync(path.resolve(process.cwd(), 'README.md'), 'utf8').replace(/\r\n/g, '\n');
 
 async function format(xml: string, overrides: Partial<ISettings>, actionKind = FormattingActionKind.format): Promise<string> {
     return (await EngineFormatter.format(xml, actionKind, overrides)).replace(/\r\n/g, '\n');
