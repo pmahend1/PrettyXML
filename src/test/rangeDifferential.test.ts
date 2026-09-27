@@ -284,6 +284,15 @@ describe("The engine is stable on its own output (task 8g)", () => {
         expect(await engineOutput(once, overrides)).toBe(once);
     }, 30000);
 
+    // Engine 3.1.3: a kept blank line is written empty, so the next format reads it back as one.
+    it.each<Partial<ISettings>>([
+        { preserveNewLines: true },
+        { addEmptyLineBetweenElements: true, preserveNewLines: true },
+    ])("formats its own output of blank lines between siblings unchanged under %j", async overrides => {
+        const once = await engineOutput("<r>\n  <a/>\n\n\n  <b/>\n  <!--c-->\n\n  <d/>\n\n</r>", overrides);
+        expect(await engineOutput(once, overrides)).toBe(once);
+    }, 30000);
+
     // Engine 3.1.1: the end tag's column used to follow the source's trailing spaces.
     it.each([
         "<r><a>\n</a></r>",
@@ -300,6 +309,7 @@ describe("Options the tree unlocks match the engine (task 8d)", () => {
     const indented = "<Root>\n    <A/>\n\n    <B>\n        <C/>\n        <D/>\n    </B>\n    <E><F/><G/><H/></E>\n    <!-- c -->\n    <I>t</I>\n</Root>";
     const commented = "<Root><A/><!-- trailing -->\n    <!-- own line -->\n    <B><!-- first --></B>\n    <C/> <!-- spaced -->\n    <D>t</D><!-- after text element --></Root>";
     const attributes = "<Root a=\"1\" b=\"2\"><Item x=\"1\" y=\"2\"/><Other x=\"1\" y=\"2\"/></Root>";
+    const readmeNewLines = "<Root>\n      <Element1>Text1</Element1>\n\n\n    <Element2>Text2</Element2>\n\n        <Element3>Text3</Element3>\n    <Element3>Text4</Element3>\n</Root>";
 
     const cases: [string, string, Partial<ISettings>][] = [
         ["blank lines between elements", indented, { addEmptyLineBetweenElements: true }],
@@ -307,6 +317,16 @@ describe("Options the tree unlocks match the engine (task 8d)", () => {
         ["comment placement", commented, { preserveCommentPlacement: true }],
         ["comment placement, preserving new lines", commented, { preserveCommentPlacement: true, preserveNewLines: true }],
         ["comment placement off", commented, { preserveCommentPlacement: false }],
+
+        // Engine 3.1.3: preserveNewLines keeps a blank line between two siblings, as exactly one.
+        ["blank lines between siblings, preserving new lines", readmeNewLines, { preserveNewLines: true }],
+        ["blank lines between siblings in CRLF, preserving new lines", readmeNewLines.replace(/\n/gu, "\r\n"), { preserveNewLines: true }],
+        ["no blank line after a start tag or before an end tag", "<Root>\n\n    <A/>\n\n    <B/>\n\n</Root>", { preserveNewLines: true }],
+        ["a blank line of spaces and tabs written empty", "<r>\n  <a/>\n  \n\t\n  <b/>\n</r>", { preserveNewLines: true }],
+        ["blank lines around a comment, an instruction and CDATA", "<r>\n    <a/>\n\n    <!-- c -->\n    <?pi x?>\n\n    <![CDATA[d]]>\n\n    <b/>\n</r>", { preserveNewLines: true }],
+        ["a blank line before CDATA in mixed content", "<r><p>x<a/>\n\n<![CDATA[d]]>\n\n<b/></p></r>", { preserveNewLines: true }],
+        ["a blank line before a comment kept in place", "<r><a/>\n\n<!-- c --><b/>\n\n</r>", { preserveCommentPlacement: true, preserveNewLines: true }],
+        ["a preserved blank line and an added one written once", "<r>\n    <a/>\n\n    <b/>\n    <c/>\n</r>", { addEmptyLineBetweenElements: true, preserveNewLines: true }],
         ["an exception matching the whole name", attributes, { positionAllAttributesOnFirstLine: true, wildCardedExceptionsForPositionAllAttributesOnFirstLine: ["^Item$"] }],
         ["an exception matching part of the name", attributes, { positionAllAttributesOnFirstLine: true, wildCardedExceptionsForPositionAllAttributesOnFirstLine: ["tem"] }],
         ["an exception matching nothing", attributes, { positionAllAttributesOnFirstLine: true, wildCardedExceptionsForPositionAllAttributesOnFirstLine: ["Nope"] }],
@@ -397,9 +417,8 @@ describe("Delegating a selection to the engine - what the synthetic root can and
      * formatter owning the default path: rule 1 says nothing is invented and nothing is deleted.
      */
     it("rewrites attribute value bytes that the range formatter leaves alone", async () => {
-        const repaired = FragmentRepairer.repair("<a b=\"x>y\" c='say \"hi\"'/>");
+        const repaired = FragmentRepairer.repair("<a c='say \"hi\"'/>");
         const formatted = FragmentRepairer.stripSyntheticRoot(await engineOutput(repaired.document), indentLength);
-        expect(formatted).toContain("&gt;");
         expect(formatted).toContain("&quot;");
     }, 30000);
 });

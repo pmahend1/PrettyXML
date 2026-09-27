@@ -307,10 +307,6 @@ describe('TextXmlFormatter — options the tree unlocks', () => {
         expect(format('<?xml-stylesheet href="a.xsl"?>', { addSpaceBeforeEndOfXmlDeclaration: true })).toBe('<?xml-stylesheet href="a.xsl"?>');
     });
 
-    /*
-     * The engine counts indentation as siblings under preserveNewLines, so it adds a blank line
-     * before a closing tag on the second format. The range formatter ignores that whitespace.
-     */
     it('adds no blank line before a closing tag when preserving new lines', () => {
         const settings = { addEmptyLineBetweenElements: true, preserveNewLines: true };
         expect(format('<r>\n    <a/>\n    <b/>\n    <c/>\n</r>', settings)).toBe('<r>\n    <a />\n\n    <b />\n\n    <c />\n</r>');
@@ -319,6 +315,18 @@ describe('TextXmlFormatter — options the tree unlocks', () => {
     it('keeps a comment on its element\'s line rather than after a blank line', () => {
         const settings = { addEmptyLineBetweenElements: true, preserveCommentPlacement: true };
         expect(format('<r><a/> <!-- x --><b/><c/></r>', settings)).toBe('<r>\n    <a /><!-- x -->\n    <b />\n\n    <c />\n</r>');
+    });
+
+    it('keeps any number of blank lines between siblings as one when preserving new lines', () => {
+        expect(format('<r>\n    <a/>\n\n\n    <b/>\n  \n\t\n    <!-- c -->\n</r>', { preserveNewLines: true })).toBe('<r>\n    <a />\n\n    <b />\n\n    <!-- c -->\n</r>');
+        expect(format('<r>\n    <a/>\n\n    <b/>\n</r>')).toBe('<r>\n    <a />\n    <b />\n</r>');
+    });
+
+    it('drops a blank line right after a start tag or right before an end tag', () => {
+        const settings = { preserveNewLines: true };
+        const once = format('<r>\n\n    <a/>\n\n    <b/>\n\n</r>', settings);
+        expect(once).toBe('<r>\n    <a />\n\n    <b />\n</r>');
+        expect(format(once, settings)).toBe(once);
     });
 
     it('never writes two blank lines in a row', () => {

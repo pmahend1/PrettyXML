@@ -326,11 +326,12 @@ export class XmlFragmentRenderer {
     }
 
     /*
-     * The engine's WriteBlankLineAfterChild, less its whitespace handling under preserveNewLines,
-     * which counts indentation as siblings and so changes its answer on a second format.
+     * The engine's WriteBlankLineAfterChild: addEmptyLineBetweenElements after an element, or a blank
+     * line preserveNewLines finds between two siblings. Whitespace is never the child, and nothing
+     * written follows the last, so a blank line after a start tag or before an end tag is dropped.
      */
     private isBlankLineAfter(siblings: readonly XmlFragmentNode[], index: number, siblingCount: number, siblingsFlow: boolean): boolean {
-        if (this.settings.addEmptyLineBetweenElements !== true || siblingCount <= 2 || XmlFragmentRenderer.isElement(siblings[index]) === false) {
+        if (XmlFragmentRenderer.isWhitespaceText(siblings[index])) {
             return false;
         }
 
@@ -339,6 +340,11 @@ export class XmlFragmentRenderer {
             next++;
         }
         if (next === siblings.length || XmlFragmentRenderer.isTextRun(siblings[next].token)) {
+            return false;
+        }
+
+        const addsBlankLine = this.settings.addEmptyLineBetweenElements === true && siblingCount > 2 && XmlFragmentRenderer.isElement(siblings[index]);
+        if (addsBlankLine === false && this.holdsBlankLine(siblings[next - 1]) === false) {
             return false;
         }
 
@@ -570,31 +576,23 @@ export class XmlFragmentRenderer {
      * Only XML's own four whitespace characters are trimmed. JavaScript's trim() counts NBSP and the
      * rest of Zs as whitespace and would delete a text run made of them - rule 1 says nothing is
      * deleted, and the engine reads them as text too.
+     *
+     * Whitespace alone is layout and writes nothing; isBlankLineAfter keeps a blank line in it.
      */
     private appendTextRun(lines: string[], rawText: string, indent: string, isTrailing: boolean, lineBreakFollows: boolean): void {
+        if (XmlFragmentRenderer.xmlWhitespaceRegex.test(rawText)) {
+            return;
+        }
+
+        // A line break after the run would be read back into the text on the next format.
         const escaped = this.escapeInvisibleNonAscii(rawText);
-        if (XmlFragmentRenderer.xmlWhitespaceRegex.test(escaped) === false) {
-            // A line break after the run would be read back into the text on the next format.
-            const text = isTrailing || lineBreakFollows ? escaped.replace(XmlFragmentRenderer.xmlWhitespaceTrailingRegex, "") : escaped;
-            this.appendTextLines(lines, text, indent);
-            return;
-        }
-
-        // Trailing whitespace is dropped outright - the formatter never ends a selection with EOL.
-        if (isTrailing || this.settings.preserveNewLines !== true) {
-            return;
-        }
-
-        // Whitespace between siblings; only an intended blank line survives.
-        if (XmlFragmentRenderer.containsBlankLine(escaped)) {
-            XmlFragmentRenderer.pushBlankLine(lines);
-        }
+        const text = isTrailing || lineBreakFollows ? escaped.replace(XmlFragmentRenderer.xmlWhitespaceTrailingRegex, "") : escaped;
+        this.appendTextLines(lines, text, indent);
     }
 
     // Onto the current line as written, unless it spans lines - then the next child starts a line too.
     private flowTextRun(lines: string[], rawText: string, indent: string, lineBreakFollows: boolean, preceding: PrecedingContent): PrecedingContent {
         if (XmlFragmentRenderer.xmlWhitespaceRegex.test(rawText)) {
-            this.appendTextRun(lines, rawText, indent, false, lineBreakFollows);
             return this.settings.preserveNewLines === true ? PrecedingContent.other : preceding;
         }
 
@@ -632,10 +630,11 @@ export class XmlFragmentRenderer {
         return text.includes("\n") || text.includes("\r");
     }
 
-    // Two newlines are a blank line the author put there on purpose.
-    private static containsBlankLine(whitespace: string): boolean {
-        const firstNewline = whitespace.indexOf("\n");
-        return firstNewline >= 0 && whitespace.includes("\n", firstNewline + 1);
+    // The engine's HoldsABlankLine: two line breaks are a blank line the author put there on purpose.
+    private holdsBlankLine(node: XmlFragmentNode): boolean {
+        return this.settings.preserveNewLines === true
+            && XmlFragmentRenderer.isWhitespaceText(node)
+            && node.token.text.split(XmlFragmentRenderer.lineBreakRegex).length > 2;
     }
 
     private formatComment(comment: string): string {
